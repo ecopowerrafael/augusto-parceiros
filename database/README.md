@@ -44,6 +44,16 @@ Para um banco que já recebeu a Fase 2, selecione o banco correto no phpMyAdmin 
 
 Para um banco novo, `database/install.sql` já contém a Fase 2 e a Fase 3 completas. Não execute o instalador completo sobre um banco existente sem análise.
 
-Se o phpMyAdmin interromper a importação, não registre a migration manualmente e não prossiga para o painel. Salve a mensagem do erro, execute novamente o precheck e compare as onze tabelas esperadas. Como os comandos usam `CREATE TABLE IF NOT EXISTS` e seeds idempotentes, a retomada deve ser feita somente após identificar a causa. Não há `DROP TABLE` ou `DROP DATABASE` nesses arquivos.
+Como a Migration 002 já foi instalada no banco remoto `u891593158_doc`, não a importe novamente. A configuração complementar usa somente `updates/003_complete_engine_service_seed_precheck.sql`, `updates/003_complete_engine_service_seed.sql` e `updates/003_complete_engine_service_seed_verify.sql`, nesta ordem.
+
+## Procedimento permanente para a Hostinger
+
+O MySQL da Hostinger é atualizado exclusivamente pelo phpMyAdmin. Não depender de SSH, CLI MySQL ou execução de migrations no terminal remoto. As migrations em `migrations/` são canônicas e portáveis; o nome `u891593158_doc` aparece somente nos SQLs manuais gerados para a Hostinger.
+
+Para gerar os arquivos manuais, execute localmente `node scripts/generate-hostinger-sql.mjs u891593158_doc database/updates`. O gerador valida o identificador, preserva strings e JSON, qualifica as tabelas da aplicação, explicita o filtro de `information_schema` e não acessa o banco remoto.
+
+Toda alteração estrutural deve entregar, nesta ordem, pré-verificação somente leitura, atualização incremental e verificação posterior. O `database/install.sql` também deve ser regenerado. Como as migrations 001 e 002 já foram aplicadas, novas alterações começam na 003; não reexecutar migrations antigas ou seeds já instalados.
+
+Se o phpMyAdmin interromper a importação, não registre a migration manualmente e não prossiga para o painel. Salve a mensagem do erro, execute novamente o precheck e compare as tabelas esperadas. Como os comandos usam seeds idempotentes, a retomada deve ser feita somente após identificar a causa. Não há `DROP TABLE` ou `DROP DATABASE` nesses arquivos.
 
 Após a confirmação da importação, a implementação dos endpoints e telas administrativas será feita em etapa separada e publicada na `main` somente depois dos testes locais.

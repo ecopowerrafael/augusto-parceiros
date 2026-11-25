@@ -15,6 +15,7 @@
     "preview": "vite preview",
     "start": "node server/index.js",
     "migrate": "node scripts/migrate.mjs",
+    "generate:hostinger-sql": "node scripts/generate-hostinger-sql.mjs",
     "provision-admin": "node scripts/provision-admin.mjs",
     "test": "vitest run"
   },

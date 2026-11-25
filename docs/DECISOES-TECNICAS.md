@@ -24,3 +24,7 @@ A logo existente foi usada sem redesenho. A interface usa vermelho como cor come
 Serviços são separados de `service_versions`, e formulários, cobranças, regras, documentos e mensagens apontam para a versão. Isso permite editar um rascunho sem mutar a configuração publicada e prepara snapshots futuros de orçamento.
 
 O avaliador usa uma DSL declarativa limitada, validada no backend. Operadores, ações e tipos de campo são listas fechadas; `eval`, SQL, scripts e URLs arbitrárias são proibidos. O frontend apenas edita configurações e exibe o simulador; não é autoridade para totais, permissões ou viabilidade.
+
+## SQL portável e importação manual
+
+As migrations canônicas não fixam o schema MySQL. Para a Hostinger, `scripts/generate-hostinger-sql.mjs` gera arquivos específicos com `USE`, `SELECT DATABASE()`, referências qualificadas e filtros explícitos de `information_schema`. Essa separação evita que o nome do banco vaze para o pool ou para o código da aplicação e evita correções textuais manuais que possam corromper JSON ou literais SQL.

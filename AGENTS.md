@@ -19,7 +19,11 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - Para autenticação, use sessões opacas persistidas no MySQL, cookies HttpOnly/Secure/SameSite, CSRF e rate limit persistido; não use tokens de autenticação em localStorage.
 - A recuperação de senha depende de SMTP configurado no ambiente; nunca retornar o token de recuperação na API.
 - A instalação inicial do MySQL desta fase é manual pelo phpMyAdmin usando `database/install.sql`; não executar migrations, provisionamento ou operações remotas sem autorização explícita da missão.
-- Para a Fase 3, executar `database/updates/002_services_pricing_rules_precheck.sql`, depois `database/updates/002_services_pricing_rules.sql` e por fim `database/updates/002_services_pricing_rules_verify.sql`. O proprietário deve confirmar a importação antes de publicar endpoints/telas dependentes.
+- A Migration 002 da Fase 3.1 já está instalada no banco remoto e não deve ser reimportada. Para a configuração complementar atual, executar somente o precheck, a atualização e a verificação da Migration 003. O proprietário deve confirmar a execução antes de publicar endpoints/telas dependentes.
+- A Hostinger usa importação manual pelo phpMyAdmin; não depender de SSH, CLI MySQL ou execução de migrations no terminal remoto. Migrations canônicas permanecem portáveis e nunca recebem o nome do banco.
+- Toda alteração de banco deve entregar três SQLs manuais: pré-verificação somente leitura, atualização incremental e verificação posterior, além de manter `database/install.sql` atualizado.
+- SQLs manuais da Hostinger devem iniciar com `USE \`u891593158_doc\`;` e `SELECT DATABASE() AS selected_database;`, qualificar tabelas da aplicação com `\`u891593158_doc\`.`, filtrar `information_schema` por `table_schema = 'u891593158_doc'` e ser gerados por `scripts/generate-hostinger-sql.mjs`. O gerador valida o identificador, não inclui credenciais e não executa SQL remoto.
+- Não alterar migrations já aplicadas. Como 001 e 002 estão instaladas, alterações estruturais futuras começam na migration 003; não repetir seeds antigos, não usar DROP/TRUNCATE, não desabilitar foreign keys e não prometer rollback transacional completo para DDL.
 
 ## Comandos
 

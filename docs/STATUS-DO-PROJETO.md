@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.1 — construtor no-code de serviços, formulários, cobranças e regras — implementação local concluída na branch de desenvolvimento; aguardando importação manual pelo phpMyAdmin antes da publicação na `main`.
+Fase 3.1 — construtor no-code de serviços, formulários, cobranças e regras — Migration 002 instalada e confirmada no MySQL remoto; branch de desenvolvimento aguardando aplicação incremental 003 e homologação antes da publicação na `main`.
 
 ## Implementado
 
@@ -33,7 +33,8 @@ Fase 3.1 — construtor no-code de serviços, formulários, cobranças e regras 
 
 ## Pendente
 
-- Importar `database/install.sql` pelo phpMyAdmin e validar com `database/verify.sql`.
+- Migration 002 já foi importada pelo phpMyAdmin no banco `u891593158_doc`; não importar novamente.
+- Aplicar somente `003_complete_engine_service_seed_precheck.sql`, `003_complete_engine_service_seed.sql` e `003_complete_engine_service_seed_verify.sql`, após revisão da pré-verificação.
 - Criar o primeiro administrador usando `database/create-admin.sql` e hash bcrypt gerado localmente.
 - Configurar SMTP e executar testes HTTP de cadastro/login/aprovação/reset usando contas fictícias.
 - Publicar e validar o deploy 0.2.1 na Hostinger.
@@ -43,7 +44,7 @@ Fase 3.1 — construtor no-code de serviços, formulários, cobranças e regras 
 
 ## Problemas conhecidos/limitações
 
-- O ambiente local não possui credenciais MySQL e, portanto, migrations e fluxos persistidos ainda não foram executados contra banco real.
+- A Migration 003 ainda não foi executada no banco remoto nesta missão; sua execução permanece manual pelo phpMyAdmin.
 - Recuperação de senha exige SMTP configurado; sem SMTP, não é possível concluir o envio real.
 - Links institucionais de política/termos são âncoras temporárias até conteúdo jurídico aprovado.
 - Formulário não persiste dados.
@@ -80,7 +81,10 @@ Fase 3.1 — construtor no-code de serviços, formulários, cobranças e regras 
 - Pacote manual Fase 3 criado em `database/updates/002_services_pricing_rules_precheck.sql`, `database/updates/002_services_pricing_rules.sql` e `database/updates/002_services_pricing_rules_verify.sql`.
 - Construtor administrativo genérico implementado com versões, seções, campos, opções, catálogo de cobranças, regras, documentos e simulador.
 - Avaliador declarativo backend implementado sem execução arbitrária de código; fontes externas permanecem simuladas e a Simples API não foi integrada.
+- Confirmação do proprietário: Migration 002 instalada no banco `u891593158_doc`, com 23 tabelas, 27 UFs, 6 categorias, 6 serviços, 6 itens de cobrança, 13 campos, 8 regras DRAFT, 1 versão, 2 documentos e 4 ações; zero relacionamentos inválidos.
+- Auditoria identificou e preparou Migration 003 para cálculo de potência, placa, UF, consultas/mapeamentos externos, CSV sem valor e regras de redução, combustível e cilindrada divergente.
+- SQLs manuais agora são gerados com seleção explícita e referências qualificadas pelo `scripts/generate-hostinger-sql.mjs`.
 
 ## Próxima missão
 
-Importar e verificar o SQL definitivo da Fase 3.1 pelo phpMyAdmin; depois homologar o editor e criar o segundo serviço de demonstração exclusivamente pela interface. Só então preparar merge/deploy na `main`. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.
+Aplicar e verificar a Migration 003 pelo phpMyAdmin; depois homologar o editor e criar o segundo serviço de demonstração exclusivamente pela interface. Só então preparar merge/deploy na `main`. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.

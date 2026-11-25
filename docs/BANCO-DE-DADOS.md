@@ -16,8 +16,14 @@ Foi revisada a migration `migrations/002_services_pricing_rules.sql` e sua cópi
 
 Para um banco Fase 2 já instalado, executar na ordem: `database/updates/002_services_pricing_rules_precheck.sql`, `database/updates/002_services_pricing_rules.sql`, `database/updates/002_services_pricing_rules_verify.sql`. O `database/install.sql` contém o conjunto completo para instalações novas. Nenhum arquivo executa `DROP`, migration automática ou operação remota.
 
-As FKs dependem de `users`, `partner_companies` e `schema_migrations` existentes. A migration registra `002_services_pricing_rules.sql` apenas quando as onze tabelas novas estiverem presentes. Em falha parcial, interromper, salvar o erro do phpMyAdmin, verificar as tabelas com o precheck e corrigir/reexecutar somente após análise; não registrar manualmente a migration.
+As FKs dependem de `users`, `partner_companies` e `schema_migrations` existentes. A migration registra `002_services_pricing_rules.sql` somente quando as 23 tabelas novas estiverem presentes. Em falha parcial, interromper, salvar o erro do phpMyAdmin, verificar as tabelas com o precheck e corrigir/reexecutar somente após análise; não registrar manualmente a migration.
 
 As rotas `/api/admin/services`, `/api/admin/service-versions/*`, `/api/admin/billing-items`, `/api/admin/rules` e `/api/admin/service-versions/:id/simulate` dependem das tabelas novas. O painel administrativo e essas rotas só devem ser publicados na `main` após confirmação da importação manual.
 
 Toda entidade de negócio deve carregar o escopo de tenant quando aplicável. Alterações de schema exigem migration, análise de dados existentes, índice/constraint, plano de rollback e deploy progressivo.
+
+## SQL manual da Hostinger
+
+O banco `u891593158_doc` é selecionado explicitamente somente nos artefatos manuais de importação. Eles começam com `USE \`u891593158_doc\`;` e `SELECT DATABASE()`, qualificam as tabelas da aplicação e usam `table_schema = 'u891593158_doc'` nas consultas de `information_schema`. As migrations canônicas continuam sem nome de banco.
+
+O gerador local é `scripts/generate-hostinger-sql.mjs`. Ele produz pré-verificação, atualização e verificação posterior; a atualização deve ser executada somente depois da leitura da pré-verificação. DDL pode realizar commit implícito no MySQL, portanto não é prometido rollback transacional completo. Em falha parcial, preservar o erro, fazer backup/verificação e criar uma nova migration incremental; não repetir uma migration aplicada.

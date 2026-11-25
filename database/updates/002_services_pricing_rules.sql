@@ -1,13 +1,21 @@
+-- Atualização da Migration 002
+-- Gerado por scripts/generate-hostinger-sql.mjs.
+-- Banco alvo: u891593158_doc.
+-- Importação manual pelo phpMyAdmin; não executar migrations antigas novamente.
+
+USE `u891593158_doc`;
+SELECT DATABASE() AS selected_database;
+
 -- Doc Motor Fase 3.1: catálogo no-code de serviços, formulários, cobranças e regras.
 -- Manual pelo phpMyAdmin. Não contém DROP, não executa alterações no startup e não cria preços publicados.
 
-CREATE TABLE IF NOT EXISTS `brazilian_states` (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`brazilian_states` (
   `uf` CHAR(2) NOT NULL PRIMARY KEY,
   `name` VARCHAR(80) NOT NULL,
   `is_active` TINYINT(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `vehicle_categories` (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`vehicle_categories` (
   `id` CHAR(36) NOT NULL PRIMARY KEY,
   `code` VARCHAR(40) NOT NULL,
   `name` VARCHAR(80) NOT NULL,
@@ -17,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `vehicle_categories` (
   UNIQUE KEY `uq_vehicle_categories_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `services` (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`services` (
   `id` CHAR(36) NOT NULL PRIMARY KEY,
   `code` VARCHAR(60) NOT NULL,
   `name` VARCHAR(180) NOT NULL,
@@ -41,39 +49,39 @@ CREATE TABLE IF NOT EXISTS `services` (
   UNIQUE KEY `uq_services_slug` (`slug`),
   KEY `idx_services_active_order` (`is_active`, `display_order`),
   KEY `idx_services_type_category` (`service_type`, `category`),
-  CONSTRAINT `fk_services_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `fk_services_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+  CONSTRAINT `fk_services_created_by` FOREIGN KEY (`created_by`) REFERENCES `u891593158_doc`.`users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_services_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `u891593158_doc`.`users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `service_vehicle_categories` (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_vehicle_categories` (
   `service_id` CHAR(36) NOT NULL,
   `vehicle_category_id` CHAR(36) NOT NULL,
   PRIMARY KEY (`service_id`, `vehicle_category_id`),
-  CONSTRAINT `fk_svc_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_svc_vehicle_category` FOREIGN KEY (`vehicle_category_id`) REFERENCES `vehicle_categories` (`id`) ON DELETE RESTRICT
+  CONSTRAINT `fk_svc_service` FOREIGN KEY (`service_id`) REFERENCES `u891593158_doc`.`services` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_svc_vehicle_category` FOREIGN KEY (`vehicle_category_id`) REFERENCES `u891593158_doc`.`vehicle_categories` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `service_ufs` (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_ufs` (
   `service_id` CHAR(36) NOT NULL,
   `uf` CHAR(2) NOT NULL,
   `is_available` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`service_id`, `uf`),
-  CONSTRAINT `fk_service_ufs_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_service_ufs_state` FOREIGN KEY (`uf`) REFERENCES `brazilian_states` (`uf`) ON DELETE RESTRICT
+  CONSTRAINT `fk_service_ufs_service` FOREIGN KEY (`service_id`) REFERENCES `u891593158_doc`.`services` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_service_ufs_state` FOREIGN KEY (`uf`) REFERENCES `u891593158_doc`.`brazilian_states` (`uf`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `service_relations` (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_relations` (
   `service_id` CHAR(36) NOT NULL,
   `related_service_id` CHAR(36) NOT NULL,
   `relation_type` VARCHAR(24) NOT NULL,
   `condition_description` VARCHAR(500) NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`service_id`, `related_service_id`),
-  CONSTRAINT `fk_service_relations_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_service_relations_related` FOREIGN KEY (`related_service_id`) REFERENCES `services` (`id`) ON DELETE RESTRICT
+  CONSTRAINT `fk_service_relations_service` FOREIGN KEY (`service_id`) REFERENCES `u891593158_doc`.`services` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_service_relations_related` FOREIGN KEY (`related_service_id`) REFERENCES `u891593158_doc`.`services` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS service_versions (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_versions` (
   id CHAR(36) NOT NULL PRIMARY KEY,
   service_id CHAR(36) NOT NULL,
   version_number INT NOT NULL,
@@ -88,21 +96,21 @@ CREATE TABLE IF NOT EXISTS service_versions (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_service_versions_number (service_id, version_number),
   KEY idx_service_versions_status (service_id, status),
-  CONSTRAINT fk_service_versions_service FOREIGN KEY (service_id) REFERENCES services (id) ON DELETE CASCADE,
-  CONSTRAINT fk_service_versions_source FOREIGN KEY (source_version_id) REFERENCES service_versions (id) ON DELETE SET NULL,
-  CONSTRAINT fk_service_versions_created_by FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL,
-  CONSTRAINT fk_service_versions_updated_by FOREIGN KEY (updated_by) REFERENCES users (id) ON DELETE SET NULL
+  CONSTRAINT fk_service_versions_service FOREIGN KEY (service_id) REFERENCES `u891593158_doc`.`services` (id) ON DELETE CASCADE,
+  CONSTRAINT fk_service_versions_source FOREIGN KEY (source_version_id) REFERENCES `u891593158_doc`.`service_versions` (id) ON DELETE SET NULL,
+  CONSTRAINT fk_service_versions_created_by FOREIGN KEY (created_by) REFERENCES `u891593158_doc`.`users` (id) ON DELETE SET NULL,
+  CONSTRAINT fk_service_versions_updated_by FOREIGN KEY (updated_by) REFERENCES `u891593158_doc`.`users` (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS service_form_sections (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_form_sections` (
   id CHAR(36) NOT NULL PRIMARY KEY, service_version_id CHAR(36) NOT NULL, stable_key VARCHAR(80) NOT NULL,
   label VARCHAR(180) NOT NULL, description VARCHAR(500) NULL, display_order INT NOT NULL DEFAULT 0, visibility_condition JSON NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_form_sections_key (service_version_id, stable_key),
-  CONSTRAINT fk_form_sections_version FOREIGN KEY (service_version_id) REFERENCES service_versions (id) ON DELETE CASCADE
+  CONSTRAINT fk_form_sections_version FOREIGN KEY (service_version_id) REFERENCES `u891593158_doc`.`service_versions` (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS service_form_fields (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_form_fields` (
   id CHAR(36) NOT NULL PRIMARY KEY, service_version_id CHAR(36) NOT NULL, section_id CHAR(36) NULL, field_key VARCHAR(100) NOT NULL,
   label VARCHAR(180) NOT NULL, description VARCHAR(500) NULL, placeholder VARCHAR(180) NULL, field_type VARCHAR(32) NOT NULL,
   default_value JSON NULL, unit VARCHAR(32) NULL, is_required TINYINT(1) NOT NULL DEFAULT 0, is_editable TINYINT(1) NOT NULL DEFAULT 1,
@@ -112,41 +120,41 @@ CREATE TABLE IF NOT EXISTS service_form_fields (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_form_fields_key (service_version_id, field_key),
   KEY idx_form_fields_order (service_version_id, display_order),
-  CONSTRAINT fk_form_fields_version FOREIGN KEY (service_version_id) REFERENCES service_versions (id) ON DELETE CASCADE,
-  CONSTRAINT fk_form_fields_section FOREIGN KEY (section_id) REFERENCES service_form_sections (id) ON DELETE SET NULL
+  CONSTRAINT fk_form_fields_version FOREIGN KEY (service_version_id) REFERENCES `u891593158_doc`.`service_versions` (id) ON DELETE CASCADE,
+  CONSTRAINT fk_form_fields_section FOREIGN KEY (section_id) REFERENCES `u891593158_doc`.`service_form_sections` (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS service_field_options (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_field_options` (
   id CHAR(36) NOT NULL PRIMARY KEY, field_id CHAR(36) NOT NULL, option_value VARCHAR(120) NOT NULL, option_label VARCHAR(180) NOT NULL,
   display_order INT NOT NULL DEFAULT 0, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uq_field_options_value (field_id, option_value),
-  CONSTRAINT fk_field_options_field FOREIGN KEY (field_id) REFERENCES service_form_fields (id) ON DELETE CASCADE
+  CONSTRAINT fk_field_options_field FOREIGN KEY (field_id) REFERENCES `u891593158_doc`.`service_form_fields` (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS service_data_sources (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_data_sources` (
   id CHAR(36) NOT NULL PRIMARY KEY, code VARCHAR(60) NOT NULL, name VARCHAR(180) NOT NULL, provider_type VARCHAR(32) NOT NULL,
   status VARCHAR(16) NOT NULL DEFAULT 'SIMULATED', supported_fields JSON NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_data_sources_code (code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS service_external_queries (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_external_queries` (
   id CHAR(36) NOT NULL PRIMARY KEY, service_version_id CHAR(36) NOT NULL, source_id CHAR(36) NOT NULL, query_key VARCHAR(80) NOT NULL,
   label VARCHAR(180) NOT NULL, context_key VARCHAR(80) NOT NULL, plate_field_key VARCHAR(100) NULL, is_required TINYINT(1) NOT NULL DEFAULT 0,
   is_enabled TINYINT(1) NOT NULL DEFAULT 1, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uq_external_queries_key (service_version_id, query_key),
-  CONSTRAINT fk_external_queries_version FOREIGN KEY (service_version_id) REFERENCES service_versions (id) ON DELETE CASCADE,
-  CONSTRAINT fk_external_queries_source FOREIGN KEY (source_id) REFERENCES service_data_sources (id) ON DELETE RESTRICT
+  CONSTRAINT fk_external_queries_version FOREIGN KEY (service_version_id) REFERENCES `u891593158_doc`.`service_versions` (id) ON DELETE CASCADE,
+  CONSTRAINT fk_external_queries_source FOREIGN KEY (source_id) REFERENCES `u891593158_doc`.`service_data_sources` (id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS service_query_mappings (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_query_mappings` (
   id CHAR(36) NOT NULL PRIMARY KEY, query_id CHAR(36) NOT NULL, target_field_key VARCHAR(100) NOT NULL, normalized_path VARCHAR(180) NOT NULL,
   data_origin VARCHAR(24) NOT NULL DEFAULT 'EXTERNAL', created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uq_query_mappings_path (query_id, target_field_key, normalized_path),
-  CONSTRAINT fk_query_mappings_query FOREIGN KEY (query_id) REFERENCES service_external_queries (id) ON DELETE CASCADE
+  CONSTRAINT fk_query_mappings_query FOREIGN KEY (query_id) REFERENCES `u891593158_doc`.`service_external_queries` (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `price_tables` (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`price_tables` (
   `id` CHAR(36) NOT NULL PRIMARY KEY,
   `code` VARCHAR(60) NOT NULL,
   `name` VARCHAR(180) NOT NULL,
@@ -160,11 +168,11 @@ CREATE TABLE IF NOT EXISTS `price_tables` (
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY `uq_price_tables_code` (`code`),
   KEY `idx_price_tables_status_validity` (`status`, `valid_from`, `valid_until`),
-  CONSTRAINT `fk_price_tables_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `fk_price_tables_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+  CONSTRAINT `fk_price_tables_created_by` FOREIGN KEY (`created_by`) REFERENCES `u891593158_doc`.`users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_price_tables_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `u891593158_doc`.`users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS billing_items (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`billing_items` (
   id CHAR(36) NOT NULL PRIMARY KEY,
   code VARCHAR(80) NOT NULL,
   name VARCHAR(180) NOT NULL,
@@ -187,14 +195,14 @@ CREATE TABLE IF NOT EXISTS billing_items (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_billing_items_code (code),
-  CONSTRAINT fk_billing_items_state FOREIGN KEY (uf) REFERENCES brazilian_states (uf) ON DELETE RESTRICT,
-  CONSTRAINT fk_billing_items_vehicle FOREIGN KEY (vehicle_category_id) REFERENCES vehicle_categories (id) ON DELETE RESTRICT,
-  CONSTRAINT fk_billing_items_partner FOREIGN KEY (partner_company_id) REFERENCES partner_companies (id) ON DELETE RESTRICT,
-  CONSTRAINT fk_billing_items_created_by FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL,
-  CONSTRAINT fk_billing_items_updated_by FOREIGN KEY (updated_by) REFERENCES users (id) ON DELETE SET NULL
+  CONSTRAINT fk_billing_items_state FOREIGN KEY (uf) REFERENCES `u891593158_doc`.`brazilian_states` (uf) ON DELETE RESTRICT,
+  CONSTRAINT fk_billing_items_vehicle FOREIGN KEY (vehicle_category_id) REFERENCES `u891593158_doc`.`vehicle_categories` (id) ON DELETE RESTRICT,
+  CONSTRAINT fk_billing_items_partner FOREIGN KEY (partner_company_id) REFERENCES `u891593158_doc`.`partner_companies` (id) ON DELETE RESTRICT,
+  CONSTRAINT fk_billing_items_created_by FOREIGN KEY (created_by) REFERENCES `u891593158_doc`.`users` (id) ON DELETE SET NULL,
+  CONSTRAINT fk_billing_items_updated_by FOREIGN KEY (updated_by) REFERENCES `u891593158_doc`.`users` (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS service_billing_items (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_billing_items` (
   id CHAR(36) NOT NULL PRIMARY KEY,
   service_version_id CHAR(36) NOT NULL,
   billing_item_id CHAR(36) NOT NULL,
@@ -211,11 +219,11 @@ CREATE TABLE IF NOT EXISTS service_billing_items (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_service_billing_items (service_version_id, billing_item_id),
-  CONSTRAINT fk_service_billing_items_version FOREIGN KEY (service_version_id) REFERENCES service_versions (id) ON DELETE CASCADE,
-  CONSTRAINT fk_service_billing_items_item FOREIGN KEY (billing_item_id) REFERENCES billing_items (id) ON DELETE RESTRICT
+  CONSTRAINT fk_service_billing_items_version FOREIGN KEY (service_version_id) REFERENCES `u891593158_doc`.`service_versions` (id) ON DELETE CASCADE,
+  CONSTRAINT fk_service_billing_items_item FOREIGN KEY (billing_item_id) REFERENCES `u891593158_doc`.`billing_items` (id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `service_prices` (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_prices` (
   `id` CHAR(36) NOT NULL PRIMARY KEY,
   `price_table_id` CHAR(36) NOT NULL,
   `service_id` CHAR(36) NOT NULL,
@@ -236,16 +244,16 @@ CREATE TABLE IF NOT EXISTS `service_prices` (
   KEY `idx_service_prices_lookup` (`service_id`, `commercial_profile`, `uf`, `vehicle_category_id`, `is_active`),
   KEY `idx_service_prices_partner` (`partner_company_id`, `is_active`),
   KEY `idx_service_prices_validity` (`valid_from`, `valid_until`),
-  CONSTRAINT `fk_service_prices_table` FOREIGN KEY (`price_table_id`) REFERENCES `price_tables` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_service_prices_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_service_prices_partner` FOREIGN KEY (`partner_company_id`) REFERENCES `partner_companies` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_service_prices_vehicle` FOREIGN KEY (`vehicle_category_id`) REFERENCES `vehicle_categories` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_service_prices_state` FOREIGN KEY (`uf`) REFERENCES `brazilian_states` (`uf`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_service_prices_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `fk_service_prices_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+  CONSTRAINT `fk_service_prices_table` FOREIGN KEY (`price_table_id`) REFERENCES `u891593158_doc`.`price_tables` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_service_prices_service` FOREIGN KEY (`service_id`) REFERENCES `u891593158_doc`.`services` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_service_prices_partner` FOREIGN KEY (`partner_company_id`) REFERENCES `u891593158_doc`.`partner_companies` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_service_prices_vehicle` FOREIGN KEY (`vehicle_category_id`) REFERENCES `u891593158_doc`.`vehicle_categories` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_service_prices_state` FOREIGN KEY (`uf`) REFERENCES `u891593158_doc`.`brazilian_states` (`uf`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_service_prices_created_by` FOREIGN KEY (`created_by`) REFERENCES `u891593158_doc`.`users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_service_prices_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `u891593158_doc`.`users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `service_price_components` (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_price_components` (
   `id` CHAR(36) NOT NULL PRIMARY KEY,
   `service_price_id` CHAR(36) NOT NULL,
   `component_type` VARCHAR(40) NOT NULL,
@@ -255,10 +263,10 @@ CREATE TABLE IF NOT EXISTS `service_price_components` (
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `idx_price_components_price` (`service_price_id`),
-  CONSTRAINT `fk_price_components_price` FOREIGN KEY (`service_price_id`) REFERENCES `service_prices` (`id`) ON DELETE CASCADE
+  CONSTRAINT `fk_price_components_price` FOREIGN KEY (`service_price_id`) REFERENCES `u891593158_doc`.`service_prices` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `technical_rules` (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`technical_rules` (
   `id` CHAR(36) NOT NULL PRIMARY KEY,
   `service_id` CHAR(36) NOT NULL,
   `service_version_id` CHAR(36) NULL,
@@ -280,15 +288,15 @@ CREATE TABLE IF NOT EXISTS `technical_rules` (
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY `idx_rules_lookup` (`service_id`, `service_version_id`, `vehicle_category_id`, `uf`, `status`, `priority`),
-  CONSTRAINT `fk_rules_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_rules_version` FOREIGN KEY (`service_version_id`) REFERENCES `service_versions` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `fk_rules_vehicle` FOREIGN KEY (`vehicle_category_id`) REFERENCES `vehicle_categories` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_rules_state` FOREIGN KEY (`uf`) REFERENCES `brazilian_states` (`uf`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_rules_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `fk_rules_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+  CONSTRAINT `fk_rules_service` FOREIGN KEY (`service_id`) REFERENCES `u891593158_doc`.`services` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_rules_version` FOREIGN KEY (`service_version_id`) REFERENCES `u891593158_doc`.`service_versions` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_rules_vehicle` FOREIGN KEY (`vehicle_category_id`) REFERENCES `u891593158_doc`.`vehicle_categories` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_rules_state` FOREIGN KEY (`uf`) REFERENCES `u891593158_doc`.`brazilian_states` (`uf`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_rules_created_by` FOREIGN KEY (`created_by`) REFERENCES `u891593158_doc`.`users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_rules_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `u891593158_doc`.`users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS technical_rule_actions (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`technical_rule_actions` (
   id CHAR(36) NOT NULL PRIMARY KEY,
   technical_rule_id CHAR(36) NOT NULL,
   action_type VARCHAR(40) NOT NULL,
@@ -297,10 +305,10 @@ CREATE TABLE IF NOT EXISTS technical_rule_actions (
   display_order INT NOT NULL DEFAULT 0,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   KEY idx_rule_actions_order (technical_rule_id, display_order),
-  CONSTRAINT fk_rule_actions_rule FOREIGN KEY (technical_rule_id) REFERENCES technical_rules (id) ON DELETE CASCADE
+  CONSTRAINT fk_rule_actions_rule FOREIGN KEY (technical_rule_id) REFERENCES `u891593158_doc`.`technical_rules` (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS service_documents (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_documents` (
   id CHAR(36) NOT NULL PRIMARY KEY,
   service_version_id CHAR(36) NOT NULL,
   document_code VARCHAR(80) NOT NULL,
@@ -312,10 +320,10 @@ CREATE TABLE IF NOT EXISTS service_documents (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_service_documents_code (service_version_id, document_code),
-  CONSTRAINT fk_service_documents_version FOREIGN KEY (service_version_id) REFERENCES service_versions (id) ON DELETE CASCADE
+  CONSTRAINT fk_service_documents_version FOREIGN KEY (service_version_id) REFERENCES `u891593158_doc`.`service_versions` (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS service_messages (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`service_messages` (
   id CHAR(36) NOT NULL PRIMARY KEY,
   service_version_id CHAR(36) NOT NULL,
   message_key VARCHAR(80) NOT NULL,
@@ -326,23 +334,23 @@ CREATE TABLE IF NOT EXISTS service_messages (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_service_messages_key (service_version_id, message_key),
-  CONSTRAINT fk_service_messages_version FOREIGN KEY (service_version_id) REFERENCES service_versions (id) ON DELETE CASCADE
+  CONSTRAINT fk_service_messages_version FOREIGN KEY (service_version_id) REFERENCES `u891593158_doc`.`service_versions` (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `technical_rule_services` (
+CREATE TABLE IF NOT EXISTS `u891593158_doc`.`technical_rule_services` (
   `technical_rule_id` CHAR(36) NOT NULL,
   `service_id` CHAR(36) NOT NULL,
   `relation_type` VARCHAR(24) NOT NULL DEFAULT 'CONDITIONAL',
   PRIMARY KEY (`technical_rule_id`, `service_id`),
-  CONSTRAINT `fk_rule_services_rule` FOREIGN KEY (`technical_rule_id`) REFERENCES `technical_rules` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_rule_services_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE RESTRICT
+  CONSTRAINT `fk_rule_services_rule` FOREIGN KEY (`technical_rule_id`) REFERENCES `u891593158_doc`.`technical_rules` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_rule_services_service` FOREIGN KEY (`service_id`) REFERENCES `u891593158_doc`.`services` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `brazilian_states` (`uf`, `name`) VALUES
+INSERT INTO `u891593158_doc`.`brazilian_states` (`uf`, `name`) VALUES
 ('AC', 'Acre'), ('AL', 'Alagoas'), ('AP', 'Amapá'), ('AM', 'Amazonas'), ('BA', 'Bahia'), ('CE', 'Ceará'), ('DF', 'Distrito Federal'), ('ES', 'Espírito Santo'), ('GO', 'Goiás'), ('MA', 'Maranhão'), ('MT', 'Mato Grosso'), ('MS', 'Mato Grosso do Sul'), ('MG', 'Minas Gerais'), ('PA', 'Pará'), ('PB', 'Paraíba'), ('PR', 'Paraná'), ('PE', 'Pernambuco'), ('PI', 'Piauí'), ('RJ', 'Rio de Janeiro'), ('RN', 'Rio Grande do Norte'), ('RS', 'Rio Grande do Sul'), ('RO', 'Rondônia'), ('RR', 'Roraima'), ('SC', 'Santa Catarina'), ('SP', 'São Paulo'), ('SE', 'Sergipe'), ('TO', 'Tocantins')
 ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
 
-INSERT INTO `vehicle_categories` (`id`, `code`, `name`) VALUES
+INSERT INTO `u891593158_doc`.`vehicle_categories` (`id`, `code`, `name`) VALUES
 ('30000000-0000-4000-8000-000000000001', 'MOTORCYCLE', 'Motocicleta'),
 ('30000000-0000-4000-8000-000000000002', 'AUTOMOBILE', 'Automóvel'),
 ('30000000-0000-4000-8000-000000000003', 'PICKUP', 'Caminhonete'),
@@ -351,7 +359,7 @@ INSERT INTO `vehicle_categories` (`id`, `code`, `name`) VALUES
 ('30000000-0000-4000-8000-000000000006', 'OTHER', 'Outros')
 ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
 
-INSERT INTO `services` (`id`, `code`, `name`, `slug`, `short_description`, `category`, `service_type`, `display_order`) VALUES
+INSERT INTO `u891593158_doc`.`services` (`id`, `code`, `name`, `slug`, `short_description`, `category`, `service_type`, `display_order`) VALUES
 ('31000000-0000-4000-8000-000000000001', 'ENGINE_REGISTRATION', 'Cadastro de motor', 'cadastro-de-motor', 'Regularização documental de motor substituído.', 'Documentação veicular', 'MAIN', 10),
 ('31000000-0000-4000-8000-000000000002', 'LOWERED_SUSPENSION', 'Regularização de suspensão rebaixada', 'regularizacao-de-suspensao-rebaixada', 'Orientação para veículos com suspensão modificada.', 'Modificações veiculares', 'MAIN', 20),
 ('31000000-0000-4000-8000-000000000003', 'WHEELS_TIRES', 'Regularização de pneus e rodas', 'regularizacao-de-pneus-e-rodas', 'Análise documental de alterações em rodas e pneus.', 'Modificações veiculares', 'MAIN', 30),
@@ -360,17 +368,17 @@ INSERT INTO `services` (`id`, `code`, `name`, `slug`, `short_description`, `cate
 ('31000000-0000-4000-8000-000000000006', 'ITL_CSV_INSPECTION', 'Inspeção veicular / CSV', 'inspecao-veicular-csv', 'Serviço complementar de inspeção, quando aplicável.', 'Serviços complementares', 'COMPLEMENTARY', 60)
 ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `slug` = VALUES(`slug`), `updated_at` = CURRENT_TIMESTAMP;
 
-INSERT INTO `service_relations` (`service_id`, `related_service_id`, `relation_type`, `condition_description`) VALUES
+INSERT INTO `u891593158_doc`.`service_relations` (`service_id`, `related_service_id`, `relation_type`, `condition_description`) VALUES
 ('31000000-0000-4000-8000-000000000001', '31000000-0000-4000-8000-000000000005', 'CONDITIONAL', 'Sujeito à análise técnica e administrativa.'),
 ('31000000-0000-4000-8000-000000000001', '31000000-0000-4000-8000-000000000006', 'CONDITIONAL', 'Sujeito à exigência aplicável ao caso.')
 ON DUPLICATE KEY UPDATE `relation_type` = VALUES(`relation_type`), `condition_description` = VALUES(`condition_description`);
 
-INSERT INTO service_versions (id, service_id, version_number, status, change_summary)
+INSERT INTO `u891593158_doc`.`service_versions` (id, service_id, version_number, status, change_summary)
 VALUES ('33000000-0000-4000-8000-000000000001', '31000000-0000-4000-8000-000000000001', 1, 'DRAFT', 'Configuração inicial no-code para validação administrativa.')
 ON DUPLICATE KEY UPDATE change_summary = VALUES(change_summary), updated_at = CURRENT_TIMESTAMP;
 
 -- Políticas preliminares, inativas até validação normativa e configuração administrativa.
-INSERT INTO technical_rules (id, service_id, service_version_id, name, description, vehicle_category_id, conditions, technical_limits, expected_result, status, priority, version) VALUES
+INSERT INTO `u891593158_doc`.`technical_rules` (id, service_id, service_version_id, name, description, vehicle_category_id, conditions, technical_limits, expected_result, status, priority, version) VALUES
 ('32000000-0000-4000-8000-000000000001', '31000000-0000-4000-8000-000000000001', '33000000-0000-4000-8000-000000000001', 'Motocicleta com mesma cilindrada', 'Política operacional preliminar; não representa garantia legal.', '30000000-0000-4000-8000-000000000001', JSON_OBJECT('all', JSON_ARRAY(JSON_OBJECT('field', 'vehicle_target.engine_cc', 'operator', 'EQUALS', 'valueField', 'vehicle_donor.engine_cc'))), JSON_OBJECT(), 'VIABLE', 'DRAFT', 10, 1),
 ('32000000-0000-4000-8000-000000000002', '31000000-0000-4000-8000-000000000001', '33000000-0000-4000-8000-000000000001', 'Motocicleta com cilindrada diferente', 'Fora dos critérios automatizados preliminares.', '30000000-0000-4000-8000-000000000001', JSON_OBJECT('all', JSON_ARRAY(JSON_OBJECT('field', 'vehicle_target.engine_cc', 'operator', 'NOT_EQUALS', 'valueField', 'vehicle_donor.engine_cc'))), JSON_OBJECT(), 'OUT_OF_CRITERIA', 'DRAFT', 20, 1),
 ('32000000-0000-4000-8000-000000000003', '31000000-0000-4000-8000-000000000001', '33000000-0000-4000-8000-000000000001', 'Automóvel com mesma potência e cilindrada', 'Sujeito às demais exigências documentais.', '30000000-0000-4000-8000-000000000002', JSON_OBJECT('all', JSON_ARRAY(JSON_OBJECT('field', 'vehicle_target.power_cv', 'operator', 'EQUALS', 'valueField', 'vehicle_donor.power_cv'), JSON_OBJECT('field', 'vehicle_target.engine_cc', 'operator', 'EQUALS', 'valueField', 'vehicle_donor.engine_cc'))), JSON_OBJECT(), 'VIABLE', 'DRAFT', 10, 1),
@@ -381,16 +389,16 @@ INSERT INTO technical_rules (id, service_id, service_version_id, name, descripti
 ('32000000-0000-4000-8000-000000000008', '31000000-0000-4000-8000-000000000001', '33000000-0000-4000-8000-000000000001', 'Outras categorias', 'Análise manual até definição de regra específica.', '30000000-0000-4000-8000-000000000006', JSON_OBJECT('all', JSON_ARRAY(JSON_OBJECT('field', 'vehicle_target.category', 'operator', 'EQUALS', 'value', 'OTHER'))), JSON_OBJECT(), 'MANUAL_REVIEW', 'DRAFT', 100, 1)
 ON DUPLICATE KEY UPDATE name = VALUES(name), updated_at = CURRENT_TIMESTAMP;
 
-INSERT INTO service_data_sources (id, code, name, provider_type, status, supported_fields)
+INSERT INTO `u891593158_doc`.`service_data_sources` (id, code, name, provider_type, status, supported_fields)
 VALUES ('34000000-0000-4000-8000-000000000001', 'VEHICLE_PROVIDER_PENDING', 'Consulta veicular — provedor a definir', 'VEHICLE_API', 'SIMULATED', JSON_ARRAY('vehicle_target.category', 'vehicle_target.state', 'vehicle_target.power_cv', 'vehicle_target.engine_cc', 'vehicle_target.fuel', 'vehicle_donor.power_cv', 'vehicle_donor.engine_cc', 'vehicle_donor.fuel'))
 ON DUPLICATE KEY UPDATE name = VALUES(name), status = VALUES(status), supported_fields = VALUES(supported_fields);
 
-INSERT INTO service_form_sections (id, service_version_id, stable_key, label, description, display_order)
+INSERT INTO `u891593158_doc`.`service_form_sections` (id, service_version_id, stable_key, label, description, display_order)
 VALUES ('35000000-0000-4000-8000-000000000001', '33000000-0000-4000-8000-000000000001', 'vehicle_target', 'Veículo que receberá o motor', 'Dados do veículo principal.', 10),
        ('35000000-0000-4000-8000-000000000002', '33000000-0000-4000-8000-000000000001', 'engine_origin', 'Motor de origem', 'Identificação e dados técnicos do motor.', 20)
 ON DUPLICATE KEY UPDATE label = VALUES(label), description = VALUES(description), display_order = VALUES(display_order);
 
-INSERT INTO service_form_fields (id, service_version_id, section_id, field_key, label, field_type, is_required, display_order, data_origin)
+INSERT INTO `u891593158_doc`.`service_form_fields` (id, service_version_id, section_id, field_key, label, field_type, is_required, display_order, data_origin)
 VALUES ('36000000-0000-4000-8000-000000000001', '33000000-0000-4000-8000-000000000001', '35000000-0000-4000-8000-000000000001', 'vehicle_target.plate', 'Placa do veículo que receberá o motor', 'VEHICLE_PLATE', 1, 10, 'MANUAL'),
        ('36000000-0000-4000-8000-000000000002', '33000000-0000-4000-8000-000000000001', '35000000-0000-4000-8000-000000000001', 'vehicle_target.category', 'Categoria veicular', 'SINGLE_SELECT', 1, 20, 'MANUAL'),
        ('36000000-0000-4000-8000-000000000003', '33000000-0000-4000-8000-000000000001', '35000000-0000-4000-8000-000000000001', 'vehicle_target.state', 'UF do veículo', 'SINGLE_SELECT', 1, 30, 'MANUAL'),
@@ -406,7 +414,7 @@ VALUES ('36000000-0000-4000-8000-000000000001', '33000000-0000-4000-8000-0000000
        ('36000000-0000-4000-8000-000000000013', '33000000-0000-4000-8000-000000000001', '35000000-0000-4000-8000-000000000002', 'engine.power_variation_percent', 'Variação percentual de potência', 'CALCULATED', 0, 130, 'CALCULATED')
 ON DUPLICATE KEY UPDATE label = VALUES(label), updated_at = CURRENT_TIMESTAMP;
 
-INSERT INTO service_field_options (id, field_id, option_value, option_label, display_order)
+INSERT INTO `u891593158_doc`.`service_field_options` (id, field_id, option_value, option_label, display_order)
 VALUES ('37000000-0000-4000-8000-000000000001', '36000000-0000-4000-8000-000000000002', 'MOTORCYCLE', 'Motocicleta', 10),
        ('37000000-0000-4000-8000-000000000002', '36000000-0000-4000-8000-000000000002', 'AUTOMOBILE', 'Automóvel', 20),
        ('37000000-0000-4000-8000-000000000003', '36000000-0000-4000-8000-000000000002', 'TRUCK', 'Caminhão', 30),
@@ -415,7 +423,7 @@ VALUES ('37000000-0000-4000-8000-000000000001', '36000000-0000-4000-8000-0000000
        ('37000000-0000-4000-8000-000000000006', '36000000-0000-4000-8000-000000000008', 'MANUAL', 'Informar dados manualmente', 20)
 ON DUPLICATE KEY UPDATE option_label = VALUES(option_label), display_order = VALUES(display_order);
 
-INSERT INTO billing_items (id, code, name, description, financial_category, default_amount_cents, status, charge_nature, amount_status, payment_mode, is_public_fee)
+INSERT INTO `u891593158_doc`.`billing_items` (id, code, name, description, financial_category, default_amount_cents, status, charge_nature, amount_status, payment_mode, is_public_fee)
 VALUES ('39000000-0000-0000-8000-000000000001', 'TRANSFER_FEE', 'Taxa de transferência', 'Valor comercial informado pelo proprietário; confirmar vigência e natureza antes da publicação.', 'DOCUMENTATION', 29580, 'DRAFT', 'PUBLIC_FEE', 'INFORMED', 'CLIENT_DIRECT', 0),
        ('39000000-0000-0000-8000-000000000002', 'SERVICE_FEE', 'Honorário', 'Honorário comercial informado pelo proprietário.', 'HONORARY', 16000, 'DRAFT', 'HONORARY', 'INFORMED', 'DOC_MOTOR', 0),
        ('39000000-0000-0000-8000-000000000003', 'ENGINE_REGISTRATION', 'Cadastro de motor', 'Serviço próprio informado pelo proprietário.', 'ENGINE', 30000, 'DRAFT', 'OWN_SERVICE', 'INFORMED', 'DOC_MOTOR', 0),
@@ -424,7 +432,7 @@ VALUES ('39000000-0000-0000-8000-000000000001', 'TRANSFER_FEE', 'Taxa de transfe
        ('39000000-0000-0000-8000-000000000006', 'MODIFICATION_REQUEST', 'Solicitação de modificação', 'Aplicabilidade depende da categoria e da regra técnica publicada.', 'TECHNICAL', 30000, 'DRAFT', 'OWN_SERVICE', 'INFORMED', 'DOC_MOTOR', 0)
 ON DUPLICATE KEY UPDATE name = VALUES(name), default_amount_cents = VALUES(default_amount_cents), updated_at = CURRENT_TIMESTAMP;
 
-INSERT INTO service_billing_items (id, service_version_id, billing_item_id, billing_mode, display_order, condition_expression)
+INSERT INTO `u891593158_doc`.`service_billing_items` (id, service_version_id, billing_item_id, billing_mode, display_order, condition_expression)
 VALUES ('38000000-0000-0000-8000-000000000001', '33000000-0000-4000-8000-000000000001', '39000000-0000-0000-8000-000000000001', 'REQUIRED', 10, NULL),
        ('38000000-0000-0000-8000-000000000002', '33000000-0000-4000-8000-000000000001', '39000000-0000-0000-8000-000000000002', 'REQUIRED', 20, NULL),
        ('38000000-0000-0000-8000-000000000003', '33000000-0000-4000-8000-000000000001', '39000000-0000-0000-8000-000000000003', 'REQUIRED', 30, NULL),
@@ -433,23 +441,23 @@ VALUES ('38000000-0000-0000-8000-000000000001', '33000000-0000-4000-8000-0000000
        ('38000000-0000-0000-8000-000000000006', '33000000-0000-4000-8000-000000000001', '39000000-0000-0000-8000-000000000006', 'CONDITIONAL', 60, JSON_OBJECT('all', JSON_ARRAY(JSON_OBJECT('field', 'engine.power_variation_percent', 'operator', 'GREATER_THAN', 'value', 0), JSON_OBJECT('field', 'engine.power_variation_percent', 'operator', 'LESS_OR_EQUAL', 'value', 10))))
 ON DUPLICATE KEY UPDATE billing_mode = VALUES(billing_mode), condition_expression = VALUES(condition_expression);
 
-INSERT INTO service_documents (id, service_version_id, document_code, name, requirement_type, condition_expression, display_order)
+INSERT INTO `u891593158_doc`.`service_documents` (id, service_version_id, document_code, name, requirement_type, condition_expression, display_order)
 VALUES ('3A000000-0000-4000-8000-000000000001', '33000000-0000-4000-8000-000000000001', 'ENGINE_INVOICE', 'Nota fiscal do motor', 'CONDITIONAL', JSON_OBJECT('all', JSON_ARRAY(JSON_OBJECT('field', 'engine.has_invoice', 'operator', 'EQUALS', 'value', 'YES'))), 10),
        ('3A000000-0000-4000-8000-000000000002', '33000000-0000-4000-8000-000000000001', 'VEHICLE_REGISTRATION', 'CRLV-e do veículo', 'REQUIRED', NULL, 20)
 ON DUPLICATE KEY UPDATE name = VALUES(name), requirement_type = VALUES(requirement_type), condition_expression = VALUES(condition_expression);
 
-INSERT INTO technical_rule_actions (id, technical_rule_id, action_type, target_key, payload, display_order)
+INSERT INTO `u891593158_doc`.`technical_rule_actions` (id, technical_rule_id, action_type, target_key, payload, display_order)
 VALUES ('3B000000-0000-4000-8000-000000000001', '32000000-0000-4000-8000-000000000004', 'ADD_BILLING_ITEM', 'MODIFICATION_REQUEST', JSON_OBJECT('billingMode', 'CONDITIONAL'), 10),
        ('3B000000-0000-4000-8000-000000000002', '32000000-0000-4000-8000-000000000004', 'ADD_BILLING_ITEM', 'ITL_CSV_INSPECTION', JSON_OBJECT('valueStatus', 'NOT_DEFINED'), 20),
        ('3B000000-0000-4000-8000-000000000003', '32000000-0000-4000-8000-000000000005', 'BLOCK_AUTOMATED_QUOTE', NULL, JSON_OBJECT('reason', 'Aumento superior a 10%'), 10),
        ('3B000000-0000-4000-8000-000000000004', '32000000-0000-4000-8000-000000000006', 'MANUAL_REVIEW', NULL, JSON_OBJECT('reason', 'Dados técnicos insuficientes'), 10)
 ON DUPLICATE KEY UPDATE action_type = VALUES(action_type), payload = VALUES(payload), display_order = VALUES(display_order);
 
-INSERT INTO `schema_migrations` (`name`)
+INSERT INTO `u891593158_doc`.`schema_migrations` (`name`)
 SELECT '002_services_pricing_rules.sql'
 FROM `information_schema`.`tables`
-WHERE `table_schema` = DATABASE()
+WHERE table_schema = 'u891593158_doc'
   AND `table_name` IN ('brazilian_states', 'vehicle_categories', 'services', 'service_vehicle_categories', 'service_ufs', 'service_relations', 'service_versions', 'service_form_sections', 'service_form_fields', 'service_field_options', 'service_data_sources', 'service_external_queries', 'service_query_mappings', 'price_tables', 'billing_items', 'service_prices', 'service_price_components', 'service_billing_items', 'technical_rules', 'technical_rule_actions', 'technical_rule_services', 'service_documents', 'service_messages')
 GROUP BY `table_schema`
 HAVING COUNT(*) = 23
-   AND NOT EXISTS (SELECT 1 FROM `schema_migrations` WHERE `name` = '002_services_pricing_rules.sql');
+   AND NOT EXISTS (SELECT 1 FROM `u891593158_doc`.`schema_migrations` WHERE `name` = '002_services_pricing_rules.sql');
