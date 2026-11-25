@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 2.0 — Autenticação, perfis e base operacional — implementação local concluída; aguardando configuração e validação MySQL/SMTP na Hostinger.
+Fase 2.1 — Ajustes de autenticação e provisionamento administrativo — implementação local concluída; aguardando criação do administrador e homologação dos parceiros.
 
 ## Implementado
 
@@ -22,7 +22,7 @@ Fase 2.0 — Autenticação, perfis e base operacional — implementação local
 - Identidade visual oficial retangular e quadrada integrada.
 - Componente reutilizável `BrandLogo` criado.
 - Ícones técnicos PWA/favicons gerados a partir do ícone oficial.
-- Versão da aplicação atualizada para `0.1.1`.
+- Versão da aplicação atualizada para `0.2.1`.
 - Proprietário aprovou visualmente a página comercial publicada.
 - API de autenticação com cadastro de cliente e parceiro, login, logout, alteração/reset de senha e sessão persistente.
 - Perfis ADMINISTRATOR, PARTNER e CLIENT com autorização no servidor e painéis iniciais.
@@ -36,9 +36,10 @@ Fase 2.0 — Autenticação, perfis e base operacional — implementação local
 - Importar `database/install.sql` pelo phpMyAdmin e validar com `database/verify.sql`.
 - Criar o primeiro administrador usando `database/create-admin.sql` e hash bcrypt gerado localmente.
 - Configurar SMTP e executar testes HTTP de cadastro/login/aprovação/reset usando contas fictícias.
-- Publicar e validar o deploy 0.2.0 na Hostinger.
+- Publicar e validar o deploy 0.2.1 na Hostinger.
 - Conferência visual manual das novas telas.
 - Domínio/canonical definitivo.
+- Aguardar criação do administrador e homologação dos parceiros pelo proprietário.
 
 ## Problemas conhecidos/limitações
 
@@ -70,7 +71,10 @@ Fase 2.0 — Autenticação, perfis e base operacional — implementação local
 - Homologação HTTP online em 25/11/2026: `/api/health`, `/api/runtime-config`, `/robots.txt`, `/manifest.webmanifest`, fallback `/login`/`/cadastro-parceiro`/`/admin` e headers responderam conforme esperado; versão online `0.2.0`, staging e noindex confirmados.
 - Homologação HTTP online: `/api/admin/summary` sem sessão retornou `401`; após correção do hash bcrypt dummy, tentativa de login fictícia retorna `503 DATABASE_NOT_READY`. O backend está acessível e diagnostica explicitamente que a conexão/schema MySQL ainda não está pronto.
 - Diagnóstico temporário de conexão MySQL executado na Hostinger: `DATABASE_CONNECTED`, `connected=1`, banco `u891593158_doc` e `DATABASE_CONNECTED_EMPTY_SCHEMA` com `table_count=0`.
+- Políticas de senha por perfil: cliente com mínimo de 6 caracteres, parceiro/colaborador com mínimo de 8 e administrador com mínimo de 12 e complexidade.
+- Alteração e redefinição de senha validam o perfil real no backend; login de usuários existentes não é afetado.
+- SQL administrativo temporário é gerado localmente por `scripts/generate-admin-sql.ps1`, fora do repositório.
 
 ## Próxima missão
 
-Importar os SQLs pelo phpMyAdmin, provisionar o primeiro administrador conforme `database/README.md` e realizar a homologação HTTP da Fase 2. Não iniciar Fase 3 nem Simples API, motor de regras, orçamentos ou financeiro.
+Importar os SQLs pelo phpMyAdmin, criar o primeiro administrador com `scripts/generate-admin-sql.ps1` e realizar a homologação HTTP da Fase 2. Não iniciar Fase 3 nem Simples API, motor de regras, orçamentos ou financeiro.

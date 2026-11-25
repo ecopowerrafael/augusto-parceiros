@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1] — Ajustes de autenticação e provisionamento administrativo
+
+- Ajustadas as políticas de senha por perfil: cliente (6), parceiro (8) e administrador (12 com complexidade).
+- Aplicadas validações de senha em cadastro, alteração e redefinição sem afetar o login de usuários existentes.
+- Adicionado mostrar/ocultar senha, autocomplete e mensagens simples nos formulários.
+- Traduzidos status nos painéis, removida duplicidade de logo e ampliado o layout desktop.
+- Provisionamento administrativo mantido sem credenciais padrão ou endpoint público.
+
 ## [0.2.0] — Fase 2 — 2026-11-25
 
 - Adicionada persistência MySQL com migrations para usuários, parceiros, clientes, sessões, rate limit e auditoria.

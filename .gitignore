@@ -10,3 +10,5 @@ Thumbs.db
 uploads/
 *.pem
 *.key
+database/create-admin.local.sql
+database/create-admin-*.sql

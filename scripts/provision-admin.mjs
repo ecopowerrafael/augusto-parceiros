@@ -2,6 +2,7 @@
 import bcrypt from 'bcryptjs'
 import { randomUUID } from 'node:crypto'
 import mysql from 'mysql2/promise'
+import { passwordPolicyError } from '../server/auth.js'
 
 const databaseUrl = process.env.DATABASE_URL
 const email = process.env.ADMIN_EMAIL?.trim().toLowerCase()
@@ -12,8 +13,9 @@ if (!databaseUrl || !email || !password || !name) {
   console.error('DATABASE_URL, ADMIN_EMAIL, ADMIN_PASSWORD and ADMIN_NAME are required.')
   process.exit(1)
 }
-if (password.length < 12) {
-  console.error('ADMIN_PASSWORD must have at least 12 characters.')
+const passwordError = passwordPolicyError(password, 'ADMINISTRATOR')
+if (passwordError) {
+  console.error(passwordError)
   process.exit(1)
 }
 

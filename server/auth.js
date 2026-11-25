@@ -8,8 +8,39 @@ export const SESSION_COOKIE = 'doc_motor_session'
 const SESSION_TTL_HOURS = 8
 const PASSWORD_RESET_TTL_MINUTES = 30
 
-const passwordSchema = z.string().min(12).max(128).regex(/[a-z]/, 'Senha deve conter letra minúscula.').regex(/[A-Z]/, 'Senha deve conter letra maiúscula.').regex(/[0-9]/, 'Senha deve conter número.')
-const basePersonSchema = z.object({
+const commonPasswords = new Set(['123456', '12345678', '123456789', '1234567890', '111111', '000000', 'senha', 'password', 'qwerty', 'admin', 'letmein'])
+const basePasswordSchema = z.string().max(128, 'A senha deve ter no máximo 128 caracteres.')
+const clientPasswordSchema = basePasswordSchema.min(6, 'A senha do cliente deve ter pelo menos 6 caracteres.').refine((value) => !isCommonPassword(value), 'Escolha uma senha menos comum.')
+const partnerPasswordSchema = basePasswordSchema.min(8, 'A senha do parceiro deve ter pelo menos 8 caracteres.').refine((value) => !isCommonPassword(value), 'Escolha uma senha menos comum.')
+const adminPasswordSchema = basePasswordSchema.min(12, 'A senha administrativa deve ter pelo menos 12 caracteres.').regex(/[a-z]/, 'A senha deve conter letra minúscula.').regex(/[A-Z]/, 'A senha deve conter letra maiúscula.').regex(/[0-9]/, 'A senha deve conter número.')
+
+export function isCommonPassword(value) {
+  const normalized = String(value || '').trim().toLowerCase()
+  return commonPasswords.has(normalized) || (/^(.)\1+$/.test(normalized) && normalized.length >= 6)
+}
+
+export function passwordPolicyError(value, role) {
+  const password = String(value || '')
+  if (role === 'ADMINISTRATOR') {
+    if (password.length < 12) return 'A senha administrativa deve ter pelo menos 12 caracteres.'
+    if (!/[a-z]/.test(password)) return 'A senha deve conter letra minúscula.'
+    if (!/[A-Z]/.test(password)) return 'A senha deve conter letra maiúscula.'
+    if (!/[0-9]/.test(password)) return 'A senha deve conter número.'
+    return null
+  }
+  const minimum = role === 'PARTNER' || role === 'COLLABORATOR' ? 8 : 6
+  if (password.length < minimum) return `A senha deve ter pelo menos ${minimum} caracteres.`
+  if (isCommonPassword(password)) return 'Escolha uma senha menos comum.'
+  return null
+}
+
+export function passwordSchemaForRole(role) {
+  if (role === 'ADMINISTRATOR') return adminPasswordSchema
+  if (role === 'PARTNER' || role === 'COLLABORATOR') return partnerPasswordSchema
+  return clientPasswordSchema
+}
+
+const basePersonSchema = (passwordSchema) => z.object({
   name: z.string().trim().min(3).max(180),
   email: z.string().trim().email().max(255),
   whatsapp: z.string().trim().min(8).max(30),
@@ -21,11 +52,11 @@ const basePersonSchema = z.object({
 
 const matchingPasswords = (schema) => schema.refine((data) => data.password === data.passwordConfirmation, { path: ['passwordConfirmation'], message: 'As senhas não conferem.' })
 
-export const clientRegistrationSchema = matchingPasswords(basePersonSchema.extend({
+export const clientRegistrationSchema = matchingPasswords(basePersonSchema(clientPasswordSchema).extend({
   cpf: z.string().trim().refine(isCpf, 'CPF inválido.'),
 }))
 
-export const partnerRegistrationSchema = matchingPasswords(basePersonSchema.extend({
+export const partnerRegistrationSchema = matchingPasswords(basePersonSchema(partnerPasswordSchema).extend({
   personType: z.enum(['PF', 'PJ']),
   legalName: z.string().trim().min(3).max(180),
   tradeName: z.string().trim().max(180).optional().or(z.literal('')),
@@ -41,10 +72,18 @@ export const partnerRegistrationSchema = matchingPasswords(basePersonSchema.exte
   segment: z.enum(['Desmanche', 'Revenda de motores', 'Autopeças', 'Oficina mecânica', 'Centro automotivo', 'Revenda de veículos', 'Prestador de serviços', 'Outros']),
 }))
 
+export const collaboratorRegistrationSchema = matchingPasswords(z.object({
+  name: z.string().trim().min(3).max(180),
+  email: z.string().trim().email().max(255),
+  whatsapp: z.string().trim().max(30).optional().or(z.literal('')),
+  password: partnerPasswordSchema,
+  passwordConfirmation: z.string(),
+}))
+
 export const loginSchema = z.object({ email: z.string().trim().email().max(255), password: z.string().min(1).max(128) })
 export const forgotPasswordSchema = z.object({ email: z.string().trim().email().max(255) })
-export const changePasswordSchema = z.object({ currentPassword: z.string().min(1), newPassword: passwordSchema, newPasswordConfirmation: z.string() }).refine((data) => data.newPassword === data.newPasswordConfirmation, { path: ['newPasswordConfirmation'], message: 'As senhas não conferem.' })
-export const resetPasswordSchema = z.object({ token: z.string().min(32), password: passwordSchema, passwordConfirmation: z.string() }).refine((data) => data.password === data.passwordConfirmation, { path: ['passwordConfirmation'], message: 'As senhas não conferem.' })
+export const changePasswordSchema = z.object({ currentPassword: z.string().min(1), newPassword: basePasswordSchema, newPasswordConfirmation: z.string() }).refine((data) => data.newPassword === data.newPasswordConfirmation, { path: ['newPasswordConfirmation'], message: 'As senhas não conferem.' })
+export const resetPasswordSchema = z.object({ token: z.string().min(32), password: basePasswordSchema, passwordConfirmation: z.string() }).refine((data) => data.password === data.passwordConfirmation, { path: ['passwordConfirmation'], message: 'As senhas não conferem.' })
 
 export function digits(value) {
   return String(value || '').replace(/\D/g, '')

@@ -60,7 +60,7 @@ Se o domínio continuar entregando `robots.txt` antigo, MIME `text/plain` no man
 
 Requests têm timeout de 120 s; não há WebSockets de entrada nem workers sempre ativos. Cron jobs existem, rodam em UTC e têm limite de 30 minutos. Uploads privados e documentos pessoais não devem ficar em `public` nem no cache offline. Limites específicos de upload e recursos variam por plano e precisam ser conferidos no painel contratado antes da Fase 8.
 
-Se o código publicado estiver em `0.2.0`, mas um login com payload válido retornar `INTERNAL_ERROR`, verificar o histórico de deploy: o commit pode estar no GitHub sem ter sido aplicado pela Web App. Após o redeploy, consultar o diagnóstico de conexão; a instalação da estrutura deve seguir o procedimento manual pelo phpMyAdmin. Falhas de banco devem aparecer como `503 DATABASE_NOT_READY`.
+Se o código publicado estiver em `0.2.1`, mas um login com payload válido retornar `INTERNAL_ERROR`, verificar o histórico de deploy: o commit pode estar no GitHub sem ter sido aplicado pela Web App. Após o redeploy, consultar o diagnóstico de conexão; a instalação da estrutura deve seguir o procedimento manual pelo phpMyAdmin. Falhas de banco devem aparecer como `503 DATABASE_NOT_READY`.
 
 ## Diagnóstico temporário de conexão MySQL
 

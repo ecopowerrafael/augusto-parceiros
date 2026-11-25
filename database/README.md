@@ -14,17 +14,15 @@ Esta pasta prepara a instalação da Fase 2 pelo phpMyAdmin. A comunicação com
 
 Não execute `scripts/migrate.mjs` nem `scripts/provision-admin.mjs` para este procedimento manual. Eles permanecem disponíveis para ambientes que tenham terminal e não devem ser combinados com o SQL manual sem conferir `schema_migrations`.
 
-## Gerar o hash bcrypt localmente
+## Gerar o SQL administrativo temporário
 
-O backend usa `bcryptjs` com custo `12`. No diretório do projeto, execute localmente e informe uma senha forte apenas quando solicitado:
+No diretório do projeto, execute localmente o script abaixo. Ele solicita a senha com `Read-Host -AsSecureString`, usa `bcryptjs` com custo `12`, preenche uma cópia de `create-admin.sql` e grava o arquivo fora do repositório em `%TEMP%`:
 
 ```powershell
-$env:ADMIN_PASSWORD = Read-Host 'Senha administrativa (não será versionada)'
-node --input-type=module -e "import bcrypt from 'bcryptjs'; console.log(await bcrypt.hash(process.env.ADMIN_PASSWORD, 12))"
-Remove-Item Env:ADMIN_PASSWORD
+powershell -ExecutionPolicy Bypass -File .\scripts\generate-admin-sql.ps1
 ```
 
-Copie somente a saída do hash para a cópia temporária de `create-admin.sql`. Não use hashes de exemplo ou senhas padrão.
+O comando imprime o caminho exato do SQL temporário gerado. Importe esse arquivo no phpMyAdmin e remova-o após o uso. Não use hashes de exemplo ou senhas padrão.
 
 ## Falhas parciais
 

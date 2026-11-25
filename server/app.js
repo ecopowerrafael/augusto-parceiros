@@ -12,6 +12,7 @@ import {
   bcrypt,
   changePasswordSchema,
   clientRegistrationSchema,
+  collaboratorRegistrationSchema,
   consumeRateLimit,
   createPasswordResetToken,
   createSession,
@@ -23,6 +24,7 @@ import {
   loadSession,
   loginSchema,
   partnerRegistrationSchema,
+  passwordPolicyError,
   publicUser,
   requireAuth,
   requireCsrf,
@@ -169,6 +171,8 @@ app.post('/api/auth/logout', databaseRequired, requireAuth, asyncRoute(async (re
 app.post('/api/auth/change-password', databaseRequired, requireAuth, requireCsrf, asyncRoute(async (request, response) => {
   const parsed = changePasswordSchema.safeParse(request.body)
   if (!parsed.success) return response.status(400).json(validationError(parsed.error))
+  const policyMessage = passwordPolicyError(parsed.data.newPassword, request.auth.user.role)
+  if (policyMessage) return response.status(400).json({ error: 'VALIDATION_ERROR', fields: [{ field: 'newPassword', message: policyMessage }] })
   const [rows] = await getDatabasePool().execute('SELECT password_hash FROM users WHERE id = ? LIMIT 1', [request.auth.user.id])
   if (!rows[0] || !await verifyPassword(parsed.data.currentPassword, rows[0].password_hash)) return response.status(400).json({ error: 'CURRENT_PASSWORD_INVALID' })
   await getDatabasePool().execute('UPDATE users SET password_hash = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?', [await hashPassword(parsed.data.newPassword), request.auth.user.id])
@@ -197,8 +201,10 @@ app.post('/api/auth/reset-password', databaseRequired, asyncRoute(async (request
   const parsed = resetPasswordSchema.safeParse(request.body)
   if (!parsed.success) return response.status(400).json(validationError(parsed.error))
   const tokenHash = hashToken(parsed.data.token)
-  const [rows] = await getDatabasePool().execute('SELECT user_id FROM password_reset_tokens WHERE token_hash = ? AND used_at IS NULL AND expires_at > UTC_TIMESTAMP() LIMIT 1', [tokenHash])
+  const [rows] = await getDatabasePool().execute('SELECT prt.user_id, u.role FROM password_reset_tokens prt JOIN users u ON u.id = prt.user_id WHERE prt.token_hash = ? AND prt.used_at IS NULL AND prt.expires_at > UTC_TIMESTAMP() LIMIT 1', [tokenHash])
   if (!rows[0]) return response.status(400).json({ error: 'RESET_TOKEN_INVALID' })
+  const policyMessage = passwordPolicyError(parsed.data.password, rows[0].role)
+  if (policyMessage) return response.status(400).json({ error: 'VALIDATION_ERROR', fields: [{ field: 'password', message: policyMessage }] })
   await withTransaction(async (connection) => {
     await connection.execute('UPDATE users SET password_hash = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?', [await hashPassword(parsed.data.password), rows[0].user_id])
     await connection.execute('UPDATE password_reset_tokens SET used_at = UTC_TIMESTAMP() WHERE token_hash = ?', [tokenHash])
@@ -272,6 +278,27 @@ app.get('/api/partner/dashboard', databaseRequired, requireRole('PARTNER'), acti
 app.get('/api/partner/members', databaseRequired, requireRole('PARTNER'), activeAccount, asyncRoute(async (request, response) => {
   const [rows] = await getDatabasePool().execute(`SELECT u.id, u.name, u.email, u.status, cm.company_role, cm.created_at FROM users u JOIN company_members cm ON cm.user_id = u.id WHERE cm.company_id = (SELECT company_id FROM company_members WHERE user_id = ? LIMIT 1) ORDER BY cm.created_at`, [request.auth.user.id])
   response.json({ items: rows })
+}))
+
+app.post('/api/partner/members', databaseRequired, requireRole('PARTNER'), activeAccount, requireCsrf, asyncRoute(async (request, response) => {
+  const parsed = collaboratorRegistrationSchema.safeParse(request.body)
+  if (!parsed.success) return response.status(400).json(validationError(parsed.error))
+  const [owners] = await getDatabasePool().execute('SELECT company_id FROM company_members WHERE user_id = ? AND company_role = \'OWNER\' LIMIT 1', [request.auth.user.id])
+  if (owners.length === 0) return response.status(403).json({ error: 'COLLABORATOR_MANAGEMENT_FORBIDDEN' })
+  const data = parsed.data; const email = data.email.toLowerCase()
+  try {
+    const user = await withTransaction(async (connection) => {
+      const userId = cryptoRandomId(); const passwordHash = await hashPassword(data.password)
+      await connection.execute(`INSERT INTO users (id, role, status, name, email, whatsapp, password_hash, terms_accepted_at, privacy_acknowledged_at, approved_at) VALUES (?, 'PARTNER', 'ACTIVE', ?, ?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP(), UTC_TIMESTAMP())`, [userId, data.name, email, data.whatsapp || null, passwordHash])
+      await connection.execute('INSERT INTO company_members (company_id, user_id, company_role) VALUES (?, ?, \'COLLABORATOR\')', [owners[0].company_id, userId])
+      return { id: userId, role: 'PARTNER', status: 'ACTIVE', name: data.name, email, cpf: null, whatsapp: data.whatsapp || null }
+    })
+    await writeAudit(request.auth.user.id, 'COLLABORATOR_CREATED', 'user', user.id, { companyId: owners[0].company_id })
+    return response.status(201).json({ user })
+  } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY') return response.status(409).json({ error: 'REGISTRATION_CONFLICT' })
+    throw error
+  }
 }))
 
 app.get('/api/client/dashboard', databaseRequired, requireRole('CLIENT'), activeAccount, (request, response) => response.json({ user: request.auth.user, features: { vehicles: false, budgets: false, services: false, documents: false } }))

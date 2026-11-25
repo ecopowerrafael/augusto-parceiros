@@ -3,11 +3,12 @@
 1. Fundação e site comercial — concluída.
 1.1. Preparação do ambiente online de homologação — concluída.
 1.4. Identidade visual oficial e encerramento da homologação inicial — concluída.
-2. Autenticação segura e PWA instalável — implementação 0.2.0 em homologação.
+2. Autenticação segura e PWA instalável — implementação 0.2.1 em homologação.
 
    Entregue: perfis ADMINISTRATOR/PARTNER/CLIENT, cadastros, aprovação de parceiro, login/logout, sessões, CSRF, rate limit, bcrypt, auditoria, reset SMTP, migrations e painéis iniciais.
    Pendente: importar o banco pelo phpMyAdmin, configurar SMTP/admin, executar testes HTTP com contas fictícias e validação visual manual.
    Conexão MySQL comprovada em ambiente real usando `127.0.0.1`; banco inicialmente vazio.
+   Ajustes 0.2.1: políticas de senha por perfil, colaboradores, mostrar/ocultar senha e status traduzidos.
 3. Painel administrativo e configurações comerciais.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.

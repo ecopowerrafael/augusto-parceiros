@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { clientRegistrationSchema, isCnpj, isCpf, loginSchema, partnerRegistrationSchema } from './auth.js'
+import { changePasswordSchema, clientRegistrationSchema, collaboratorRegistrationSchema, isCnpj, isCpf, loginSchema, partnerRegistrationSchema, passwordPolicyError, passwordSchemaForRole, resetPasswordSchema } from './auth.js'
 
 describe('document validation', () => {
   it('accepts valid CPF and rejects repeated or invalid digits', () => {
@@ -16,13 +16,46 @@ describe('document validation', () => {
 })
 
 describe('authentication input contracts', () => {
-  it('requires strong matching passwords and consent for clients', () => {
-    const result = clientRegistrationSchema.safeParse({ name: 'Cliente Teste', email: 'teste@example.com', cpf: '52998224725', whatsapp: '15997118125', password: 'SenhaFraca', passwordConfirmation: 'SenhaFraca', acceptTerms: true, privacyAcknowledgement: true })
-    expect(result.success).toBe(false)
+  it('accepts a simple six-character client password and numeric client password', () => {
+    const base = { name: 'Cliente Teste', email: 'teste@example.com', cpf: '52998224725', whatsapp: '15997118125', passwordConfirmation: 'abcdef', acceptTerms: true, privacyAcknowledgement: true }
+    expect(clientRegistrationSchema.safeParse({ ...base, password: 'abcdef' }).success).toBe(true)
+    expect(clientRegistrationSchema.safeParse({ ...base, password: '246813', passwordConfirmation: '246813' }).success).toBe(true)
+  })
+
+  it('rejects a client password shorter than six characters or extremely common', () => {
+    expect(passwordPolicyError('12345', 'CLIENT')).toContain('6')
+    expect(passwordPolicyError('123456', 'CLIENT')).toContain('menos comum')
+    expect(clientRegistrationSchema.safeParse({ name: 'Cliente Teste', email: 'teste@example.com', cpf: '52998224725', whatsapp: '15997118125', password: '12345', passwordConfirmation: '12345', acceptTerms: true, privacyAcknowledgement: true }).success).toBe(false)
+  })
+
+  it('accepts a partner password with eight characters without complexity requirements', () => {
+    const result = partnerRegistrationSchema.safeParse({ personType: 'PJ', legalName: 'Empresa Teste', tradeName: '', cpfCnpj: '04252011000110', responsibleName: 'Responsável Teste', state: 'SP', segment: 'Desmanche', name: 'Responsável Teste', email: 'parceiro@example.com', whatsapp: '15997118125', password: '24681357', passwordConfirmation: '24681357', acceptTerms: true, privacyAcknowledgement: true })
+    expect(result.success).toBe(true)
+    expect(passwordPolicyError('1234567', 'PARTNER')).toContain('8')
+  })
+
+  it('keeps the administrative twelve-character complexity policy', () => {
+    expect(passwordPolicyError('abcdef12345', 'ADMINISTRATOR')).toContain('12')
+    expect(passwordPolicyError('Abcdefghijkl', 'ADMINISTRATOR')).toContain('número')
+    expect(passwordPolicyError('Abcdefghij12', 'ADMINISTRATOR')).toBeNull()
+    expect(passwordSchemaForRole('ADMINISTRATOR').safeParse('Abcdefghij12').success).toBe(true)
   })
 
   it('rejects malformed login and partner documents', () => {
     expect(loginSchema.safeParse({ email: 'invalido', password: '' }).success).toBe(false)
+    expect(loginSchema.safeParse({ email: 'existente@example.com', password: '123' }).success).toBe(true)
     expect(partnerRegistrationSchema.safeParse({ personType: 'PJ', cpfCnpj: '123', name: 'x', email: 'x', whatsapp: 'x', password: 'SenhaSegura123', passwordConfirmation: 'SenhaSegura123', acceptTerms: true, privacyAcknowledgement: true }).success).toBe(false)
+  })
+
+  it('applies the profile policy to change and reset contracts at the backend boundary', () => {
+    expect(changePasswordSchema.safeParse({ currentPassword: 'old', newPassword: '246813', newPasswordConfirmation: '246813' }).success).toBe(true)
+    expect(resetPasswordSchema.safeParse({ token: 'a'.repeat(32), password: '12345678', passwordConfirmation: '12345678' }).success).toBe(true)
+    expect(passwordPolicyError('246813', 'CLIENT')).toBeNull()
+    expect(passwordPolicyError('246813', 'PARTNER')).toContain('8')
+  })
+
+  it('uses the partner policy for collaborator registration', () => {
+    expect(collaboratorRegistrationSchema.safeParse({ name: 'Colaborador Teste', email: 'colaborador@example.com', whatsapp: '', password: '24681357', passwordConfirmation: '24681357' }).success).toBe(true)
+    expect(collaboratorRegistrationSchema.safeParse({ name: 'Colaborador Teste', email: 'colaborador@example.com', whatsapp: '', password: '1234567', passwordConfirmation: '1234567' }).success).toBe(false)
   })
 })
