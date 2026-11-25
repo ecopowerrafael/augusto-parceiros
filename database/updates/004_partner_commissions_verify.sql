@@ -1,6 +1,13 @@
--- Verificação posterior somente leitura da Migration 004.
+-- Verificação da Migration 004
+-- Gerado por scripts/generate-hostinger-sql.mjs.
+-- Banco alvo: u891593158_doc.
+-- Importação manual pelo phpMyAdmin; não executar migrations antigas novamente.
+
 USE `u891593158_doc`;
 SELECT DATABASE() AS selected_database;
+
+-- Verificação posterior somente leitura da Migration 004.
+
 SELECT VERSION() AS mysql_version;
 SELECT COUNT(*) AS migration_004_count FROM `u891593158_doc`.`schema_migrations` WHERE name = '004_partner_commissions.sql';
 SELECT table_name FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('commission_settings', 'partner_commission_overrides') ORDER BY table_name;

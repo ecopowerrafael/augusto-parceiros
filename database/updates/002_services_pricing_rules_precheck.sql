@@ -26,11 +26,11 @@ WHERE table_schema = 'u891593158_doc'
 ORDER BY table_name;
 
 SELECT COUNT(*) AS migration_002_already_registered
-FROM `u891593158_doc`.``u891593158_doc`.``u891593158_doc`.`schema_migrations```
+FROM `u891593158_doc`.``u891593158_doc`.``u891593158_doc`.``u891593158_doc`.``u891593158_doc`.``u891593158_doc`.``u891593158_doc`.``u891593158_doc`.`schema_migrations````````
 WHERE name = '002_services_pricing_rules.sql';
 
 SELECT COUNT(*) AS migration_001_present
-FROM `u891593158_doc`.``u891593158_doc`.``u891593158_doc`.`schema_migrations```
+FROM `u891593158_doc`.``u891593158_doc`.``u891593158_doc`.``u891593158_doc`.``u891593158_doc`.``u891593158_doc`.``u891593158_doc`.``u891593158_doc`.`schema_migrations````````
 WHERE name = '001_initial.sql';
 
 SELECT COUNT(*) AS compatible_service_columns
