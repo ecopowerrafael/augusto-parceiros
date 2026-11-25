@@ -7,6 +7,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { config } from './config.js'
 import { getDatabasePool, isDatabaseConfigured, withTransaction } from './database.js'
+import { createPublicServiceRouter, createServiceRouter } from './services.js'
 import {
   assertSameOrigin,
   bcrypt,
@@ -302,6 +303,9 @@ app.post('/api/partner/members', databaseRequired, requireRole('PARTNER'), activ
 }))
 
 app.get('/api/client/dashboard', databaseRequired, requireRole('CLIENT'), activeAccount, (request, response) => response.json({ user: request.auth.user, features: { vehicles: false, budgets: false, services: false, documents: false } }))
+
+app.use('/api/services', createPublicServiceRouter({ databaseRequired }))
+app.use('/api/admin', createServiceRouter({ databaseRequired, activeAccount }))
 
 app.use(express.static(dist, { index: false }))
 app.get('*', asyncRoute(async (_request, response, next) => {

@@ -26,7 +26,7 @@ try {
     try {
       const statements = sql.split(/;\s*(?=\n|$)/).map((statement) => statement.trim()).filter(Boolean)
       for (const statement of statements) await connection.query(statement)
-      await connection.query('INSERT INTO schema_migrations (name) VALUES (?)', [file])
+      await connection.query('INSERT INTO schema_migrations (name) VALUES (?) ON DUPLICATE KEY UPDATE name = VALUES(name)', [file])
       await connection.commit()
       console.log(`Applied migration ${file}`)
     } catch (error) {
