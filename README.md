@@ -32,6 +32,7 @@ O formulário da Fase 1 não grava dados. Não utilize dados reais de clientes d
 - `migrations/001_initial.sql`: schema inicial da Fase 2.
 - `scripts/migrate.mjs` e `scripts/provision-admin.mjs`: operações explícitas de infraestrutura.
 - `docs/`: decisões, regras, roadmap, segurança e status persistente.
+- `docs/HOMOLOGACAO-FASE-3.2.md`: roteiro dos 12 cenários do motor e homologação do segundo serviço no-code.
 
 ## Fase 3.1 — construtor no-code
 
