@@ -1,0 +1,17 @@
+# Comissionamento de parceiros
+
+## Estado
+
+A Fase 3.5 prepara um modelo genérico de comissão, mas o modelo inicial é `NONE`: nenhum valor comercial é calculado ou publicado. A API nunca deve confiar em valores enviados pelo frontend.
+
+## Modelos previstos
+
+`NONE`, `SERVICE_PERCENTAGE`, `HONORARIUM_PERCENTAGE`, `FULL_HONORARIUM` e `FIXED_AMOUNT`. Os valores são calculados em centavos no backend e os itens elegíveis dependem de classificação semântica (`charge_nature` e `is_public_fee`), não do nome do serviço.
+
+## Banco
+
+Importe `migrations/004_partner_commissions.sql` manualmente pelo phpMyAdmin, após verificar que as migrations 001, 002 e 003 estão registradas. A migration cria configuração global e override por parceiro, sem preços reais e sem comandos destrutivos.
+
+## Homologação
+
+Use os casos unitários em `server/commissions.test.js`. Antes de ativar qualquer modelo, valide no ambiente real a leitura da configuração, a persistência do override e a auditoria administrativa.

@@ -83,6 +83,7 @@ function App() {
   if (path === '/aguardando-aprovacao') return <PartnerStatusPage />
   if (path === '/acesso-nao-autorizado') return <StatusPage title="Acesso não autorizado." text="Seu perfil não possui permissão para esta área." href="/" />
   if (path === '/admin') return <DashboardPage role="ADMINISTRATOR" />
+  if (path.startsWith('/admin/')) return <DashboardPage role="ADMINISTRATOR" />
   if (path === '/parceiro') return <DashboardPage role="PARTNER" />
   if (path === '/area-do-parceiro') return <PartnerAreaPage />
   if (path === '/cliente') return <DashboardPage role="CLIENT" />

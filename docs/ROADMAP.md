@@ -24,3 +24,4 @@
 10. Financeiro, relatórios e expansão.
 
 Fases posteriores dependem de validação das regras operacionais e não devem ser inferidas como aprovação pelo Detran.
+- Fase 3.5: reestruturação administrativa e preparação de comissionamento concluídas na branch `feature/fase-3-5-admin-comissoes`; aguardando importação manual da migration 004 e homologação online antes da integração na `main`.

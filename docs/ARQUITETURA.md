@@ -21,3 +21,6 @@ Versões são rascunhos até publicação posterior. O serviço inicial de cadas
 ## Limites da infraestrutura
 
 Hostinger Web Apps suporta Node 18/20/22/24, React/Vite/Express, variáveis de ambiente, deploy via GitHub e MySQL. A hospedagem compartilhada encerra requisições em 120 segundos e não oferece workers permanentes ou WebSockets de entrada; tarefas assíncronas futuras devem usar cron ou serem reavaliadas para VPS.
+# Fase 3.5
+
+A área administrativa usa rotas independentes sobre o mesmo shell autenticado. A aprovação de parceiro é uma transação única que bloqueia a empresa, sincroniza os usuários membros e registra auditoria. Falhas retornam request ID e são observáveis somente nos logs privados.

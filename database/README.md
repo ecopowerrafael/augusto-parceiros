@@ -57,3 +57,10 @@ Toda alteração estrutural deve entregar, nesta ordem, pré-verificação somen
 Se o phpMyAdmin interromper a importação, não registre a migration manualmente e não prossiga para o painel. Salve a mensagem do erro, execute novamente o precheck e compare as tabelas esperadas. Como os comandos usam seeds idempotentes, a retomada deve ser feita somente após identificar a causa. Não há `DROP TABLE` ou `DROP DATABASE` nesses arquivos.
 
 Após a confirmação da importação, a implementação dos endpoints e telas administrativas será feita em etapa separada e publicada na `main` somente depois dos testes locais.
+# Migration 004 — comissionamento
+
+Após a importação das migrations anteriores, execute `migrations/004_partner_commissions.sql` manualmente pelo phpMyAdmin. O script é não destrutivo e cria o modelo inicial `NONE`; ele não publica preços, não calcula comissões históricas e não executa migrations no startup.
+
+Ordem segura: execute `database/updates/004_partner_commissions_precheck.sql`, importe `migrations/004_partner_commissions.sql` e então execute `database/updates/004_partner_commissions_verify.sql`. Se houver falha parcial, pare, consulte as tabelas/colunas no phpMyAdmin e não registre manualmente a migration como aplicada.
+
+Confirme `004_partner_commissions.sql` em `schema_migrations` e a existência de `commission_settings` e `partner_commission_overrides` antes de liberar a configuração administrativa.

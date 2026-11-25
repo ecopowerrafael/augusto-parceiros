@@ -51,7 +51,9 @@ Não executar migrations no startup, não usar SSH como requisito e não importa
 
 ## Fase 3.4 — cadastro e mensagens
 
-A versão `0.3.2` não exige migration. O documento único do cadastro infere PF/PJ no backend e o frontend aplica máscara apenas para apresentação. Validar CPF e CNPJ com dados fictícios, incluindo colagem formatada, documento incompleto e retorno de CNPJ para CPF ao apagar caracteres.
+A versão `0.3.3` está em homologação na branch `feature/fase-3-5-admin-comissoes`. Antes de publicar em `main`, executar o precheck 004, importar `migrations/004_partner_commissions.sql` pelo phpMyAdmin e executar o verify 004. Não executar migrations no startup.
+
+Em falha na aprovação administrativa, registrar o `X-Request-ID` devolvido pela API e consultar os logs privados da aplicação; o log estruturado informa código/estado SQL sem credenciais ou PII.
 
 Confirmar também que erros como `DOCUMENT_TYPE_MISMATCH`, `INVALID_DOCUMENT`, `REGISTRATION_CONFLICT`, `INVALID_CREDENTIALS`, `AUTHENTICATION_REQUIRED` e `INTERNAL_ERROR` aparecem em português claro na interface, sem expor os códigos.
 

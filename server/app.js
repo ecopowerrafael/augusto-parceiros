@@ -9,6 +9,7 @@ import { config } from './config.js'
 import { getDatabasePool, isDatabaseConfigured, withTransaction } from './database.js'
 import { createPublicServiceRouter, createServiceRouter } from './services.js'
 import { isPartnerCompanyStatus, partnerUserStatusForCompanyStatus } from './partner-flow.js'
+import { COMMISSION_MODELS, validateCommissionConfig } from './commissions.js'
 import {
   assertSameOrigin,
   bcrypt,
@@ -52,7 +53,9 @@ const activeAccount = (request, response, next) => request.auth?.user.status ===
 app.disable('x-powered-by')
 app.set('trust proxy', 1)
 app.use(express.json({ limit: '100kb' }))
-app.use((_request, response, next) => {
+app.use((request, response, next) => {
+  request.requestId = String(request.headers['x-request-id'] || randomUUID()).slice(0, 80)
+  response.setHeader('X-Request-ID', request.requestId)
   if (!config.allowIndexing) response.setHeader('X-Robots-Tag', 'noindex, nofollow')
   response.setHeader('X-Content-Type-Options', 'nosniff')
   response.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
@@ -261,20 +264,43 @@ app.get('/api/admin/audit', databaseRequired, requireRole('ADMINISTRATOR'), asyn
   response.json({ items, page, pageSize })
 }))
 
+app.get('/api/admin/commissions', databaseRequired, requireRole('ADMINISTRATOR'), asyncRoute(async (_request, response) => {
+  const [settings] = await getDatabasePool().execute('SELECT default_model, default_percentage, default_fixed_amount_cents, honorarium_only, updated_at FROM commission_settings WHERE id = ? LIMIT 1', ['45000000-0000-4000-8000-000000000001'])
+  response.json({ models: COMMISSION_MODELS, settings: settings[0] || { default_model: 'NONE', default_percentage: null, default_fixed_amount_cents: null, honorarium_only: 0 }, migrationRequired: !settings[0] })
+}))
+
+app.put('/api/admin/commissions', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
+  const body = request.body || {}
+  const model = String(body.model || 'NONE').toUpperCase()
+  const percentage = body.percentage === null || body.percentage === undefined || body.percentage === '' ? null : Number(body.percentage)
+  const fixedAmountCents = body.fixedAmountCents === null || body.fixedAmountCents === undefined || body.fixedAmountCents === '' ? null : Number(body.fixedAmountCents)
+  try { validateCommissionConfig({ model, percentage, fixedAmountCents }) } catch (error) { return response.status(400).json({ error: error.message }) }
+  await getDatabasePool().execute('UPDATE commission_settings SET default_model = ?, default_percentage = ?, default_fixed_amount_cents = ?, honorarium_only = ?, updated_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?', [model, percentage, fixedAmountCents, body.honorariumOnly ? 1 : 0, request.auth.user.id, '45000000-0000-4000-8000-000000000001'])
+  await writeAudit(request.auth.user.id, 'COMMISSION_SETTINGS_UPDATED', 'commission_settings', '45000000-0000-4000-8000-000000000001', { model })
+  response.json({ status: 'updated', model })
+}))
+
 app.patch('/api/admin/partners/:id/status', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
   const status = String(request.body.status || '').toUpperCase()
   if (!isPartnerCompanyStatus(status) || status === 'PENDING') return response.status(400).json({ error: 'INVALID_STATUS' })
   const reason = ['REJECTED', 'SUSPENDED'].includes(status) ? String(request.body.reason || '').trim().slice(0, 500) || null : null
-  const result = await withTransaction(async (connection) => {
-    const [companies] = await connection.execute('SELECT id FROM partner_companies WHERE id = ? FOR UPDATE', [request.params.id])
-    if (companies.length === 0) return false
-    await connection.execute('UPDATE partner_companies SET status = ?, rejection_reason = ?, approved_at = IF(? = \'ACTIVE\', UTC_TIMESTAMP(), approved_at), approved_by = IF(? = \'ACTIVE\', ?, approved_by), updated_at = UTC_TIMESTAMP() WHERE id = ?', [status, reason, status, status, request.auth.user.id, request.params.id])
-    await connection.execute(`UPDATE users u JOIN company_members cm ON cm.user_id = u.id SET u.status = ?, u.approved_at = IF(? = 'ACTIVE', UTC_TIMESTAMP(), u.approved_at), u.approved_by = IF(? = 'ACTIVE', ?, u.approved_by), u.updated_at = UTC_TIMESTAMP() WHERE cm.company_id = ?`, [partnerUserStatusForCompanyStatus(status), status, status, request.auth.user.id, request.params.id])
-    return true
-  })
-  if (!result) return response.status(404).json({ error: 'PARTNER_NOT_FOUND' })
-  await writeAudit(request.auth.user.id, `PARTNER_${status}`, 'partner_company', request.params.id, { reason })
-  return response.json({ status })
+  try {
+    const result = await withTransaction(async (connection) => {
+      const [companies] = await connection.execute('SELECT id FROM partner_companies WHERE id = ? FOR UPDATE', [request.params.id])
+      if (companies.length === 0) return false
+      const approvedAt = status === 'ACTIVE' ? new Date() : null
+      const approvedBy = status === 'ACTIVE' ? request.auth.user.id : null
+      await connection.execute('UPDATE partner_companies SET status = ?, rejection_reason = ?, approved_at = COALESCE(?, approved_at), approved_by = COALESCE(?, approved_by), updated_at = UTC_TIMESTAMP() WHERE id = ?', [status, reason, approvedAt, approvedBy, request.params.id])
+      await connection.execute('UPDATE users u JOIN company_members cm ON cm.user_id = u.id SET u.status = ?, u.approved_at = COALESCE(?, u.approved_at), u.approved_by = COALESCE(?, u.approved_by), u.updated_at = UTC_TIMESTAMP() WHERE cm.company_id = ?', [partnerUserStatusForCompanyStatus(status), approvedAt, approvedBy, request.params.id])
+      return true
+    })
+    if (!result) return response.status(404).json({ error: 'PARTNER_NOT_FOUND' })
+    await writeAudit(request.auth.user.id, `PARTNER_${status}`, 'partner_company', request.params.id, { reason })
+    return response.json({ status })
+  } catch (error) {
+    console.error(JSON.stringify({ event: 'admin_partner_status_failed', requestId: request.requestId, companyId: request.params.id, targetStatus: status, code: error.code || 'UNKNOWN', errno: error.errno || null, sqlState: error.sqlState || null }))
+    return response.status(500).json({ error: 'PARTNER_STATUS_UPDATE_FAILED', requestId: request.requestId })
+  }
 }))
 
 app.get('/api/partner/dashboard', databaseRequired, requireRole('PARTNER'), activeAccount, asyncRoute(async (request, response) => {
@@ -329,12 +355,12 @@ app.get('*', asyncRoute(async (_request, response, next) => {
   } catch (error) { next(error) }
 }))
 
-app.use((error, _request, response, _next) => {
+app.use((error, request, response, _next) => {
   void _next
-  console.error('Unhandled request error', config.debug ? error : error.message)
+  console.error(JSON.stringify({ event: 'unhandled_request_error', requestId: request.requestId || null, method: request.method, path: request.path, code: error.code || 'UNKNOWN', message: config.debug ? error.message : 'request_failed' }))
   if (response.headersSent) return
   const databaseUnavailable = error.code === 'DATABASE_NOT_CONFIGURED' || String(error.code || '').startsWith('ER_') || ['ECONNREFUSED', 'ETIMEDOUT', 'PROTOCOL_CONNECTION_LOST', 'ENOTFOUND', 'EAI_AGAIN'].includes(error.code)
-  response.status(databaseUnavailable ? 503 : 500).json({ error: error.code === 'DATABASE_NOT_CONFIGURED' ? 'DATABASE_NOT_CONFIGURED' : databaseUnavailable ? 'DATABASE_NOT_READY' : 'INTERNAL_ERROR' })
+  response.status(databaseUnavailable ? 503 : 500).json({ error: error.code === 'DATABASE_NOT_CONFIGURED' ? 'DATABASE_NOT_CONFIGURED' : databaseUnavailable ? 'DATABASE_NOT_READY' : 'INTERNAL_ERROR', requestId: request.requestId })
 })
 
 function cryptoRandomId() {

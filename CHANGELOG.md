@@ -77,3 +77,10 @@
 - Implementados serviços, FAQ, fluxo de parceria e CTAs de WhatsApp.
 - Adicionados manifest PWA, robots.txt, sitemap.xml e metadados SEO.
 - Registrada arquitetura compatível com Hostinger Web Apps Node.js.
+## 0.3.3 — Fase 3.5
+
+- Reestruturada a área administrativa com navegação independente para visão geral, parceiros, clientes e configuração de serviços.
+- Corrigida a transição de status de parceiros com atualização atômica de empresa e usuários vinculados, request ID e logs estruturados sem PII.
+- Preparada a migration 004 de comissionamento genérico, inicialmente com modelo `NONE` e sem valores comerciais ativos.
+- A migration 004 ainda depende de importação manual no phpMyAdmin antes da integração em `main`.
+

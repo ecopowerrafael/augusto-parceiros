@@ -28,3 +28,9 @@ O avaliador usa uma DSL declarativa limitada, validada no backend. Operadores, a
 ## SQL portável e importação manual
 
 As migrations canônicas não fixam o schema MySQL. Para a Hostinger, `scripts/generate-hostinger-sql.mjs` gera arquivos específicos com `USE`, `SELECT DATABASE()`, referências qualificadas e filtros explícitos de `information_schema`. Essa separação evita que o nome do banco vaze para o pool ou para o código da aplicação e evita correções textuais manuais que possam corromper JSON ou literais SQL.
+# ADR — aprovação e comissionamento da Fase 3.5
+
+- Manter a aprovação no backend e em transação única; o frontend não decide permissões nem status de usuários.
+- Usar request IDs e códigos MySQL em logs estruturados, sem registrar payload sensível.
+- Preparar comissões por modelo semântico e centavos, com `NONE` como padrão até homologação e sem dependência de nomes de serviços.
+- Bloquear a integração em `main` até a importação manual e verificação da migration 004.

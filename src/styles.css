@@ -8,3 +8,5 @@
  .admin-filters{display:grid;grid-template-columns:2fr 1fr 100px;gap:9px;padding:14px 0}.admin-filters input{border:1px solid #d6d6d0;background:#fff;padding:10px;font-size:12px;min-width:0}@media(max-width:720px){.admin-filters{grid-template-columns:1fr}.metric-grid{grid-template-columns:repeat(2,1fr)}}
  .admin-detail{display:grid;gap:5px;margin-top:12px;padding:12px;background:#f3f3f0;border-left:3px solid #d5232a;font-size:11px}.admin-detail strong{color:#171717}.admin-detail span{margin-top:0}
  .form-section-title{grid-column:1/-1;margin-top:14px;padding-top:14px;border-top:1px solid #d6d6d0;color:#d5232a;font:700 11px 'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase}.form-section-copy{grid-column:1/-1;margin:0}.document-type-hint{grid-column:1/-1;color:#777670;font-size:11px;margin:-6px 0 0}
+/* Fase 3.5: navegação administrativa independente e melhor uso da largura. */
+.admin-navigation{display:grid;gap:10px}.admin-navigation a{font-size:11px;line-height:1.35}.admin-navigation a:hover{color:#fff}.dashboard-main{max-width:none}

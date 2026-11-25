@@ -27,3 +27,6 @@ Toda entidade de negócio deve carregar o escopo de tenant quando aplicável. Al
 O banco `u891593158_doc` é selecionado explicitamente somente nos artefatos manuais de importação. Eles começam com `USE \`u891593158_doc\`;` e `SELECT DATABASE()`, qualificam as tabelas da aplicação e usam `table_schema = 'u891593158_doc'` nas consultas de `information_schema`. As migrations canônicas continuam sem nome de banco.
 
 O gerador local é `scripts/generate-hostinger-sql.mjs`. Ele produz pré-verificação, atualização e verificação posterior; a atualização deve ser executada somente depois da leitura da pré-verificação. DDL pode realizar commit implícito no MySQL, portanto não é prometido rollback transacional completo. Em falha parcial, preservar o erro, fazer backup/verificação e criar uma nova migration incremental; não repetir uma migration aplicada.
+# Fase 3.5 — comissões
+
+`004_partner_commissions.sql` cria `commission_settings` e `partner_commission_overrides`. O registro inicial é `NONE`, sem valores comerciais. A importação é manual e deve ser verificada antes de ativar as telas dependentes.

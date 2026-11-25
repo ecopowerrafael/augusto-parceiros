@@ -101,3 +101,7 @@ Fase 3.4 — correções de usabilidade, cadastro e mensagens — implementaçã
 ## Próxima missão
 
 Publicar a branch de correção 0.3.2, validar online os formulários de parceiro com CPF/CNPJ e concluir a homologação administrativa do fluxo de parceiros. Depois retomar o roteiro em `docs/HOMOLOGACAO-FASE-3.2.md`. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.
+- Fase atual: Fase 3.5 em branch `feature/fase-3-5-admin-comissoes`, aguardando validação da migration 004 no Hostinger.
+- Nesta etapa: aprovação administrativa com diagnóstico seguro, navegação administrativa separada e avaliador genérico de comissão sem ativação comercial.
+- Pendente: importar `migrations/004_partner_commissions.sql`, validar aprovação real de parceiro e só então publicar a integração em `main`.
+- Limitação real: não foi executada aprovação autenticada no Hostinger nesta sessão; o diagnóstico agora retorna `X-Request-ID` e registra código SQL nos logs privados.

@@ -21,6 +21,8 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - Para autenticação, use sessões opacas persistidas no MySQL, cookies HttpOnly/Secure/SameSite, CSRF e rate limit persistido; não use tokens de autenticação em localStorage.
 - A recuperação de senha depende de SMTP configurado no ambiente; nunca retornar o token de recuperação na API.
 - A instalação inicial do MySQL desta fase é manual pelo phpMyAdmin usando `database/install.sql`; não executar migrations, provisionamento ou operações remotas sem autorização explícita da missão.
+- Na Fase 3.5, a migration `004_partner_commissions.sql` também é manual: executar precheck, importar, verificar e aguardar confirmação do proprietário antes de integrar dependências de schema na `main`.
+- Aprovação administrativa deve ser atômica, sincronizar empresa e usuários vinculados, registrar auditoria e, em falha SQL, registrar apenas request ID/código SQL sem PII ou credenciais.
 - A Migration 002 já está instalada no banco remoto e não deve ser reimportada; a Migration 003 também foi confirmada. Não executar novamente esses SQLs. Qualquer alteração estrutural futura exige nova migration e confirmação explícita antes da publicação.
 - A Hostinger usa importação manual pelo phpMyAdmin; não depender de SSH, CLI MySQL ou execução de migrations no terminal remoto. Migrations canônicas permanecem portáveis e nunca recebem o nome do banco.
 - Toda alteração de banco deve entregar três SQLs manuais: pré-verificação somente leitura, atualização incremental e verificação posterior, além de manter `database/install.sql` atualizado.
