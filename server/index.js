@@ -13,6 +13,10 @@ const indexFile = path.join(dist, 'index.html')
 app.disable('x-powered-by')
 app.use((_request, response, next) => {
   if (!config.allowIndexing) response.setHeader('X-Robots-Tag', 'noindex, nofollow')
+  response.setHeader('X-Content-Type-Options', 'nosniff')
+  response.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+  response.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+  response.setHeader('X-Frame-Options', 'SAMEORIGIN')
   next()
 })
 
@@ -32,6 +36,15 @@ app.get('/robots.txt', (_request, response) => {
   response.type('text/plain').send(config.allowIndexing
     ? 'User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n'
     : 'User-agent: *\nDisallow: /\n')
+})
+
+app.get('/manifest.webmanifest', async (_request, response, next) => {
+  try {
+    const manifest = await fs.readFile(path.join(dist, 'manifest.json'), 'utf8')
+    response.type('application/manifest+json').send(manifest)
+  } catch (error) {
+    next(error)
+  }
 })
 
 app.use(express.static(dist, { index: false }))

@@ -6,6 +6,10 @@ Monorepo simples, um único deploy Node.js. O build do Vite gera o frontend est�
 
 O módulo `server/config.js` centraliza `NODE_ENV`, `APP_ENV`, `ALLOW_INDEXING`, `APP_DEBUG`, porta e versão. A aplicação comercial não depende de MySQL ou Simples API para inicializar. O endpoint `/api/health` não testa conectividade com banco; a estrutura de diagnóstico fica reservada para a Fase 2 e não expõe detalhes sensíveis.
 
+## Metodologia de ambientes
+
+O computador local é usado para edição, lint, testes unitários e build. A Hostinger Node.js Web App é o ambiente de teste funcional real, recebendo a branch `main`. O ciclo é: implementar → validar localmente → commit → push → deploy Hostinger → testar por HTTP → corrigir → registrar. A inspeção visual é manual quando a automação do navegador não estiver disponível.
+
 ## Direção futura
 
 Adicionar API REST no mesmo processo Express, com camadas consistentes de validação (Zod), autorização no servidor, serviços de domínio, Prisma/MySQL e armazenamento privado de documentos. O banco alvo é MySQL por compatibilidade com Hostinger compartilhada.

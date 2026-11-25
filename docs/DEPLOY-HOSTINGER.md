@@ -12,6 +12,8 @@ Baseado na documentação oficial consultada em 25/11/2026: Hostinger Web Apps N
 6. Adicionar variáveis pelo painel, nunca no repositório.
 7. Validar o domínio, HTTPS e o caminho de fallback SPA.
 
+8. Manter `NPM_CONFIG_INCLUDE=dev` no ambiente de build para garantir que ferramentas de compilação presentes em `devDependencies` estejam disponíveis durante o deploy.
+
 ## Variáveis de homologação
 
 Configure diretamente no painel da Hostinger, sem versionar valores:
@@ -21,6 +23,7 @@ NODE_ENV=production
 APP_ENV=staging
 ALLOW_INDEXING=false
 APP_DEBUG=false
+NPM_CONFIG_INCLUDE=dev
 PORT=(fornecida pela Hostinger, quando aplicável)
 DATABASE_URL=(opcional nesta fase; não é exigida para a página comercial)
 ```
@@ -39,6 +42,10 @@ Não preencher senha de banco neste repositório ou nesta documentação. O banc
 - [ ] Links de WhatsApp abrem a mensagem correta, sem envio automático.
 - [ ] Não há erros no console nem overflow em 360px e desktop.
 - [ ] Nenhum dado real de cliente foi utilizado.
+
+## Evidência técnica desta homologação
+
+Os endpoints podem ser validados por `curl.exe` ou `Invoke-WebRequest`; não dependem de navegador automatizado. A conferência visual permanece manual quando o controle do navegador não estiver disponível.
 
 ## Limitações relevantes
 
