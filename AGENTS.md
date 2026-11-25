@@ -11,6 +11,8 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - Ao concluir uma missão, atualize `CHANGELOG.md` e `docs/STATUS-DO-PROJETO.md`.
 - Execute `npm run lint`, `npm run typecheck`, `npm run build` e os testes relevantes antes de entregar.
 - Não afirmar que algo foi testado sem executar a verificação.
+- O ambiente de homologação oficial é a Hostinger; depois de publicar na `main`, registrar se o teste online foi realmente executado.
+- Nunca adicionar senha de banco, chave de API ou dado de cliente ao código, logs, documentação ou commits.
 
 ## Comandos
 

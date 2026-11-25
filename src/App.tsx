@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArrowUpRight, Check, ChevronDown, Menu, MessageCircle, ShieldCheck, X } from 'lucide-react'
 import { whatsappLink } from './whatsapp'
+import type { RuntimeConfig } from './runtime-config'
 
 const wa = whatsappLink
 
@@ -24,6 +25,7 @@ const faqs = [
 ]
 
 function App() {
+  const [runtimeConfig, setRuntimeConfig] = useState<RuntimeConfig | undefined>(window.__DOC_MOTOR_CONFIG__)
   const [menuOpen, setMenuOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [form, setForm] = useState({ name: '', company: '', segment: '', city: '', state: '', whatsapp: '', email: '', message: '' })
@@ -31,7 +33,12 @@ function App() {
   const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }))
   const partnershipMessage = () => `Olá, Doc Motor! Tenho interesse em ser parceiro.\n\nNome: ${form.name}\nEmpresa: ${form.company}\nSegmento: ${form.segment}\nCidade/UF: ${form.city} - ${form.state}\nWhatsApp: ${form.whatsapp}\nE-mail: ${form.email || 'Não informado'}\nMensagem: ${form.message || 'Gostaria de conhecer as condições da parceria.'}`
 
+  useEffect(() => {
+    if (!runtimeConfig) fetch('/api/runtime-config').then((response) => response.ok ? response.json() as Promise<RuntimeConfig> : undefined).then(setRuntimeConfig).catch(() => undefined)
+  }, [runtimeConfig])
+
   return <div className="site-shell">
+    {runtimeConfig?.appEnv === 'staging' && <div className="staging-banner" role="status">Ambiente de homologação — sistema em desenvolvimento.</div>}
     <header className="site-header">
       <a className="brand" href="#inicio" aria-label="Doc Motor, início"><img src="/assets/logo.png" alt="Doc Motor" /></a>
       <button className="menu-toggle" aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>

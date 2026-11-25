@@ -15,6 +15,12 @@ npm run dev
 
 Verificações: `npm run lint`, `npm run typecheck`, `npm run test` e `npm run build`.
 
+## Homologação
+
+O ambiente principal de homologação é a Hostinger Node.js Web App, com deploy da branch `main`. Na homologação, use `NODE_ENV=production`, `APP_ENV=staging`, `ALLOW_INDEXING=false` e `APP_DEBUG=false`. O endpoint público de saúde é `GET /api/health`; ele retorna somente status, ambiente e versão.
+
+O formulário da Fase 1 não grava dados. Não utilize dados reais de clientes durante a homologação.
+
 ## Estrutura
 
 - `src/App.tsx`: experiência comercial e interações locais.

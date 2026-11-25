@@ -12,6 +12,34 @@ Baseado na documentação oficial consultada em 25/11/2026: Hostinger Web Apps N
 6. Adicionar variáveis pelo painel, nunca no repositório.
 7. Validar o domínio, HTTPS e o caminho de fallback SPA.
 
+## Variáveis de homologação
+
+Configure diretamente no painel da Hostinger, sem versionar valores:
+
+```text
+NODE_ENV=production
+APP_ENV=staging
+ALLOW_INDEXING=false
+APP_DEBUG=false
+PORT=(fornecida pela Hostinger, quando aplicável)
+DATABASE_URL=(opcional nesta fase; não é exigida para a página comercial)
+```
+
+Não preencher senha de banco neste repositório ou nesta documentação. O banco só será conectado quando a Fase 2 definir o acesso e as migrations.
+
+## Checklist de testes online
+
+- [ ] Deploy da branch `main` concluído na Hostinger.
+- [ ] `GET /api/health` retorna `status: ok`, `environment: staging` e a versão esperada.
+- [ ] Header `X-Robots-Tag` contém `noindex, nofollow`.
+- [ ] `/robots.txt` retorna `Disallow: /`.
+- [ ] Página inicial carrega com banner de homologação.
+- [ ] Fallback SPA funciona em uma rota amigável.
+- [ ] Logo e imagens carregam sem 404.
+- [ ] Links de WhatsApp abrem a mensagem correta, sem envio automático.
+- [ ] Não há erros no console nem overflow em 360px e desktop.
+- [ ] Nenhum dado real de cliente foi utilizado.
+
 ## Limitações relevantes
 
 Requests têm timeout de 120 s; não há WebSockets de entrada nem workers sempre ativos. Cron jobs existem, rodam em UTC e têm limite de 30 minutos. Uploads privados e documentos pessoais não devem ficar em `public` nem no cache offline. Limites específicos de upload e recursos variam por plano e precisam ser conferidos no painel contratado antes da Fase 8.

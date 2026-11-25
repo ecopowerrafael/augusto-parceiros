@@ -1,0 +1,16 @@
+.staging-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  padding: 8px 12px;
+  background: #6f1419;
+  color: #fff;
+  text-align: center;
+  font: 500 11px 'DM Mono', monospace;
+  letter-spacing: .04em;
+}
+
+.staging-banner ~ .site-header { top: 31px; }
+.staging-banner ~ main .hero { padding-top: 31px; }

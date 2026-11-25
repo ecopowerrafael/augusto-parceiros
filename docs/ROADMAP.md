@@ -1,6 +1,7 @@
 # Roadmap
 
-1. Fundação e site comercial — em execução/concluída nesta entrega.
+1. Fundação e site comercial — concluída.
+1.1. Preparação do ambiente online de homologação — em execução nesta entrega.
 2. Autenticação segura e PWA instalável.
 3. Painel administrativo e configurações comerciais.
 4. Integração Simples API, após validação contratual e técnica.
