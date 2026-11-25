@@ -65,6 +65,8 @@ Fase 2.0 — Autenticação, perfis e base operacional — implementação local
 - `npm run lint`: passou após a atualização final do backend; validação MySQL online ainda não executada.
 - Navegador automatizado: não utilizado conforme orientação; telas da Fase 2 aguardam conferência visual manual.
 - Reauditoria local: lint, typecheck, 5 testes, build e diff-check aprovados após as correções do painel.
+- Homologação HTTP online em 25/11/2026: `/api/health`, `/api/runtime-config`, `/robots.txt`, `/manifest.webmanifest`, fallback `/login`/`/cadastro-parceiro`/`/admin` e headers responderam conforme esperado; versão online `0.2.0`, staging e noindex confirmados.
+- Homologação HTTP online: `/api/admin/summary` sem sessão retornou `401`; tentativa de login fictícia alcançou o backend, mas retornou `500`, indicando que a prontidão do schema MySQL ainda precisa ser confirmada. O tratamento foi ajustado para responder `503 DATABASE_NOT_READY` em novo deploy quando a migration não estiver aplicada.
 
 ## Próxima missão
 

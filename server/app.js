@@ -290,7 +290,8 @@ app.use((error, _request, response, _next) => {
   void _next
   console.error('Unhandled request error', config.debug ? error : error.message)
   if (response.headersSent) return
-  response.status(error.code === 'DATABASE_NOT_CONFIGURED' ? 503 : 500).json({ error: error.code === 'DATABASE_NOT_CONFIGURED' ? 'DATABASE_NOT_CONFIGURED' : 'INTERNAL_ERROR' })
+  const databaseUnavailable = error.code === 'DATABASE_NOT_CONFIGURED' || ['ECONNREFUSED', 'ETIMEDOUT', 'PROTOCOL_CONNECTION_LOST', 'ER_NO_SUCH_TABLE', 'ER_BAD_DB_ERROR'].includes(error.code)
+  response.status(databaseUnavailable ? 503 : 500).json({ error: error.code === 'DATABASE_NOT_CONFIGURED' ? 'DATABASE_NOT_CONFIGURED' : databaseUnavailable ? 'DATABASE_NOT_READY' : 'INTERNAL_ERROR' })
 })
 
 function cryptoRandomId() {
