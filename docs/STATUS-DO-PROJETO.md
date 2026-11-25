@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.5 — reestruturação administrativa e preparação de comissionamento — versão `0.3.3` integrada na `main`; propagação online e homologação autenticada ainda pendentes.
+Fase 3.6 — design system, painéis profissionais e homologação do simulador — versão `0.3.4` em validação local.
 
 ## Fase 3.5 — estado da publicação
 
@@ -14,6 +14,12 @@ Fase 3.5 — reestruturação administrativa e preparação de comissionamento �
 - Após a publicação da `main` em `44ca97339c1f4dd24caded242cb4631de92865e7`, a validação com `Invoke-WebRequest` foi tentada para todas as rotas previstas, mas o ambiente local continuou sem resolver `docmotor.online`; propagação permanece não confirmada.
 
 ## Implementado
+
+- Shell SaaS responsivo para painéis autenticados, com navegação por perfil, topbar, largura integral, títulos objetivos e alteração de senha em Minha conta.
+- Correção do endpoint `/api/partner/dashboard` para retornar cidade, UF e CEP da empresa persistida.
+- Comissão global com campos condicionais por modelo e entrada de valor fixo em reais, convertida para centavos no backend.
+- Override individual agora suporta herança global, configuração customizada e desativação sem nova migration.
+- Documento permanente do design system em `docs/DESIGN-SYSTEM.md`.
 
 - Landing page comercial responsiva com hero, serviços, parceria, público, processo, FAQ e contato.
 - Logo oficial fornecida preservada; imagens automotivas locais geradas para o projeto.
@@ -42,6 +48,10 @@ Fase 3.5 — reestruturação administrativa e preparação de comissionamento �
 
 ## Pendente
 
+- Executar a conferência visual manual dos painéis em desktop e mobile na Hostinger.
+- Homologar os cenários do simulador no-code com dados fictícios e registrar respostas reais.
+- Homologar a comissão individual nos três estados: herdar, customizar e desativar.
+
 - Criar/usar uma conta fictícia de parceiro e validar cadastro, status pendente, aprovação, recusa, suspensão e reativação com o administrador.
 - Validar cadastro de parceiro com CPF e CNPJ pela máscara dinâmica e confirmar a versão `0.3.2` online.
 - Conferência visual manual do menu, cadastro e painéis em mobile e desktop.
@@ -59,6 +69,12 @@ Fase 3.5 — reestruturação administrativa e preparação de comissionamento �
 - O navegador local não foi usado para homologação visual; essa conferência permanece manual.
 
 ## Testes realizados
+
+- `npm run typecheck`: aprovado após os ajustes da Fase 3.6.
+- `npm run lint`: aprovado após os ajustes da Fase 3.6.
+- `npm test -- --run --pool=threads --minWorkers=1 --maxWorkers=1`: 55 testes aprovados.
+- `git diff --check`: aprovado.
+- Navegador automatizado e conferência visual: não executados; permanecem pendentes de validação humana.
 
 - `vitest run`: 1 teste passou (link do WhatsApp usa o número comercial e codifica a mensagem).
 - `eslint .`: passou.

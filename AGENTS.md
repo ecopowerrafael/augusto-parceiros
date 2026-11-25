@@ -4,7 +4,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 
 ## Regras locais
 
-- Trabalhe por fases; as migrations 001, 002 e 003 da Fase 3 foram confirmadas no banco remoto. A Fase 3.1 está implementada e a Fase 3.2 está em homologação autenticada. Não iniciar a Fase 4 sem nova autorização explícita.
+- Trabalhe por fases; as migrations 001, 002, 003 e 004 foram confirmadas no banco remoto. A Fase 3.6 usa o design system documentado em `docs/DESIGN-SYSTEM.md`. Não iniciar a Fase 4 sem nova autorização explícita.
 - O backend é a autoridade para autenticação, autorização, tenant, limites e regras de negócio.
 - Não versionar `.env`, credenciais, tokens ou documentos pessoais.
 - Ao mudar schema, atualizar `docs/BANCO-DE-DADOS.md` e planejar migration/rollback.
@@ -14,6 +14,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - Todas as interfaces devem usar português brasileiro, traduzir códigos técnicos antes de exibi-los, usar mensagens contextualizadas, aplicar máscaras reutilizáveis em campos com formato conhecido, evitar dados redundantes e validar sempre no frontend e no backend.
 - Execute `npm run lint`, `npm run typecheck`, `npm run build` e os testes relevantes antes de entregar.
 - Não afirmar que algo foi testado sem executar a verificação.
+- Painéis autenticados devem usar o shell SaaS compartilhado, navegação por perfil, textos em português e estados futuros explicitamente desabilitados; não criar telas paralelas com layout próprio sem justificativa.
 - O ambiente de homologação oficial é a Hostinger; depois de publicar na `main`, registrar se o teste online foi realmente executado.
 - Fluxo permanente: implementar localmente → lint/typecheck/test/build → commit → publicar na `main` → validar na Hostinger por HTTP → corrigir e registrar evidências.
 - A conferência visual fica sob responsabilidade humana quando o controle automatizado do navegador não estiver disponível; registrar como pendente, sem inventar resultado.

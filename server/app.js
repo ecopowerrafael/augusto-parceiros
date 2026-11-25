@@ -310,14 +310,20 @@ app.get('/api/admin/partners/:id/commission', databaseRequired, requireRole('ADM
 }))
 
 app.put('/api/admin/partners/:id/commission', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
-  const body = request.body || {}; const model = String(body.model || 'NONE').toUpperCase(); const percentage = body.percentage === null || body.percentage === undefined || body.percentage === '' ? null : Number(body.percentage); const fixedAmountCents = body.fixedAmountCents === null || body.fixedAmountCents === undefined || body.fixedAmountCents === '' ? null : Number(body.fixedAmountCents)
-  try { validateCommissionConfig({ model, percentage, fixedAmountCents }) } catch (error) { return response.status(400).json({ error: error.message }) }
+  const body = request.body || {}; const scope = String(body.scope || 'CUSTOM').toUpperCase()
   const [companies] = await getDatabasePool().execute('SELECT id FROM partner_companies WHERE id = ? LIMIT 1', [request.params.id]); if (!companies[0]) return response.status(404).json({ error: 'PARTNER_NOT_FOUND' })
+  if (scope === 'INHERIT') {
+    await getDatabasePool().execute('DELETE FROM partner_commission_overrides WHERE partner_company_id = ?', [request.params.id])
+    await writeAudit(request.auth.user.id, 'PARTNER_COMMISSION_INHERIT', 'partner_company', request.params.id, {})
+    return response.json({ status: 'updated', scope })
+  }
+  const bodyModel = scope === 'DISABLED' ? 'NONE' : String(body.model || 'NONE').toUpperCase(); const model = bodyModel; const percentage = body.percentage === null || body.percentage === undefined || body.percentage === '' ? null : Number(body.percentage); const fixedAmountCents = body.fixedAmountCents === null || body.fixedAmountCents === undefined || body.fixedAmountCents === '' ? null : Number(body.fixedAmountCents)
+  try { validateCommissionConfig({ model, percentage, fixedAmountCents }) } catch (error) { return response.status(400).json({ error: error.message }) }
   await getDatabasePool().execute(`INSERT INTO partner_commission_overrides (id, partner_company_id, model, percentage, fixed_amount_cents, honorarium_only, notes, valid_from, valid_until, created_by, updated_by)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON DUPLICATE KEY UPDATE model = VALUES(model), percentage = VALUES(percentage), fixed_amount_cents = VALUES(fixed_amount_cents), honorarium_only = VALUES(honorarium_only), notes = VALUES(notes), valid_from = VALUES(valid_from), valid_until = VALUES(valid_until), updated_by = VALUES(updated_by), updated_at = UTC_TIMESTAMP()`, [cryptoRandomId(), request.params.id, model, percentage, fixedAmountCents, body.honorariumOnly ? 1 : 0, body.notes ? String(body.notes).trim().slice(0, 500) : null, body.validFrom || null, body.validUntil || null, request.auth.user.id, request.auth.user.id])
   await writeAudit(request.auth.user.id, 'PARTNER_COMMISSION_UPDATED', 'partner_company', request.params.id, { model })
-  response.json({ status: 'updated', model })
+  response.json({ status: 'updated', model, scope: scope === 'DISABLED' ? 'DISABLED' : 'CUSTOM' })
 }))
 
 app.patch('/api/admin/partners/:id/status', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
@@ -344,7 +350,7 @@ app.patch('/api/admin/partners/:id/status', databaseRequired, requireRole('ADMIN
 }))
 
 app.get('/api/partner/dashboard', databaseRequired, requireRole('PARTNER'), activeAccount, asyncRoute(async (request, response) => {
-  const [rows] = await getDatabasePool().execute(`SELECT c.id, c.legal_name, c.trade_name, c.person_type, c.cpf_cnpj, c.email, c.whatsapp, c.segment, c.status, cm.company_role FROM partner_companies c JOIN company_members cm ON cm.company_id = c.id WHERE cm.user_id = ? LIMIT 1`, [request.auth.user.id])
+  const [rows] = await getDatabasePool().execute(`SELECT c.id, c.legal_name, c.trade_name, c.person_type, c.cpf_cnpj, c.email, c.whatsapp, c.segment, c.city, c.state, c.zip_code, c.status, cm.company_role FROM partner_companies c JOIN company_members cm ON cm.company_id = c.id WHERE cm.user_id = ? LIMIT 1`, [request.auth.user.id])
   response.json({ user: request.auth.user, company: rows[0] || null })
 }))
 

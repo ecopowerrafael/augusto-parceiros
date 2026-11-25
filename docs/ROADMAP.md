@@ -15,7 +15,8 @@
    Integração dos CTAs comerciais com o cadastro real, acompanhamento seguro de pendentes, busca/filtros administrativos e transições de status com auditoria. Pendente validar o fluxo completo online com contas fictícias.
 3.4. Usabilidade, cadastro e mensagens — correção 0.3.2 publicada.
    Documento CPF/CNPJ automático, remoção de nome de acesso, máscaras reutilizáveis e tradução centralizada de erros; sem alteração de schema.
-3.5. Reestruturação administrativa e comissionamento — versão 0.3.3 integrada na `main`; Migration 004 instalada e validada, pendente propagação e homologação autenticada.
+3.5. Reestruturação administrativa e comissionamento — versão 0.3.3 integrada na `main`; Migration 004 instalada e validada.
+3.6. Design system, painéis profissionais e homologação do simulador — versão 0.3.4 em validação local. Shell autenticado, navegação por perfil, correção de cidade/UF e comissão condicional implementados; revisão visual manual e homologação Hostinger pendentes.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4] — Fase 3.6 — Design system e homologação do simulador — 2026-11-25
+
+- Criado shell SaaS responsivo para áreas autenticadas, com navegação específica de administrador e parceiro, topbar, títulos objetivos e conta separada.
+- Corrigido o carregamento de cidade/UF no painel do parceiro pela consulta oficial do backend.
+- Tornada a configuração global de comissão condicional ao modelo, com valor fixo exibido em reais e conversão para centavos no envio.
+- Itens operacionais futuros permanecem explicitamente indisponíveis; não foram criadas operações simuladas nem integração real com a Simples API.
+
 ## [0.3.3] — Fase 3.5 — Administração e comissionamento — 2026-11-25
 
 - Branch `feature/fase-3-5-admin-comissoes` integrada na `main` após validação local completa.
