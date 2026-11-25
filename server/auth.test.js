@@ -40,6 +40,12 @@ describe('authentication input contracts', () => {
     expect(passwordPolicyError('1234567', 'PARTNER')).toContain('8')
   })
 
+  it('accepts partner CPF without a username and rejects an incomplete document', () => {
+    const base = { legalName: 'Parceiro Pessoa Física', cpfCnpj: '52998224725', responsibleName: 'Responsável Teste', state: 'SP', segment: 'Oficina mecânica', email: 'pf@example.com', whatsapp: '15997118125', password: '24681357', passwordConfirmation: '24681357', acceptTerms: true, privacyAcknowledgement: true }
+    expect(partnerRegistrationSchema.safeParse(base).success).toBe(true)
+    expect(partnerRegistrationSchema.safeParse({ ...base, cpfCnpj: '5299822472' }).success).toBe(false)
+  })
+
   it('keeps the administrative twelve-character complexity policy', () => {
     expect(passwordPolicyError('abcdef12345', 'ADMINISTRATOR')).toContain('12')
     expect(passwordPolicyError('Abcdefghijkl', 'ADMINISTRATOR')).toContain('número')
