@@ -67,6 +67,7 @@ Fase 2.0 — Autenticação, perfis e base operacional — implementação local
 - Reauditoria local: lint, typecheck, 5 testes, build e diff-check aprovados após as correções do painel.
 - Homologação HTTP online em 25/11/2026: `/api/health`, `/api/runtime-config`, `/robots.txt`, `/manifest.webmanifest`, fallback `/login`/`/cadastro-parceiro`/`/admin` e headers responderam conforme esperado; versão online `0.2.0`, staging e noindex confirmados.
 - Homologação HTTP online: `/api/admin/summary` sem sessão retornou `401`; após correção do hash bcrypt dummy, tentativa de login fictícia retorna `503 DATABASE_NOT_READY`. O backend está acessível e diagnostica explicitamente que a conexão/schema MySQL ainda não está pronto.
+- Diagnóstico temporário de conexão MySQL adicionado à inicialização; ainda não executado na Hostinger. Consultar os logs privados pelo marcador `[database-diagnostic]` após o próximo redeploy.
 
 ## Próxima missão
 

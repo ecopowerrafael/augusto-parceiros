@@ -61,3 +61,11 @@ Se o domínio continuar entregando `robots.txt` antigo, MIME `text/plain` no man
 Requests têm timeout de 120 s; não há WebSockets de entrada nem workers sempre ativos. Cron jobs existem, rodam em UTC e têm limite de 30 minutos. Uploads privados e documentos pessoais não devem ficar em `public` nem no cache offline. Limites específicos de upload e recursos variam por plano e precisam ser conferidos no painel contratado antes da Fase 8.
 
 Se o código publicado estiver em `0.2.0`, mas um login com payload válido retornar `INTERNAL_ERROR`, verificar o histórico de deploy: o commit pode estar no GitHub sem ter sido aplicado pela Web App. Após o redeploy, executar a migration e repetir o teste; falhas de banco devem aparecer como `503 DATABASE_NOT_READY`.
+
+## Diagnóstico temporário de conexão MySQL
+
+Na inicialização do `server/index.js`, a aplicação executa o diagnóstico privado usando o mesmo pool de `server/database.js`. Os resultados aparecem nos logs da aplicação Node.js da Hostinger: painel da Web App → logs/runtime logs da aplicação → reiniciar/redeploy → procurar por `[database-diagnostic]`.
+
+O diagnóstico executa somente `SELECT 1 AS connected`, `SELECT DATABASE() AS database_name` e `SHOW TABLES`. Não cria tabelas, não executa migrations e não cria administrador. A senha, a URL completa e o conteúdo de `DATABASE_URL` nunca são registrados.
+
+Status possíveis: `DATABASE_CONFIG_MISSING`, `DATABASE_CONFIG_INVALID`, `ECONNREFUSED`, `ETIMEDOUT`, `ENOTFOUND`, `ER_ACCESS_DENIED_ERROR`, `ER_BAD_DB_ERROR`, `DATABASE_CONNECTED`, `DATABASE_CONNECTED_EMPTY_SCHEMA` e `DATABASE_CONNECTED_SCHEMA_EXISTS`. Para schema vazio ou existente, o log inclui apenas o banco selecionado, o resultado de conectividade e a quantidade de tabelas.

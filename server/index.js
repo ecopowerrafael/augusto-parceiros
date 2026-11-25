@@ -1,7 +1,9 @@
 /* global console */
 import app from './app.js'
 import { config } from './config.js'
+import { diagnoseDatabase } from './database.js'
 
 app.listen(config.port, '0.0.0.0', () => {
   console.log(`Doc Motor listening on port ${config.port} (${config.appEnv})`)
+  void diagnoseDatabase()
 })
