@@ -269,6 +269,10 @@ app.get('/api/admin/commissions', databaseRequired, requireRole('ADMINISTRATOR')
   response.json({ models: COMMISSION_MODELS, settings: settings[0] || { default_model: 'NONE', default_percentage: null, default_fixed_amount_cents: null, honorarium_only: 0 }, migrationRequired: !settings[0] })
 }))
 
+app.get('/api/admin/api-keys', databaseRequired, requireRole('ADMINISTRATOR'), (_request, response) => {
+  response.json({ storage: 'backend-environment', integrations: [{ code: 'SIMPLES_API', name: 'Simples API', configured: Boolean(process.env.SIMPLES_API_KEY), secretName: 'SIMPLES_API_KEY', realCallsEnabled: false }] })
+})
+
 app.put('/api/admin/commissions', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
   const body = request.body || {}
   const model = String(body.model || 'NONE').toUpperCase()
