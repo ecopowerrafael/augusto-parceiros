@@ -77,10 +77,11 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 
 - `npm run typecheck`: aprovado após os ajustes da Fase 3.6.
 - `npm run lint`: aprovado após os ajustes da Fase 3.6.
-- `npm test -- --run --pool=threads --minWorkers=1 --maxWorkers=1`: 55 testes aprovados.
+- `npm test -- --run --pool=threads --minWorkers=1 --maxWorkers=1`: 58 testes aprovados.
 - `git diff --check`: aprovado.
 - `npm run generate:hostinger-sql`: aprovado; os SQLs 002–004 validados não são reescritos pelo gerador para evitar qualificação cumulativa.
 - Navegador automatizado e conferência visual: não executados; permanecem pendentes de validação humana.
+- Revalidação HTTP após os commits `78f9d76`, `54b726f` e `c7c446c`: não executada porque `docmotor.online` continuou sem resolução DNS neste ambiente (`curl: (6) Could not resolve host`).
 
 - `vitest run`: 1 teste passou (link do WhatsApp usa o número comercial e codifica a mensagem).
 - `eslint .`: passou.
