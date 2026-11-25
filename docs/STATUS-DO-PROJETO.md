@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.6 — design system, painéis profissionais e homologação do simulador — versão `0.3.4` em validação local.
+Fase 3.6 — design system, painéis profissionais e homologação do simulador — versão `0.3.4` em validação local; Migration 005 preparada e ainda não importada no banco remoto.
 
 ## Fase 3.5 — estado da publicação
 
@@ -20,6 +20,9 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 - Comissão global com campos condicionais por modelo e entrada de valor fixo em reais, convertida para centavos no backend.
 - Override individual agora suporta herança global, configuração customizada e desativação sem nova migration.
 - Documento permanente do design system em `docs/DESIGN-SYSTEM.md`.
+- Endpoint protegido `/api/admin/commissions/simulate` com o mesmo avaliador de comissão usado pela regra operacional, sem criar registros financeiros.
+- Módulo protegido `/api/admin/settings` para dados comerciais persistidos, com fallback explícito `SETTINGS_MIGRATION_REQUIRED` antes da importação da Migration 005.
+- Pacote manual da Migration 005: `database/updates/005_application_settings_precheck.sql`, `005_application_settings.sql` e `005_application_settings_verify.sql`; `database/install.sql` atualizado para bancos novos.
 
 - Landing page comercial responsiva com hero, serviços, parceria, público, processo, FAQ e contato.
 - Logo oficial fornecida preservada; imagens automotivas locais geradas para o projeto.
@@ -51,6 +54,7 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 - Executar a conferência visual manual dos painéis em desktop e mobile na Hostinger.
 - Homologar os cenários do simulador no-code com dados fictícios e registrar respostas reais.
 - Homologar a comissão individual nos três estados: herdar, customizar e desativar.
+- Importar e verificar a Migration 005 pelo phpMyAdmin antes de homologar o salvamento das configurações gerais.
 
 - Criar/usar uma conta fictícia de parceiro e validar cadastro, status pendente, aprovação, recusa, suspensão e reativação com o administrador.
 - Validar cadastro de parceiro com CPF e CNPJ pela máscara dinâmica e confirmar a versão `0.3.2` online.
@@ -74,6 +78,7 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 - `npm run lint`: aprovado após os ajustes da Fase 3.6.
 - `npm test -- --run --pool=threads --minWorkers=1 --maxWorkers=1`: 55 testes aprovados.
 - `git diff --check`: aprovado.
+- `npm run generate:hostinger-sql`: aprovado; os SQLs 002–004 validados não são reescritos pelo gerador para evitar qualificação cumulativa.
 - Navegador automatizado e conferência visual: não executados; permanecem pendentes de validação humana.
 
 - `vitest run`: 1 teste passou (link do WhatsApp usa o número comercial e codifica a mensagem).

@@ -31,3 +31,5 @@ As áreas autenticadas usam um shell SaaS consistente, separado visualmente do s
 ## Limites da fase
 
 O construtor no-code continua usando o avaliador declarativo existente. A Fase 3.6 não integra a Simples API real, não cria orçamento definitivo e não persiste resultados de simuladores como registros financeiros.
+
+Configurações gerais são dados comerciais persistidos pela Migration 005; informações de ambiente, versão, indexação e segredos continuam somente leitura e nunca são editáveis pela interface.

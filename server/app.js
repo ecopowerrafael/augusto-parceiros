@@ -9,7 +9,7 @@ import { config } from './config.js'
 import { getDatabasePool, isDatabaseConfigured, withTransaction } from './database.js'
 import { createPublicServiceRouter, createServiceRouter } from './services.js'
 import { isPartnerCompanyStatus, partnerUserStatusForCompanyStatus } from './partner-flow.js'
-import { COMMISSION_MODELS, validateCommissionConfig } from './commissions.js'
+import { COMMISSION_MODELS, evaluateCommission, validateCommissionConfig } from './commissions.js'
 import {
   assertSameOrigin,
   bcrypt,
@@ -264,6 +264,40 @@ app.get('/api/admin/audit', databaseRequired, requireRole('ADMINISTRATOR'), asyn
   response.json({ items, page, pageSize })
 }))
 
+app.get('/api/admin/settings', databaseRequired, requireRole('ADMINISTRATOR'), asyncRoute(async (_request, response) => {
+  try {
+    const [rows] = await getDatabasePool().execute('SELECT id, company_name, support_whatsapp, support_email, city, state, privacy_url, terms_url, timezone, updated_at FROM application_settings WHERE id = ? LIMIT 1', ['55000000-0000-4000-8000-000000000001'])
+    response.json({ settings: rows[0] || null, migrationRequired: !rows[0], runtime: { appEnv: config.appEnv, version: config.version, allowIndexing: config.allowIndexing } })
+  } catch (error) {
+    if (error.code === 'ER_NO_SUCH_TABLE') return response.json({ settings: null, migrationRequired: true, runtime: { appEnv: config.appEnv, version: config.version, allowIndexing: config.allowIndexing } })
+    throw error
+  }
+}))
+
+app.put('/api/admin/settings', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
+  const body = request.body || {}
+  const values = {
+    companyName: String(body.companyName || '').trim().slice(0, 180),
+    supportWhatsapp: String(body.supportWhatsapp || '').trim().slice(0, 30) || null,
+    supportEmail: String(body.supportEmail || '').trim().slice(0, 255) || null,
+    city: String(body.city || '').trim().slice(0, 120) || null,
+    state: String(body.state || '').trim().toUpperCase().slice(0, 2) || null,
+    privacyUrl: String(body.privacyUrl || '').trim().slice(0, 500) || null,
+    termsUrl: String(body.termsUrl || '').trim().slice(0, 500) || null,
+  }
+  if (!values.companyName) return response.status(400).json({ error: 'COMPANY_NAME_REQUIRED' })
+  if (values.state && !/^[A-Z]{2}$/.test(values.state)) return response.status(400).json({ error: 'INVALID_STATE' })
+  if (values.supportEmail && !/^\S+@\S+\.\S+$/.test(values.supportEmail)) return response.status(400).json({ error: 'INVALID_EMAIL' })
+  try {
+    await getDatabasePool().execute(`UPDATE application_settings SET company_name = ?, support_whatsapp = ?, support_email = ?, city = ?, state = ?, privacy_url = ?, terms_url = ?, updated_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?`, [values.companyName, values.supportWhatsapp, values.supportEmail, values.city, values.state, values.privacyUrl, values.termsUrl, request.auth.user.id, '55000000-0000-4000-8000-000000000001'])
+  } catch (error) {
+    if (error.code === 'ER_NO_SUCH_TABLE') return response.status(409).json({ error: 'SETTINGS_MIGRATION_REQUIRED' })
+    throw error
+  }
+  await writeAudit(request.auth.user.id, 'APPLICATION_SETTINGS_UPDATED', 'application_settings', '55000000-0000-4000-8000-000000000001', { fields: Object.keys(values).filter((key) => key !== 'supportEmail') })
+  response.json({ status: 'updated' })
+}))
+
 app.get('/api/admin/commissions', databaseRequired, requireRole('ADMINISTRATOR'), asyncRoute(async (_request, response) => {
   const [settings] = await getDatabasePool().execute('SELECT default_model, default_percentage, default_fixed_amount_cents, honorarium_only, updated_at FROM commission_settings WHERE id = ? LIMIT 1', ['45000000-0000-4000-8000-000000000001'])
   response.json({ models: COMMISSION_MODELS, settings: settings[0] || { default_model: 'NONE', default_percentage: null, default_fixed_amount_cents: null, honorarium_only: 0 }, migrationRequired: !settings[0] })
@@ -282,6 +316,20 @@ app.put('/api/admin/commissions', databaseRequired, requireRole('ADMINISTRATOR')
   await getDatabasePool().execute('UPDATE commission_settings SET default_model = ?, default_percentage = ?, default_fixed_amount_cents = ?, honorarium_only = ?, updated_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?', [model, percentage, fixedAmountCents, body.honorariumOnly ? 1 : 0, request.auth.user.id, '45000000-0000-4000-8000-000000000001'])
   await writeAudit(request.auth.user.id, 'COMMISSION_SETTINGS_UPDATED', 'commission_settings', '45000000-0000-4000-8000-000000000001', { model })
   response.json({ status: 'updated', model })
+}))
+
+app.post('/api/admin/commissions/simulate', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
+  const body = request.body || {}
+  const model = String(body.model || 'NONE').toUpperCase()
+  const percentage = body.percentage === null || body.percentage === undefined || body.percentage === '' ? null : Number(body.percentage)
+  const fixedAmountCents = body.fixedAmountCents === null || body.fixedAmountCents === undefined || body.fixedAmountCents === '' ? null : Number(body.fixedAmountCents)
+  const charges = Array.isArray(body.charges) ? body.charges.map((charge) => ({ amountCents: charge.amountCents, chargeNature: charge.chargeNature, isPublicFee: Boolean(charge.isPublicFee) })) : []
+  try {
+    const result = evaluateCommission({ model, percentage, fixedAmountCents }, charges)
+    response.json({ simulated: true, result })
+  } catch (error) {
+    return response.status(400).json({ error: error.message })
+  }
 }))
 
 app.get('/api/admin/partners/:id/details', databaseRequired, requireRole('ADMINISTRATOR'), asyncRoute(async (request, response) => {
