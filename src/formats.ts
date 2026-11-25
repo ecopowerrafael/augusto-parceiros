@@ -21,7 +21,8 @@ export function formatCpfCnpj(value: string) {
 
 export function formatPhone(value: string) {
   const normalized = String(value || '').replace(/\D/g, '').slice(0, 11)
-  if (normalized.length <= 2) return normalized.replace(/^([0-9]{0,2})/, '($1')
+  if (!normalized) return ''
+  if (normalized.length <= 2) return `(${normalized}`
   if (normalized.length <= 10) return normalized.replace(/^(\d{2})(\d{0,4})(\d{0,4})$/, '($1) $2-$3').replace(/-$/, '')
   return normalized.replace(/^(\d{2})(\d{0,5})(\d{0,4})$/, '($1) $2-$3').replace(/-$/, '')
 }

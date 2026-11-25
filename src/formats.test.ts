@@ -22,6 +22,7 @@ describe('máscaras e normalização de formulários', () => {
 
   it('aplica máscaras reutilizáveis de telefone e CEP', () => {
     expect(formatPhone('15997118125')).toBe('(15) 99711-8125')
+    expect(formatPhone('')).toBe('')
     expect(formatCep('18123456')).toBe('18123-456')
   })
 })
