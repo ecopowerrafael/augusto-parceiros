@@ -12,7 +12,7 @@
 - Padronizados SQLs manuais Hostinger com gerador local, `USE`, `SELECT DATABASE()`, schema explícito e referências qualificadas.
 - Publicada a versão `0.3.0` na `main` e validada por HTTP na Hostinger; testes autenticados do builder permanecem sob responsabilidade do proprietário.
 - Ampliada a interface do builder para opções, campos calculados, condições de visibilidade, cobranças condicionais, mapeamentos e ações de regras.
-- Mantida a entrega somente na branch de desenvolvimento; nenhum SQL remoto executado e nenhuma alteração publicada na `main`.
+- Adicionado roteiro persistente em `docs/HOMOLOGACAO-FASE-3.2.md` com 12 cenários do motor, checklist do segundo serviço no-code e limites da validação.
 
 ## [0.3.0-prep] — Preparação anterior de serviços, preços e regras técnicas — 2026-11-25
 
