@@ -112,8 +112,3 @@ Fase 3.5 — reestruturação administrativa e preparação de comissionamento �
 ## Próxima missão
 
 Confirmar a propagação da versão `0.3.3` no Hostinger e executar `docs/HOMOLOGACAO-APROVACAO-PARCEIRO.md` com dados fictícios. Não iniciar a Fase 4/Simples API real, orçamento definitivo, documentação digital ou financeiro.
-- Fase atual: Fase 3.5 em branch `feature/fase-3-5-admin-comissoes`, aguardando validação da migration 004 no Hostinger.
-- Nesta etapa: aprovação administrativa com diagnóstico seguro, navegação administrativa separada e avaliador genérico de comissão sem ativação comercial.
-- Pendente: importar `migrations/004_partner_commissions.sql`, validar aprovação real de parceiro e só então publicar a integração em `main`.
-- Limitação real: a validação HTTP externa desta sessão falhou por resolução DNS local (`docmotor.online:443` não resolvido); não foi possível confirmar a versão publicada nem executar aprovação autenticada no Hostinger. O diagnóstico retorna `X-Request-ID` e registra código SQL nos logs privados.
-- Roteiro de homologação e diagnóstico somente leitura: `docs/HOMOLOGACAO-APROVACAO-PARCEIRO.md` e `database/verify-admin-approval.sql`.
