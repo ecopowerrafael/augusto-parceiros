@@ -11,3 +11,9 @@ Não simular armazenamento, autenticação ou integração externa. O formulári
 ## 2026-11-25 — logo oficial preservada
 
 A logo existente foi usada sem redesenho. A interface usa vermelho como cor comercial de ação e mantém o azul da marca como assinatura da logo.
+# Fase 2 — decisões adicionais
+
+- `mysql2` foi adotado no lugar do Prisma para a primeira migration: a hospedagem compartilhada não exige geração de client/binários e o schema SQL versionado mantém o deploy simples. A camada `server/database.js` centraliza pool e transações.
+- Sessões opacas persistidas foram escolhidas em vez de JWT para permitir revogação, expiração e controle operacional imediato.
+- SMTP é opcional na inicialização, mas obrigatório para envio real de recuperação de senha; sem configuração a solicitação não expõe token e permanece documentada como indisponível.
+- O painel administrativo usa consultas reais do MySQL e ações transacionais de aprovação/suspensão. Nenhum indicador é preenchido com valores fictícios.

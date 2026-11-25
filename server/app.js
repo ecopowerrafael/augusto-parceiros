@@ -182,7 +182,7 @@ app.post('/api/auth/forgot-password', databaseRequired, asyncRoute(async (reques
   if (!parsed.success) return response.status(400).json(validationError(parsed.error))
   if (!await consumeRateLimit(`forgot-password:${request.ip}`, 5, 900)) return response.status(429).json({ error: 'TOO_MANY_REQUESTS' })
   const generic = { status: 'ok' }
-  if (!process.env.SMTP_HOST || !process.env.SMTP_FROM || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) return response.json(generic)
+  if (!process.env.SMTP_HOST || !process.env.SMTP_FROM || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) return response.status(503).json({ error: 'PASSWORD_RECOVERY_NOT_CONFIGURED' })
   const [rows] = await getDatabasePool().execute('SELECT id, email, name FROM users WHERE email = ? AND status NOT IN (\'DISABLED\') LIMIT 1', [parsed.data.email.toLowerCase()])
   if (rows.length === 0) return response.json(generic)
   const token = await issuePasswordReset(rows[0].id)
@@ -193,6 +193,7 @@ app.post('/api/auth/forgot-password', databaseRequired, asyncRoute(async (reques
 }))
 
 app.post('/api/auth/reset-password', databaseRequired, asyncRoute(async (request, response) => {
+  if (!assertSameOrigin(request)) return response.status(403).json({ error: 'ORIGIN_NOT_ALLOWED' })
   const parsed = resetPasswordSchema.safeParse(request.body)
   if (!parsed.success) return response.status(400).json(validationError(parsed.error))
   const tokenHash = hashToken(parsed.data.token)
@@ -219,11 +220,31 @@ app.get('/api/admin/partners', databaseRequired, requireRole('ADMINISTRATOR'), a
   const offset = (page - 1) * pageSize
   const status = String(request.query.status || '').toUpperCase()
   const params = []
-  let where = ''
-  if (['PENDING', 'ACTIVE', 'SUSPENDED', 'REJECTED'].includes(status)) { where = 'WHERE status = ?'; params.push(status) }
+  const filters = []
+  if (request.query.q) { filters.push('(legal_name LIKE ? OR trade_name LIKE ? OR email LIKE ? OR cpf_cnpj LIKE ?)'); const query = `%${String(request.query.q).trim().slice(0, 80)}%`; params.push(query, query, query, query) }
+  if (['PENDING', 'ACTIVE', 'SUSPENDED', 'REJECTED'].includes(status)) { filters.unshift('status = ?'); params.unshift(status) }
+  const where = filters.length ? `WHERE ${filters.join(' AND ')}` : ''
   const [rows] = await getDatabasePool().execute(`SELECT id, person_type, legal_name, trade_name, cpf_cnpj, responsible_name, email, whatsapp, city, state, segment, status, rejection_reason, created_at FROM partner_companies ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`, [...params, pageSize, offset])
-  const [[count]] = await getDatabasePool().query(`SELECT COUNT(*) AS total FROM partner_companies ${where}`, params)
-  response.json({ items: rows, page, pageSize, total: count[0].total })
+  const [countRows] = await getDatabasePool().query(`SELECT COUNT(*) AS total FROM partner_companies ${where}`, params)
+  response.json({ items: rows, page, pageSize, total: countRows[0].total })
+}))
+
+app.get('/api/admin/users', databaseRequired, requireRole('ADMINISTRATOR'), asyncRoute(async (request, response) => {
+  const page = Math.max(1, Number(request.query.page || 1)); const pageSize = Math.min(50, Math.max(1, Number(request.query.pageSize || 20))); const offset = (page - 1) * pageSize
+  const filters = []; const params = []; const role = String(request.query.role || '').toUpperCase(); const status = String(request.query.status || '').toUpperCase()
+  if (['ADMINISTRATOR', 'PARTNER', 'CLIENT'].includes(role)) { filters.push('role = ?'); params.push(role) }
+  if (['ACTIVE', 'PENDING', 'SUSPENDED', 'DISABLED'].includes(status)) { filters.push('status = ?'); params.push(status) }
+  if (request.query.q) { filters.push('(name LIKE ? OR email LIKE ?)'); const query = `%${String(request.query.q).trim().slice(0, 80)}%`; params.push(query, query) }
+  const where = filters.length ? `WHERE ${filters.join(' AND ')}` : ''
+  const [rows] = await getDatabasePool().execute(`SELECT id, role, status, name, email, whatsapp, created_at, last_login_at FROM users ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`, [...params, pageSize, offset])
+  const [countRows] = await getDatabasePool().query(`SELECT COUNT(*) AS total FROM users ${where}`, params)
+  response.json({ items: rows, page, pageSize, total: countRows[0].total })
+}))
+
+app.get('/api/admin/audit', databaseRequired, requireRole('ADMINISTRATOR'), asyncRoute(async (request, response) => {
+  const page = Math.max(1, Number(request.query.page || 1)); const pageSize = Math.min(50, Math.max(1, Number(request.query.pageSize || 20))); const offset = (page - 1) * pageSize
+  const [items] = await getDatabasePool().execute('SELECT id, actor_user_id, action, entity_type, entity_id, metadata, created_at FROM audit_logs ORDER BY created_at DESC LIMIT ? OFFSET ?', [pageSize, offset])
+  response.json({ items, page, pageSize })
 }))
 
 app.patch('/api/admin/partners/:id/status', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {

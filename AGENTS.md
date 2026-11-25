@@ -8,6 +8,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - O backend é a autoridade para autenticação, autorização, tenant, limites e regras de negócio.
 - Não versionar `.env`, credenciais, tokens ou documentos pessoais.
 - Ao mudar schema, atualizar `docs/BANCO-DE-DADOS.md` e planejar migration/rollback.
+- Ao mudar autenticação ou autorização, atualizar `docs/AUTENTICACAO-E-PERMISSOES.md` e revisar a matriz de acesso.
 - Ao concluir uma missão, atualize `CHANGELOG.md` e `docs/STATUS-DO-PROJETO.md`.
 - Execute `npm run lint`, `npm run typecheck`, `npm run build` e os testes relevantes antes de entregar.
 - Não afirmar que algo foi testado sem executar a verificação.

@@ -6,6 +6,8 @@
 - Adicionados perfis, cadastros, login, logout, alteração e recuperação de senha via SMTP configurável.
 - Adicionados CSRF, cookies HttpOnly/Secure, bcrypt e scripts de migration/provisionamento.
 - Preservado o site comercial; sem Simples API, motor de regras, orçamentos ou financeiro.
+- Painel administrativo inicial com indicadores reais e ações de aprovação, recusa e suspensão de parceiros.
+- Gestão inicial de usuários, auditoria protegida e matriz documentada de permissões.
 
 ## [0.1.1] — Fase 1.4 — 2026-11-25
 

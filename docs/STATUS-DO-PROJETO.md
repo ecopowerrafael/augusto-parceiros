@@ -26,6 +26,9 @@ Fase 2.0 — Autenticação, perfis e base operacional — implementação local
 - Proprietário aprovou visualmente a página comercial publicada.
 - API de autenticação com cadastro de cliente e parceiro, login, logout, alteração/reset de senha e sessão persistente.
 - Perfis ADMINISTRATOR, PARTNER e CLIENT com autorização no servidor e painéis iniciais.
+- Painel administrativo com indicadores reais, filtros e ações de aprovação, recusa e suspensão.
+- Painel parceiro com dados da empresa e usuários vinculados; painel cliente com dados da própria conta.
+- Matriz de autenticação e permissões em `docs/AUTENTICACAO-E-PERMISSOES.md`.
 - Migration MySQL, rate limit persistido, auditoria e script seguro de provisionamento do administrador.
 
 ## Pendente
@@ -61,6 +64,7 @@ Fase 2.0 — Autenticação, perfis e base operacional — implementação local
 - `npm run build`: passou e gerou o build de produção.
 - `npm run lint`: passou após a atualização final do backend; validação MySQL online ainda não executada.
 - Navegador automatizado: não utilizado conforme orientação; telas da Fase 2 aguardam conferência visual manual.
+- Reauditoria local: lint, typecheck, 5 testes, build e diff-check aprovados após as correções do painel.
 
 ## Próxima missão
 
