@@ -3,6 +3,7 @@ import { ArrowUpRight, Check, ChevronDown, Menu, MessageCircle, ShieldCheck, X }
 import { whatsappLink } from './whatsapp'
 import type { RuntimeConfig } from './runtime-config'
 import { BrandLogo } from './components/BrandLogo'
+import { ClientRegistrationPage, DashboardPage, LoginPage, PartnerRegistrationPage, PasswordRecoveryPage, ResetPasswordPage, StatusPage } from './auth/AuthPages'
 
 const wa = whatsappLink
 
@@ -25,7 +26,7 @@ const faqs = [
   ['Como funciona a parceria para desmanches e autopeças?', 'Você indica o cliente e nossa equipe conduz a análise documental. A plataforma digital de parceiros está em desenvolvimento; por enquanto, o atendimento é feito diretamente pelo WhatsApp.'],
 ]
 
-function App() {
+function CommercialApp() {
   const [runtimeConfig, setRuntimeConfig] = useState<RuntimeConfig | undefined>(window.__DOC_MOTOR_CONFIG__)
   const [menuOpen, setMenuOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
@@ -72,6 +73,21 @@ function App() {
     </main>
     <footer className="footer"><div className="container footer-top"><div className="footer-brand"><BrandLogo /><p>Documentação veicular com clareza, responsabilidade e direção.</p></div><div className="footer-links"><div><strong>Explorar</strong><a href="#servicos">Serviços</a><a href="#como-funciona">Como funciona</a><a href="#parceiro">Seja parceiro</a></div><div><strong>Atendimento</strong><a href="#faq">Perguntas frequentes</a><a href="#contato">Contato</a><a href="/area-do-parceiro">Área do parceiro</a></div><div><strong>Legal</strong><a href="#contato">Política de privacidade</a><a href="#contato">Termos de uso</a></div></div></div><div className="container footer-bottom"><span>© 2026 Doc Motor. Informação sujeita à análise do caso concreto.</span><span>Feito para mover.</span></div></footer><a className="floating-whatsapp" href={wa('Olá, Doc Motor! Gostaria de falar com um especialista.')} aria-label="Falar com a Doc Motor pelo WhatsApp"><MessageCircle size={24} /></a>
   </div>
+}
+
+function App() {
+  const path = window.location.pathname
+  if (path === '/login') return <LoginPage />
+  if (path === '/cadastro-cliente') return <ClientRegistrationPage />
+  if (path === '/cadastro-parceiro') return <PartnerRegistrationPage />
+  if (path === '/aguardando-aprovacao') return <StatusPage title="Cadastro recebido." text="Seu interesse foi registrado e aguarda aprovação administrativa. Você poderá entrar quando o acesso for liberado." href="/login" />
+  if (path === '/acesso-nao-autorizado') return <StatusPage title="Acesso não autorizado." text="Seu perfil não possui permissão para esta área." href="/" />
+  if (path === '/admin') return <DashboardPage role="ADMINISTRATOR" />
+  if (path === '/parceiro') return <DashboardPage role="PARTNER" />
+  if (path === '/cliente') return <DashboardPage role="CLIENT" />
+  if (path === '/recuperar-senha') return <PasswordRecoveryPage />
+  if (path === '/redefinir-senha') return <ResetPasswordPage />
+  return <CommercialApp />
 }
 
 export default App

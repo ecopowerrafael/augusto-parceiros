@@ -1,10 +1,10 @@
 # Doc Motor — Documentação Veicular
 
-Landing page comercial da Doc Motor, construída para apresentar serviços de regularização veicular e captar clientes/parceiros via WhatsApp. A Fase 1 não possui autenticação, banco de dados ou integração real com a Simples API.
+Plataforma comercial e operacional da Doc Motor. A Fase 1 entrega o site comercial; a Fase 2 adiciona autenticação, perfis, permissões e persistência MySQL. Simples API, regras de viabilidade, orçamentos e financeiro permanecem fora do escopo atual.
 
 ## Stack
 
-React + TypeScript + Vite, servido em produção por Express; CSS responsivo sem dependência de framework visual; Lucide para ícones; PWA manifest preparado. A escolha é compatível com o fluxo Node.js Web App da Hostinger.
+React + TypeScript + Vite, servido em produção por Express; MySQL via mysql2, Zod, bcryptjs, Nodemailer e Lucide. A escolha é compatível com o fluxo Node.js Web App da Hostinger.
 
 ## Desenvolvimento
 
@@ -27,11 +27,18 @@ O formulário da Fase 1 não grava dados. Não utilize dados reais de clientes d
 - `src/styles.css`: identidade visual e responsividade.
 - `public/assets`: logo oficial e imagens editoriais locais.
 - `server/index.js`: servidor Express para servir `dist` em produção.
+- `server/app.js` e `server/auth.js`: API de autenticação, autorização, sessões, auditoria e painéis iniciais.
+- `migrations/001_initial.sql`: schema inicial da Fase 2.
+- `scripts/migrate.mjs` e `scripts/provision-admin.mjs`: operações explícitas de infraestrutura.
 - `docs/`: decisões, regras, roadmap, segurança e status persistente.
 
 ## Deploy
 
 Leia [`docs/DEPLOY-HOSTINGER.md`](docs/DEPLOY-HOSTINGER.md). Em produção, configure `npm run build` como build command, `dist` como output quando aplicável e `server/index.js` como entry file Node/Express.
+
+## Fase 2
+
+Configure `DATABASE_URL` no ambiente, execute `node scripts/migrate.mjs` e provisione o primeiro administrador com `node scripts/provision-admin.mjs`. O cadastro de parceiro inicia pendente de aprovação.
 
 ## Escopo da Fase 1
 

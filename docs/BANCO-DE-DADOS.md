@@ -1,7 +1,11 @@
 # Banco de dados
 
-Não existe banco nesta fase. A configuração futura deverá usar MySQL da Hostinger via `DATABASE_URL` com host `127.0.0.1`.
+## Fase 2 — schema inicial
 
-Entidades previstas: usuário, parceiro, cliente, veículo, serviço, regra de viabilidade, tabela de preço, orçamento, solicitação, documento, link de upload, evento de timeline e histórico de alterações.
+MySQL da Hostinger é conectado por `DATABASE_URL`. `migrations/001_initial.sql` cria usuários, parceiros, membros, clientes, sessões, tokens de reset, rate limits e auditoria, com chaves estrangeiras, índices e unicidade de e-mail/documento.
+
+Execute `node scripts/migrate.mjs` somente com `DATABASE_URL` configurada. Cada migration é registrada em `schema_migrations` e aplicada em transação. Não há migration destrutiva nesta fase. Sessões armazenam apenas hashes dos tokens.
+
+Entidades futuras: veículo, serviço, regra de viabilidade, tabela de preço, orçamento, solicitação, documento, link de upload e evento de timeline.
 
 Toda entidade de negócio deve carregar o escopo de tenant quando aplicável. Alterações de schema exigem migration, análise de dados existentes, índice/constraint, plano de rollback e deploy progressivo.

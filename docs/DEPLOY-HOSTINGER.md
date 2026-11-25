@@ -25,10 +25,17 @@ ALLOW_INDEXING=false
 APP_DEBUG=false
 NPM_CONFIG_INCLUDE=dev
 PORT=(fornecida pela Hostinger, quando aplicável)
-DATABASE_URL=(opcional nesta fase; não é exigida para a página comercial)
+DATABASE_URL=(MySQL da Hostinger; necessária para a Fase 2)
+DB_POOL_SIZE=5
+SMTP_HOST=...
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=...
+SMTP_PASSWORD=...
+SMTP_FROM=...
 ```
 
-Não preencher senha de banco neste repositório ou nesta documentação. O banco só será conectado quando a Fase 2 definir o acesso e as migrations.
+Não preencher senhas neste repositório ou nesta documentação. Após configurar o painel, executar `node scripts/migrate.mjs` e `node scripts/provision-admin.mjs` em ambiente controlado.
 
 ## Checklist de testes online
 

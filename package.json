@@ -1,9 +1,11 @@
 {
   "name": "doc-motor",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.2.0",
   "type": "module",
-  "engines": { "node": ">=20 <25" },
+  "engines": {
+    "node": ">=20 <25"
+  },
   "scripts": {
     "dev": "vite",
     "prebuild": "node scripts/sync-manifest-version.mjs",
@@ -12,23 +14,28 @@
     "typecheck": "tsc -b --pretty false",
     "preview": "vite preview",
     "start": "node server/index.js",
+    "migrate": "node scripts/migrate.mjs",
+    "provision-admin": "node scripts/provision-admin.mjs",
     "test": "vitest run"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
+    "bcryptjs": "^3.0.3",
     "express": "^4.21.2",
     "lucide-react": "^0.468.0",
+    "mysql2": "^3.24.6",
+    "nodemailer": "^10.6.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "vite": "^6.0.5",
     "typescript": "^5.7.2",
+    "vite": "^6.0.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@eslint/js": "^9.17.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "eslint": "^9.17.0",
-    "@eslint/js": "^9.17.0",
     "typescript-eslint": "^8.18.0",
     "vitest": "^2.1.8"
   }

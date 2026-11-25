@@ -4,7 +4,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 
 ## Regras locais
 
-- Trabalhe por fases; não inicie a Fase 2 sem autorização explícita.
+- Trabalhe por fases; a Fase 2 foi autorizada na missão 2.0. Não iniciar a Fase 3 sem nova autorização explícita.
 - O backend é a autoridade para autenticação, autorização, tenant, limites e regras de negócio.
 - Não versionar `.env`, credenciais, tokens ou documentos pessoais.
 - Ao mudar schema, atualizar `docs/BANCO-DE-DADOS.md` e planejar migration/rollback.
@@ -15,6 +15,8 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - Fluxo permanente: implementar localmente → lint/typecheck/test/build → commit → publicar na `main` → validar na Hostinger por HTTP → corrigir e registrar evidências.
 - A conferência visual fica sob responsabilidade humana quando o controle automatizado do navegador não estiver disponível; registrar como pendente, sem inventar resultado.
 - Nunca adicionar senha de banco, chave de API ou dado de cliente ao código, logs, documentação ou commits.
+- Para autenticação, use sessões opacas persistidas no MySQL, cookies HttpOnly/Secure/SameSite, CSRF e rate limit persistido; não use tokens de autenticação em localStorage.
+- A recuperação de senha depende de SMTP configurado no ambiente; nunca retornar o token de recuperação na API.
 
 ## Comandos
 
