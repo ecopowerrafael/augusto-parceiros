@@ -7,6 +7,7 @@
 - Implementado avaliador declarativo sem `eval`, com deduplicação de cobranças, limites, análise manual e bloqueios.
 - Adicionados testes dos cenários financeiros A–J, placas, 10%, dados ausentes, ciclos e referências inválidas.
 - Completa a auditoria das mutações do builder, incluindo campos, opções, vínculos de cobrança, ações, regras e documentos.
+- Adicionada aba de configuração geral/versionamento e exposição no builder para disponibilidade, publicação e arquivamento de versões.
 - Mantida a entrega somente na branch de desenvolvimento; nenhum SQL remoto executado e nenhuma alteração publicada na `main`.
 
 ## [0.3.0-prep] — Preparação de serviços, preços e regras técnicas — 2026-11-25
