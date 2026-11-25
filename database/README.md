@@ -64,3 +64,5 @@ Após a importação das migrations anteriores, execute `migrations/004_partner_
 Ordem segura: execute `database/updates/004_partner_commissions_precheck.sql`, importe `migrations/004_partner_commissions.sql` e então execute `database/updates/004_partner_commissions_verify.sql`. Se houver falha parcial, pare, consulte as tabelas/colunas no phpMyAdmin e não registre manualmente a migration como aplicada.
 
 Confirme `004_partner_commissions.sql` em `schema_migrations` e a existência de `commission_settings` e `partner_commission_overrides` antes de liberar a configuração administrativa.
+
+Para investigar a aprovação de parceiros sem alterar dados, use `database/verify-admin-approval.sql` e siga `docs/HOMOLOGACAO-APROVACAO-PARCEIRO.md`.

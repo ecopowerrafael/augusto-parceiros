@@ -15,6 +15,7 @@ const manualFiles = [
   'database/install.sql',
   'database/verify.sql',
   'database/create-admin.sql',
+  'database/verify-admin-approval.sql',
 ]
 
 describe('SQL manual da Hostinger', () => {

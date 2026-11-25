@@ -105,3 +105,4 @@ Publicar a branch de correção 0.3.2, validar online os formulários de parceir
 - Nesta etapa: aprovação administrativa com diagnóstico seguro, navegação administrativa separada e avaliador genérico de comissão sem ativação comercial.
 - Pendente: importar `migrations/004_partner_commissions.sql`, validar aprovação real de parceiro e só então publicar a integração em `main`.
 - Limitação real: a validação HTTP externa desta sessão falhou por resolução DNS local (`docmotor.online:443` não resolvido); não foi possível confirmar a versão publicada nem executar aprovação autenticada no Hostinger. O diagnóstico retorna `X-Request-ID` e registra código SQL nos logs privados.
+- Roteiro de homologação e diagnóstico somente leitura: `docs/HOMOLOGACAO-APROVACAO-PARCEIRO.md` e `database/verify-admin-approval.sql`.
