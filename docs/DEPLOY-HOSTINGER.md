@@ -41,7 +41,7 @@ Não preencher senhas neste repositório ou nesta documentação. A instalação
 
 O proprietário confirmou a importação da Migration 002 e das 23 tabelas no banco correto. Não reimportar a 002. Para esta missão, usar somente: (1) `database/updates/003_complete_engine_service_seed_precheck.sql`; (2) `database/updates/003_complete_engine_service_seed.sql`; (3) `database/updates/003_complete_engine_service_seed_verify.sql`. Só depois da confirmação da 003 o código do painel que depende dessas configurações poderá ser publicado na `main`.
 
-A versão `0.3.0` foi publicada na `main` pelo commit `4f22ceb`. Na validação HTTP imediatamente posterior, a Hostinger ainda entregava `0.2.1`; `/api/admin/*` respondia o fallback HTML em vez das rotas protegidas novas. Considerar o deploy pendente e executar redeploy/trigger no painel Hostinger antes da homologação online. Não importar migrations novamente.
+A versão `0.3.0` foi publicada na `main` pelo commit `4f22ceb` (documentação final em `020b443`) e propagou na Hostinger. A validação HTTP confirmou `/api/health`, `/api/runtime-config`, `/api/services/catalog`, manifest, robots, headers, assets e `401` nas rotas administrativas sem sessão. Não importar migrations novamente.
 
 Os arquivos manuais devem ser gerados localmente por `node scripts/generate-hostinger-sql.mjs u891593158_doc database/updates`. Eles iniciam com `USE \`u891593158_doc\`;` e `SELECT DATABASE()`, qualificam tabelas da aplicação e não dependem de SSH ou CLI MySQL. A 002 já foi aplicada; para a configuração complementar, usar somente a sequência da 003: precheck, `003_complete_engine_service_seed.sql`, depois verify. Não importar novamente a 002.
 

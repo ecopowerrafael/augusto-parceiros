@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.2 — publicação e homologação online do construtor no-code — Migrations 001, 002 e 003 confirmadas no MySQL remoto; código publicado na `main` em `4f22ceb`, aguardando propagação/redeploy da Hostinger.
+Fase 3.2 — publicação e homologação online do construtor no-code — Migrations 001, 002 e 003 confirmadas no MySQL remoto; código publicado na `main` e versão `0.3.0` propagada na Hostinger.
 
 ## Implementado
 
@@ -44,7 +44,7 @@ Fase 3.2 — publicação e homologação online do construtor no-code — Migra
 
 ## Problemas conhecidos/limitações
 
-- Homologar a versão 0.3.0 na Hostinger após o redeploy; a validação atual ainda retorna a versão online 0.2.1.
+- Executar homologação autenticada do builder e criar o segundo serviço demonstrativo pela interface.
 - Recuperação de senha exige SMTP configurado; sem SMTP, não é possível concluir o envio real.
 - Links institucionais de política/termos são âncoras temporárias até conteúdo jurídico aprovado.
 - Formulário não persiste dados.
@@ -73,6 +73,7 @@ Fase 3.2 — publicação e homologação online do construtor no-code — Migra
 - Verificações desta preparação: lint, typecheck, build, sintaxe Node, revisão estática do SQL (9 tabelas, zero comandos destrutivos) e 12 testes com worker único aprovados. A execução padrão do Vitest sofreu OOM do ambiente; o resultado com worker único foi concluído.
 - Homologação HTTP online em 25/11/2026: `/api/health`, `/api/runtime-config`, `/robots.txt`, `/manifest.webmanifest`, fallback `/login`/`/cadastro-parceiro`/`/admin` e headers responderam conforme esperado; versão online `0.2.0`, staging e noindex confirmados.
 - Após o push da `main` em `4f22ceb`, a validação externa continuou retornando `/api/health` e `/api/runtime-config` na versão `0.2.1`; `/api/admin/*` ainda respondeu o fallback HTML, evidenciando que o novo deploy não havia propagado. Assets públicos e headers permaneceram acessíveis.
+- Após a propagação, validação HTTP da `0.3.0`: `/api/health` e `/api/runtime-config` retornaram versão `0.3.0`, `/api/services/catalog` retornou os serviços persistidos no MySQL, `/api/admin/services` retornou `401 AUTHENTICATION_REQUIRED`, manifest/robots/headers/fallback React responderam corretamente e os dois assets referenciados pelo HTML retornaram `200`.
 - Homologação HTTP online: `/api/admin/summary` sem sessão retornou `401`; após correção do hash bcrypt dummy, tentativa de login fictícia retorna `503 DATABASE_NOT_READY`. O backend está acessível e diagnostica explicitamente que a conexão/schema MySQL ainda não está pronto.
 - Diagnóstico temporário de conexão MySQL executado na Hostinger: `DATABASE_CONNECTED`, `connected=1`, banco `u891593158_doc` e `DATABASE_CONNECTED_EMPTY_SCHEMA` com `table_count=0`.
 - Políticas de senha por perfil: cliente com mínimo de 6 caracteres, parceiro/colaborador com mínimo de 8 e administrador com mínimo de 12 e complexidade.
@@ -88,4 +89,4 @@ Fase 3.2 — publicação e homologação online do construtor no-code — Migra
 
 ## Próxima missão
 
-Publicar a versão 0.3.0 na `main`, validar online e criar o segundo serviço de demonstração exclusivamente pela interface. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.
+Concluir homologação autenticada do builder e criar o segundo serviço de demonstração exclusivamente pela interface. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.
