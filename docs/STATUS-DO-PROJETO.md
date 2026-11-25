@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 1.3 — Homologação online e preparação para Fase 2.
+Fase 1.4 — Identidade visual oficial e encerramento da homologação inicial.
 
 ## Implementado
 
@@ -19,10 +19,15 @@ Fase 1.3 — Homologação online e preparação para Fase 2.
 - Validação HTTP real do domínio `https://docmotor.online/` executada.
 - Correção preparada para colisão de `robots.txt` estático e MIME do manifest.
 - Headers básicos de segurança adicionados.
+- Identidade visual oficial retangular e quadrada integrada.
+- Componente reutilizável `BrandLogo` criado.
+- Ícones técnicos PWA/favicons gerados a partir do ícone oficial.
+- Versão da aplicação atualizada para `0.1.1`.
+- Proprietário aprovou visualmente a página comercial publicada.
 
 ## Pendente
 
-- Novo deploy na Hostinger após o commit desta correção; ainda não refletido no domínio durante a revalidação HTTP.
+- Novo deploy na Hostinger após o commit desta correção; a substituição da marca ainda aguarda o redeploy desta Fase 1.4.
 - Conferência visual manual pelo proprietário.
 - Domínio/canonical definitivo.
 - Teste visual real em navegador e screenshots: tentativa feita, mas o navegador embutido retornou uma tela offline e o sandbox bloqueou acesso ao socket local.
@@ -45,7 +50,8 @@ Fase 1.3 — Homologação online e preparação para Fase 2.
 - Navegador automatizado: não utilizado conforme orientação; conferência visual manual pendente.
 - Homologação online inicial: HTTPS, HTML, health, runtime-config, fallback e assets aprovados.
 - Homologação online inicial: robots.txt e MIME do manifest reprovados e corrigidos no código; o domínio continuou entregando a versão anterior após duas consultas, aguardando redeploy efetivo/cache da Hostinger.
+- Fase 1.4: validação visual aprovada pelo proprietário; pendente apenas validar tecnicamente os novos assets após o redeploy.
 
 ## Próxima missão
 
-Confirmar o redeploy da Hostinger, revalidar robots/manifest/headers online e então iniciar a Fase 2 de autenticação, banco e permissões. Não implementar Simples API, motor de regras, orçamentos ou financeiro enquanto os requisitos técnicos essenciais não forem confirmados.
+Publicar a Fase 1.4, validar novos assets e headers por HTTP após o redeploy e aguardar autorização explícita antes da Fase 2.

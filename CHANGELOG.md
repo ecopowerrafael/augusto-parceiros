@@ -1,6 +1,14 @@
 # Changelog
 
-## [0.1.1] — Fase 1.1 — 2026-11-25
+## [0.1.1] — Fase 1.4 — 2026-11-25
+
+- Substituída a marca de apresentação pelo logotipo retangular oficial.
+- Criado componente reutilizável `BrandLogo` para futuras telas autenticadas.
+- Gerados favicons, Apple Touch Icon e ícones PWA a partir do ícone oficial quadrado.
+- Atualizadas referências do manifest, HTML e documentação de identidade visual.
+- Versão centralizada atualizada para `0.1.1`.
+
+## [0.1.0] — Fase 1.1 — 2026-11-25
 
 - Adicionada configuração centralizada de ambientes e variáveis de homologação.
 - Adicionados `/api/health` e `/api/runtime-config` sem dados sensíveis.
