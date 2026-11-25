@@ -6,6 +6,7 @@
 - Implementado editor administrativo genérico e simulador baseado nas configurações persistidas.
 - Implementado avaliador declarativo sem `eval`, com deduplicação de cobranças, limites, análise manual e bloqueios.
 - Adicionados testes dos cenários financeiros A–J, placas, 10%, dados ausentes, ciclos e referências inválidas.
+- Completa a auditoria das mutações do builder, incluindo campos, opções, vínculos de cobrança, ações, regras e documentos.
 - Mantida a entrega somente na branch de desenvolvimento; nenhum SQL remoto executado e nenhuma alteração publicada na `main`.
 
 ## [0.3.0-prep] — Preparação de serviços, preços e regras técnicas — 2026-11-25
