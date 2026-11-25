@@ -8,3 +8,6 @@ As regras abaixo são política operacional inicial e precisam de validação an
 - Categorias desconhecidas ficam em análise manual.
 - Resultado de viabilidade nunca é garantia de aprovação pelo Detran.
 - Dados técnicos ausentes ou inválidos não devem ser inventados.
+- Serviços, formulários, cobranças, exigências e regras devem ser configuráveis por versão, sem lógica exclusiva de um serviço no React ou Express.
+- Regras `DRAFT` só podem ser testadas no simulador administrativo; não liberam orçamento comercial.
+- Cobranças condicionais são avaliadas no backend, deduplicadas por código e nunca somam item sem valor definido.

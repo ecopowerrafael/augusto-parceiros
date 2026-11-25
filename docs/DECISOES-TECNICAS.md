@@ -18,3 +18,9 @@ A logo existente foi usada sem redesenho. A interface usa vermelho como cor come
 - SMTP é opcional na inicialização, mas obrigatório para envio real de recuperação de senha; sem configuração a solicitação não expõe token e permanece documentada como indisponível.
 - O painel administrativo usa consultas reais do MySQL e ações transacionais de aprovação/suspensão. Nenhum indicador é preenchido com valores fictícios.
 - A primeira instalação do banco será manual pelo phpMyAdmin, após diagnóstico real confirmar `127.0.0.1`, para não depender de SSH/terminal da Hostinger. `schema_migrations` é registrado pelo SQL somente depois que as oito tabelas da Fase 2 existem.
+
+## 2026-11-25 — configuração no-code por versão
+
+Serviços são separados de `service_versions`, e formulários, cobranças, regras, documentos e mensagens apontam para a versão. Isso permite editar um rascunho sem mutar a configuração publicada e prepara snapshots futuros de orçamento.
+
+O avaliador usa uma DSL declarativa limitada, validada no backend. Operadores, ações e tipos de campo são listas fechadas; `eval`, SQL, scripts e URLs arbitrárias são proibidos. O frontend apenas edita configurações e exibe o simulador; não é autoridade para totais, permissões ou viabilidade.

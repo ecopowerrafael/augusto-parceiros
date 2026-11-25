@@ -1,6 +1,6 @@
 # Doc Motor — Documentação Veicular
 
-Plataforma comercial e operacional da Doc Motor. A Fase 1 entrega o site comercial; a Fase 2 adiciona autenticação, perfis, permissões e persistência MySQL. Simples API, regras de viabilidade, orçamentos e financeiro permanecem fora do escopo atual.
+Plataforma comercial e operacional da Doc Motor. A Fase 1 entrega o site comercial; a Fase 2 adiciona autenticação, perfis, permissões e persistência MySQL. A Fase 3.1 adiciona o construtor no-code de serviços e o simulador administrativo. Simples API real, orçamentos definitivos, documentos de clientes e financeiro permanecem fora do escopo atual.
 
 ## Stack
 
@@ -28,13 +28,16 @@ O formulário da Fase 1 não grava dados. Não utilize dados reais de clientes d
 - `public/assets`: logo oficial e imagens editoriais locais.
 - `server/index.js`: servidor Express para servir `dist` em produção.
 - `server/app.js` e `server/auth.js`: API de autenticação, autorização, sessões, auditoria e painéis iniciais.
+- `server/services.js` e `server/service-config.js`: catálogo administrativo, construtor no-code e avaliador declarativo sem `eval`.
 - `migrations/001_initial.sql`: schema inicial da Fase 2.
 - `scripts/migrate.mjs` e `scripts/provision-admin.mjs`: operações explícitas de infraestrutura.
 - `docs/`: decisões, regras, roadmap, segurança e status persistente.
 
-## Preparação da Fase 3
+## Fase 3.1 — construtor no-code
 
-A Fase 3 está autorizada somente para preparar o catálogo de serviços, disponibilidade, preços e regras técnicas. O código da aplicação ainda não consulta essas tabelas. Para um banco Fase 2 existente, execute no phpMyAdmin, nesta ordem: `database/updates/002_services_pricing_rules_precheck.sql`, `database/updates/002_services_pricing_rules.sql` e `database/updates/002_services_pricing_rules_verify.sql`. Após a confirmação do proprietário, será implementado o painel administrativo e a publicação dependerá dessas tabelas.
+A branch contém o painel administrativo para configurar serviços, versões, seções, campos, fontes simuladas, cobranças, regras, documentos e o simulador. O backend valida todos os contratos e é a autoridade para o cálculo. Não há integração real com a Simples API, emissão de orçamento, PDF ou armazenamento de documentos nesta fase.
+
+Para um banco Fase 2 existente, execute no phpMyAdmin, nesta ordem: `database/updates/002_services_pricing_rules_precheck.sql`, `database/updates/002_services_pricing_rules.sql` e `database/updates/002_services_pricing_rules_verify.sql`. A publicação na `main` e o deploy permanecem bloqueados até a confirmação da importação.
 
 O arquivo `database/install.sql` já contém o schema Fase 2 + Fase 3 para bancos novos. Não executar `DROP`, migrations automáticas ou operações remotas pelo projeto.
 

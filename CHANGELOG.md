@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1] — Fase 3.1 — Construtor no-code — 2026-11-25
+
+- Revisado o schema Fase 3 para versões de serviço, formulários dinâmicos, fontes simuladas, catálogo de cobranças, ações, documentos e mensagens.
+- Implementado editor administrativo genérico e simulador baseado nas configurações persistidas.
+- Implementado avaliador declarativo sem `eval`, com deduplicação de cobranças, limites, análise manual e bloqueios.
+- Adicionados testes dos cenários financeiros A–J, placas, 10%, dados ausentes, ciclos e referências inválidas.
+- Mantida a entrega somente na branch de desenvolvimento; nenhum SQL remoto executado e nenhuma alteração publicada na `main`.
+
 ## [0.3.0-prep] — Preparação de serviços, preços e regras técnicas — 2026-11-25
 
 - Preparado schema SQL para serviços, categorias, UFs, disponibilidade, relações, preços e regras técnicas.

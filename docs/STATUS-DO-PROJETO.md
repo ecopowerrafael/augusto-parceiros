@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.0 — preparação do schema de serviços, preços e regras técnicas — SQL/documentação preparados em branch de desenvolvimento; aguardando importação manual pelo phpMyAdmin antes do código dependente.
+Fase 3.1 — construtor no-code de serviços, formulários, cobranças e regras — implementação local concluída na branch de desenvolvimento; aguardando importação manual pelo phpMyAdmin antes da publicação na `main`.
 
 ## Implementado
 
@@ -76,7 +76,9 @@ Fase 3.0 — preparação do schema de serviços, preços e regras técnicas —
 - SQL administrativo temporário é gerado localmente por `scripts/generate-admin-sql.ps1`, fora do repositório.
 - Schema Fase 3 preparado sem preços reais: catálogo de serviços, categorias, UFs, disponibilidade, relações, tabelas de preço, componentes e regras técnicas preliminares em `DRAFT`.
 - Pacote manual Fase 3 criado em `database/updates/002_services_pricing_rules_precheck.sql`, `database/updates/002_services_pricing_rules.sql` e `database/updates/002_services_pricing_rules_verify.sql`.
+- Construtor administrativo genérico implementado com versões, seções, campos, opções, catálogo de cobranças, regras, documentos e simulador.
+- Avaliador declarativo backend implementado sem execução arbitrária de código; fontes externas permanecem simuladas e a Simples API não foi integrada.
 
 ## Próxima missão
 
-Importar e verificar o SQL da Fase 3 pelo phpMyAdmin. Após confirmação do proprietário, implementar o painel administrativo de serviços, preços e regras. Não iniciar Fase 4/Simples API, motor automático, orçamentos ou financeiro.
+Importar e verificar o SQL definitivo da Fase 3.1 pelo phpMyAdmin; depois homologar o editor e criar o segundo serviço de demonstração exclusivamente pela interface. Só então preparar merge/deploy na `main`. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.
