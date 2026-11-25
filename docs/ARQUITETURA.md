@@ -1,6 +1,6 @@
 # Arquitetura
 
-## Estado atual — Fase 3.1
+## Estado atual — Fase 3.2
 
 Monorepo simples, um único deploy Node.js. O build do Vite gera o frontend estático e o Express serve `dist` no mesmo domínio, com fallback para SPA. A API REST da Fase 2 está no mesmo processo e usa MySQL via `mysql2`.
 

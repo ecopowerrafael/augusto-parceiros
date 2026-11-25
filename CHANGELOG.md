@@ -13,6 +13,7 @@
 - Publicada a versão `0.3.0` na `main` e validada por HTTP na Hostinger; testes autenticados do builder permanecem sob responsabilidade do proprietário.
 - Ampliada a interface do builder para opções, campos calculados, condições de visibilidade, cobranças condicionais, mapeamentos e ações de regras.
 - Adicionado roteiro persistente em `docs/HOMOLOGACAO-FASE-3.2.md` com 12 cenários do motor, checklist do segundo serviço no-code e limites da validação.
+- Alinhada a documentação de fase: 3.1 implementada, 3.2 em homologação autenticada e migrations 001–003 confirmadas, sem reimportação.
 
 ## [0.3.0-prep] — Preparação anterior de serviços, preços e regras técnicas — 2026-11-25
 

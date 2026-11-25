@@ -1,6 +1,6 @@
 # Doc Motor — Documentação Veicular
 
-Plataforma comercial e operacional da Doc Motor. A Fase 1 entrega o site comercial; a Fase 2 adiciona autenticação, perfis, permissões e persistência MySQL. A Fase 3.1 adiciona o construtor no-code de serviços e o simulador administrativo. Simples API real, orçamentos definitivos, documentos de clientes e financeiro permanecem fora do escopo atual.
+Plataforma comercial e operacional da Doc Motor. A Fase 1 entrega o site comercial; a Fase 2 adiciona autenticação, perfis, permissões e persistência MySQL. A Fase 3.1 implementa o construtor no-code de serviços e o simulador administrativo; a Fase 3.2 publica e homologa essa entrega. Simples API real, orçamentos definitivos, documentos de clientes e financeiro permanecem fora do escopo atual.
 
 ## Stack
 
@@ -34,7 +34,7 @@ O formulário da Fase 1 não grava dados. Não utilize dados reais de clientes d
 - `docs/`: decisões, regras, roadmap, segurança e status persistente.
 - `docs/HOMOLOGACAO-FASE-3.2.md`: roteiro dos 12 cenários do motor e homologação do segundo serviço no-code.
 
-## Fase 3.1 — construtor no-code
+## Fase 3 — construtor no-code e homologação
 
 A branch contém o painel administrativo para configurar serviços, versões, seções, campos, fontes simuladas, cobranças, regras, documentos e o simulador. O backend valida todos os contratos e é a autoridade para o cálculo. Não há integração real com a Simples API, emissão de orçamento, PDF ou armazenamento de documentos nesta fase.
 
