@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.3 — correção do fluxo de cadastro e aprovação de parceiros — implementação em branch de correção, versão `0.3.1` preparada para homologação.
+Fase 3.3 — correção do fluxo de cadastro e aprovação de parceiros — código publicado na `main`, versão `0.3.1` propagada na Hostinger; homologação funcional com conta fictícia pendente.
 
 ## Implementado
 
@@ -33,7 +33,6 @@ Fase 3.3 — correção do fluxo de cadastro e aprovação de parceiros — impl
 
 ## Pendente
 
-- Executar validação online da versão `0.3.1` na Hostinger após a integração da branch de correção.
 - Criar/usar uma conta fictícia de parceiro e validar cadastro, status pendente, aprovação, recusa, suspensão e reativação com o administrador.
 - Conferência visual manual do menu, cadastro e painéis em mobile e desktop.
 - Configurar SMTP para validar recuperação de senha real.
@@ -79,6 +78,7 @@ Fase 3.3 — correção do fluxo de cadastro e aprovação de parceiros — impl
 - Revalidação local após o roteiro: 35 testes aprovados com worker único, `npm run lint`, `npm run typecheck` e `npm run build` aprovados; nenhum arquivo versionado foi alterado pelo build.
 - Revalidação HTTP externa em 25/11/2026: `/api/health` retornou `200` com `version=0.3.0`, runtime confirmou `staging`/`allowIndexing=false`, catálogo público retornou dados persistidos, `/api/admin/services` respondeu `401`, e `robots.txt`/manifest responderam `200` com headers de segurança.
 - Auditoria da Fase 3.3 confirmou os links provisórios no `src/App.tsx`, a infraestrutura de autenticação/admin existente e a ausência de endpoint de acompanhamento próprio para parceiros pendentes.
+- Publicação Fase 3.3: commit `b99ed33` integrado na `main`; em 25/11/2026 `/api/health` retornou `0.3.1`, o HTML referenciou `index-Bpu536if.js`, e `/api/partner/status` e `/api/admin/partners` retornaram `401 AUTHENTICATION_REQUIRED` sem sessão.
 - Homologação HTTP online: `/api/admin/summary` sem sessão retornou `401`; após correção do hash bcrypt dummy, tentativa de login fictícia retorna `503 DATABASE_NOT_READY`. O backend está acessível e diagnostica explicitamente que a conexão/schema MySQL ainda não está pronto.
 - Diagnóstico temporário de conexão MySQL executado na Hostinger: `DATABASE_CONNECTED`, `connected=1`, banco `u891593158_doc` e `DATABASE_CONNECTED_EMPTY_SCHEMA` com `table_count=0`.
 - Políticas de senha por perfil: cliente com mínimo de 6 caracteres, parceiro/colaborador com mínimo de 8 e administrador com mínimo de 12 e complexidade.

@@ -51,7 +51,7 @@ Não executar migrations no startup, não usar SSH como requisito e não importa
 
 ## Fase 3.3 — correção do fluxo de parceiros
 
-A versão `0.3.1` não exige migration. As migrations 001, 002 e 003 permanecem instaladas e não devem ser reexecutadas. Após integrar a branch de correção na `main`, aguardar a propagação e validar `/api/health` com `version=0.3.1`.
+A versão `0.3.1` não exige migration. As migrations 001, 002 e 003 permanecem instaladas e não devem ser reexecutadas. O commit `b99ed33` foi integrado na `main` e propagou na Hostinger; `/api/health` retornou `version=0.3.1` e o bundle `index-Bpu536if.js` foi entregue.
 
 Validação funcional mínima, com contas fictícias e sessão autorizada:
 
