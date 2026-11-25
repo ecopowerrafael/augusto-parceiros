@@ -1,0 +1,37 @@
+# Instalação manual do banco Doc Motor
+
+Esta pasta prepara a instalação da Fase 2 pelo phpMyAdmin. A comunicação com o MySQL da Hostinger já foi comprovada pelos logs do backend usando `127.0.0.1`; o banco estava inicialmente vazio. Os arquivos não executam operações remotas automaticamente.
+
+## Ordem exata
+
+1. No phpMyAdmin, selecione o banco correto, atualmente `u891593158_doc`.
+2. Abra a aba **Importar** e importe `database/install.sql`.
+3. Execute `database/verify.sql` e confirme as tabelas, a migration `001_initial.sql` e zero órfãos.
+4. Gere localmente o hash bcrypt da senha administrativa.
+5. Crie uma cópia temporária de `database/create-admin.sql`, substitua somente os placeholders de nome, e-mail e hash, e execute essa cópia no phpMyAdmin.
+6. Execute novamente a parte de administradores de `database/verify.sql` e confirme exatamente um administrador.
+7. Remova a cópia preenchida do computador quando concluir. Ela não deve ser commitada nem enviada ao GitHub.
+
+Não execute `scripts/migrate.mjs` nem `scripts/provision-admin.mjs` para este procedimento manual. Eles permanecem disponíveis para ambientes que tenham terminal e não devem ser combinados com o SQL manual sem conferir `schema_migrations`.
+
+## Gerar o hash bcrypt localmente
+
+O backend usa `bcryptjs` com custo `12`. No diretório do projeto, execute localmente e informe uma senha forte apenas quando solicitado:
+
+```powershell
+$env:ADMIN_PASSWORD = Read-Host 'Senha administrativa (não será versionada)'
+node --input-type=module -e "import bcrypt from 'bcryptjs'; console.log(await bcrypt.hash(process.env.ADMIN_PASSWORD, 12))"
+Remove-Item Env:ADMIN_PASSWORD
+```
+
+Copie somente a saída do hash para a cópia temporária de `create-admin.sql`. Não use hashes de exemplo ou senhas padrão.
+
+## Falhas parciais
+
+O arquivo usa `CREATE TABLE IF NOT EXISTS` e não contém `DROP TABLE`/`DROP DATABASE`. A tabela `schema_migrations` só recebe `001_initial.sql` quando as oito tabelas da Fase 2 estão presentes. Se a importação interromper, não marque a instalação como concluída: execute `verify.sql`, corrija o erro no phpMyAdmin e importe `install.sql` novamente. Antes de repetir, confirme se o erro não deixou uma tabela com estrutura incompleta.
+
+O MySQL pode confirmar DDL individualmente; por isso, a ausência do registro em `schema_migrations` é o sinal de que a instalação não deve ser considerada completa. Não crie manualmente esse registro sem validar todas as tabelas.
+
+## Atualizações futuras
+
+Cada atualização deve ser um novo arquivo SQL versionado, por exemplo `002_nome.sql`, acompanhado de instruções de pré-verificação, execução e verificação. O SQL de instalação manual correspondente deve registrar o nome da migration somente depois da estrutura daquela versão existir. Nunca reutilize ou edite uma migration já aplicada para alterar produção.

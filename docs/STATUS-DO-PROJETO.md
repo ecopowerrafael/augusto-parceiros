@@ -33,8 +33,9 @@ Fase 2.0 — Autenticação, perfis e base operacional — implementação local
 
 ## Pendente
 
-- Configurar `DATABASE_URL`, SMTP e primeiro administrador na Hostinger.
-- Executar migration no banco real e testes HTTP de cadastro/login/aprovação/reset usando contas fictícias.
+- Importar `database/install.sql` pelo phpMyAdmin e validar com `database/verify.sql`.
+- Criar o primeiro administrador usando `database/create-admin.sql` e hash bcrypt gerado localmente.
+- Configurar SMTP e executar testes HTTP de cadastro/login/aprovação/reset usando contas fictícias.
 - Publicar e validar o deploy 0.2.0 na Hostinger.
 - Conferência visual manual das novas telas.
 - Domínio/canonical definitivo.
@@ -65,10 +66,11 @@ Fase 2.0 — Autenticação, perfis e base operacional — implementação local
 - `npm run lint`: passou após a atualização final do backend; validação MySQL online ainda não executada.
 - Navegador automatizado: não utilizado conforme orientação; telas da Fase 2 aguardam conferência visual manual.
 - Reauditoria local: lint, typecheck, 5 testes, build e diff-check aprovados após as correções do painel.
+- Verificações desta preparação: lint, typecheck, build, sintaxe Node, revisão estática do SQL (9 tabelas, zero comandos destrutivos) e 12 testes com worker único aprovados. A execução padrão do Vitest sofreu OOM do ambiente; o resultado com worker único foi concluído.
 - Homologação HTTP online em 25/11/2026: `/api/health`, `/api/runtime-config`, `/robots.txt`, `/manifest.webmanifest`, fallback `/login`/`/cadastro-parceiro`/`/admin` e headers responderam conforme esperado; versão online `0.2.0`, staging e noindex confirmados.
 - Homologação HTTP online: `/api/admin/summary` sem sessão retornou `401`; após correção do hash bcrypt dummy, tentativa de login fictícia retorna `503 DATABASE_NOT_READY`. O backend está acessível e diagnostica explicitamente que a conexão/schema MySQL ainda não está pronto.
-- Diagnóstico temporário de conexão MySQL adicionado à inicialização; ainda não executado na Hostinger. Consultar os logs privados pelo marcador `[database-diagnostic]` após o próximo redeploy.
+- Diagnóstico temporário de conexão MySQL executado na Hostinger: `DATABASE_CONNECTED`, `connected=1`, banco `u891593158_doc` e `DATABASE_CONNECTED_EMPTY_SCHEMA` com `table_count=0`.
 
 ## Próxima missão
 
-Configurar as variáveis seguras da Hostinger, executar `node scripts/migrate.mjs`, provisionar o primeiro administrador e realizar a homologação HTTP da Fase 2. Não iniciar Fase 3 nem Simples API, motor de regras, orçamentos ou financeiro.
+Importar os SQLs pelo phpMyAdmin, provisionar o primeiro administrador conforme `database/README.md` e realizar a homologação HTTP da Fase 2. Não iniciar Fase 3 nem Simples API, motor de regras, orçamentos ou financeiro.

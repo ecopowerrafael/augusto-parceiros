@@ -17,3 +17,4 @@ A logo existente foi usada sem redesenho. A interface usa vermelho como cor come
 - Sessões opacas persistidas foram escolhidas em vez de JWT para permitir revogação, expiração e controle operacional imediato.
 - SMTP é opcional na inicialização, mas obrigatório para envio real de recuperação de senha; sem configuração a solicitação não expõe token e permanece documentada como indisponível.
 - O painel administrativo usa consultas reais do MySQL e ações transacionais de aprovação/suspensão. Nenhum indicador é preenchido com valores fictícios.
+- A primeira instalação do banco será manual pelo phpMyAdmin, após diagnóstico real confirmar `127.0.0.1`, para não depender de SSH/terminal da Hostinger. `schema_migrations` é registrado pelo SQL somente depois que as oito tabelas da Fase 2 existem.

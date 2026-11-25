@@ -38,7 +38,9 @@ Leia [`docs/DEPLOY-HOSTINGER.md`](docs/DEPLOY-HOSTINGER.md). Em produção, conf
 
 ## Fase 2
 
-Configure `DATABASE_URL` no ambiente, execute `node scripts/migrate.mjs` e provisione o primeiro administrador com `node scripts/provision-admin.mjs`. O cadastro de parceiro inicia pendente de aprovação.
+Em ambientes com terminal, `node scripts/migrate.mjs` e `node scripts/provision-admin.mjs` executam a instalação/provisionamento. Na Hostinger desta fase, use o procedimento manual pelo phpMyAdmin documentado em `database/README.md`. O cadastro de parceiro inicia pendente de aprovação.
+
+Para a instalação atual da Hostinger, siga `database/README.md`: importe os SQLs pelo phpMyAdmin e não execute os scripts de terminal.
 
 ## Escopo da Fase 1
 

@@ -6,7 +6,8 @@
 2. Autenticação segura e PWA instalável — implementação 0.2.0 em homologação.
 
    Entregue: perfis ADMINISTRATOR/PARTNER/CLIENT, cadastros, aprovação de parceiro, login/logout, sessões, CSRF, rate limit, bcrypt, auditoria, reset SMTP, migrations e painéis iniciais.
-   Pendente: configurar banco/SMTP/admin na Hostinger, executar testes HTTP com contas fictícias e validação visual manual.
+   Pendente: importar o banco pelo phpMyAdmin, configurar SMTP/admin, executar testes HTTP com contas fictícias e validação visual manual.
+   Conexão MySQL comprovada em ambiente real usando `127.0.0.1`; banco inicialmente vazio.
 3. Painel administrativo e configurações comerciais.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.

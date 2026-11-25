@@ -18,6 +18,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - Nunca adicionar senha de banco, chave de API ou dado de cliente ao código, logs, documentação ou commits.
 - Para autenticação, use sessões opacas persistidas no MySQL, cookies HttpOnly/Secure/SameSite, CSRF e rate limit persistido; não use tokens de autenticação em localStorage.
 - A recuperação de senha depende de SMTP configurado no ambiente; nunca retornar o token de recuperação na API.
+- A instalação inicial do MySQL desta fase é manual pelo phpMyAdmin usando `database/install.sql`; não executar migrations, provisionamento ou operações remotas sem autorização explícita da missão.
 
 ## Comandos
 

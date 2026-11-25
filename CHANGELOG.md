@@ -8,6 +8,7 @@
 - Preservado o site comercial; sem Simples API, motor de regras, orçamentos ou financeiro.
 - Painel administrativo inicial com indicadores reais e ações de aprovação, recusa e suspensão de parceiros.
 - Gestão inicial de usuários, auditoria protegida e matriz documentada de permissões.
+- Adicionados artefatos de instalação manual pelo phpMyAdmin: `database/install.sql`, `database/create-admin.sql`, `database/verify.sql` e documentação operacional.
 
 ## [0.1.1] — Fase 1.4 — 2026-11-25
 
