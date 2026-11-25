@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.2 — publicação e homologação online do construtor no-code — Migrations 001, 002 e 003 confirmadas no MySQL remoto; código publicado na `main` e versão `0.3.0` propagada na Hostinger.
+Fase 3.3 — correção do fluxo de cadastro e aprovação de parceiros — implementação em branch de correção, versão `0.3.1` preparada para homologação.
 
 ## Implementado
 
@@ -33,21 +33,20 @@ Fase 3.2 — publicação e homologação online do construtor no-code — Migra
 
 ## Pendente
 
-- Migration 002 já foi importada pelo phpMyAdmin no banco `u891593158_doc`; não importar novamente.
-- Aplicar somente `003_complete_engine_service_seed_precheck.sql`, `003_complete_engine_service_seed.sql` e `003_complete_engine_service_seed_verify.sql`, após revisão da pré-verificação.
-- Criar o primeiro administrador usando `database/create-admin.sql` e hash bcrypt gerado localmente.
-- Configurar SMTP e executar testes HTTP de cadastro/login/aprovação/reset usando contas fictícias.
-- Publicar e validar o deploy 0.2.1 na Hostinger.
+- Executar validação online da versão `0.3.1` na Hostinger após a integração da branch de correção.
+- Criar/usar uma conta fictícia de parceiro e validar cadastro, status pendente, aprovação, recusa, suspensão e reativação com o administrador.
+- Conferência visual manual do menu, cadastro e painéis em mobile e desktop.
+- Configurar SMTP para validar recuperação de senha real.
 - Conferência visual manual das novas telas.
 - Domínio/canonical definitivo.
-- Aguardar criação do administrador e homologação dos parceiros pelo proprietário.
+- Não iniciar a Fase 4 nem consumir créditos da Simples API.
 
 ## Problemas conhecidos/limitações
 
-- Executar homologação autenticada do builder e criar o segundo serviço demonstrativo pela interface.
+- A conferência autenticada do construtor no-code e a criação do segundo serviço demonstrativo continuam pendentes da missão anterior.
 - Recuperação de senha exige SMTP configurado; sem SMTP, não é possível concluir o envio real.
 - Links institucionais de política/termos são âncoras temporárias até conteúdo jurídico aprovado.
-- Formulário não persiste dados.
+- O formulário comercial geral continua encaminhando atendimento para o WhatsApp; o cadastro de parceiro usa `/cadastro-parceiro` e persiste no MySQL.
 
 ## Testes realizados
 
@@ -79,6 +78,7 @@ Fase 3.2 — publicação e homologação online do construtor no-code — Migra
 - Roteiro persistente de homologação autenticada criado em `docs/HOMOLOGACAO-FASE-3.2.md`, incluindo os 12 cenários do motor e o aceite do segundo serviço no-code.
 - Revalidação local após o roteiro: 35 testes aprovados com worker único, `npm run lint`, `npm run typecheck` e `npm run build` aprovados; nenhum arquivo versionado foi alterado pelo build.
 - Revalidação HTTP externa em 25/11/2026: `/api/health` retornou `200` com `version=0.3.0`, runtime confirmou `staging`/`allowIndexing=false`, catálogo público retornou dados persistidos, `/api/admin/services` respondeu `401`, e `robots.txt`/manifest responderam `200` com headers de segurança.
+- Auditoria da Fase 3.3 confirmou os links provisórios no `src/App.tsx`, a infraestrutura de autenticação/admin existente e a ausência de endpoint de acompanhamento próprio para parceiros pendentes.
 - Homologação HTTP online: `/api/admin/summary` sem sessão retornou `401`; após correção do hash bcrypt dummy, tentativa de login fictícia retorna `503 DATABASE_NOT_READY`. O backend está acessível e diagnostica explicitamente que a conexão/schema MySQL ainda não está pronto.
 - Diagnóstico temporário de conexão MySQL executado na Hostinger: `DATABASE_CONNECTED`, `connected=1`, banco `u891593158_doc` e `DATABASE_CONNECTED_EMPTY_SCHEMA` com `table_count=0`.
 - Políticas de senha por perfil: cliente com mínimo de 6 caracteres, parceiro/colaborador com mínimo de 8 e administrador com mínimo de 12 e complexidade.
@@ -94,4 +94,4 @@ Fase 3.2 — publicação e homologação online do construtor no-code — Migra
 
 ## Próxima missão
 
-Executar, com sessão administrativa autorizada, o roteiro em `docs/HOMOLOGACAO-FASE-3.2.md`, criar o segundo serviço de demonstração exclusivamente pela interface e registrar as evidências. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.
+Publicar a branch de correção 0.3.1, validar online o cadastro pelo site comercial e concluir a homologação administrativa do fluxo de parceiros. Depois retomar o roteiro em `docs/HOMOLOGACAO-FASE-3.2.md`. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.

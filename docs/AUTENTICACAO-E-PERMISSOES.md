@@ -22,7 +22,9 @@ As rotas privadas usam `requireAuth`, `requireRole` e, para parceiros, consultas
 
 ## Status
 
-Parceiros são criados como `PENDING` e não acessam rotas operacionais. A aprovação administrativa altera a empresa e os usuários vinculados para `ACTIVE`; suspensão altera o acesso para `SUSPENDED`; recusa desabilita o usuário e preserva a justificativa.
+Parceiros são criados como `PENDING`, com empresa, responsável e vínculo `OWNER` persistidos em uma transação. O próprio parceiro pendente pode consultar somente o status da sua empresa em `/api/partner/status`; não acessa rotas operacionais. A aprovação administrativa altera a empresa e os usuários vinculados para `ACTIVE`; suspensão altera o acesso para `SUSPENDED`; recusa desabilita o usuário e preserva a justificativa. A mudança é transacional e registrada em `audit_logs`.
+
+Os links comerciais `/cadastro-parceiro` e `/area-do-parceiro` usam o cadastro e a sessão existentes. A área encaminha usuários não autenticados ao login, parceiros pendentes ao acompanhamento e parceiros ativos ao painel. A autoridade dessas decisões permanece no backend.
 
 ## Recuperação
 

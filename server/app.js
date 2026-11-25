@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url'
 import { config } from './config.js'
 import { getDatabasePool, isDatabaseConfigured, withTransaction } from './database.js'
 import { createPublicServiceRouter, createServiceRouter } from './services.js'
+import { isPartnerCompanyStatus, partnerUserStatusForCompanyStatus } from './partner-flow.js'
 import {
   assertSameOrigin,
   bcrypt,
@@ -217,7 +218,7 @@ app.post('/api/auth/reset-password', databaseRequired, asyncRoute(async (request
 app.get('/api/admin/summary', databaseRequired, requireRole('ADMINISTRATOR'), asyncRoute(async (_request, response) => {
   const pool = getDatabasePool()
   const [userRows] = await pool.query(`SELECT COUNT(*) AS total_users, SUM(role = 'CLIENT') AS total_clients, SUM(role = 'PARTNER') AS total_partner_users FROM users`)
-  const [companyRows] = await pool.query(`SELECT COUNT(*) AS total_partners, SUM(status = 'PENDING') AS pending_partners, SUM(status = 'ACTIVE') AS active_partners, SUM(status = 'SUSPENDED') AS suspended_partners FROM partner_companies`)
+  const [companyRows] = await pool.query(`SELECT COUNT(*) AS total_partners, SUM(status = 'PENDING') AS pending_partners, SUM(status = 'ACTIVE') AS active_partners, SUM(status = 'REJECTED') AS rejected_partners, SUM(status = 'SUSPENDED') AS suspended_partners FROM partner_companies`)
   response.json({ users: userRows[0], partners: companyRows[0] })
 }))
 
@@ -230,6 +231,8 @@ app.get('/api/admin/partners', databaseRequired, requireRole('ADMINISTRATOR'), a
   const filters = []
   if (request.query.q) { filters.push('(legal_name LIKE ? OR trade_name LIKE ? OR email LIKE ? OR cpf_cnpj LIKE ?)'); const query = `%${String(request.query.q).trim().slice(0, 80)}%`; params.push(query, query, query, query) }
   if (['PENDING', 'ACTIVE', 'SUSPENDED', 'REJECTED'].includes(status)) { filters.unshift('status = ?'); params.unshift(status) }
+  if (request.query.segment) { filters.push('segment = ?'); params.push(String(request.query.segment).trim().slice(0, 120)) }
+  if (request.query.state) { filters.push('state = ?'); params.push(String(request.query.state).trim().toUpperCase().slice(0, 2)) }
   const where = filters.length ? `WHERE ${filters.join(' AND ')}` : ''
   const [rows] = await getDatabasePool().execute(`SELECT id, person_type, legal_name, trade_name, cpf_cnpj, responsible_name, email, whatsapp, city, state, segment, status, rejection_reason, created_at FROM partner_companies ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`, [...params, pageSize, offset])
   const [countRows] = await getDatabasePool().query(`SELECT COUNT(*) AS total FROM partner_companies ${where}`, params)
@@ -256,14 +259,13 @@ app.get('/api/admin/audit', databaseRequired, requireRole('ADMINISTRATOR'), asyn
 
 app.patch('/api/admin/partners/:id/status', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
   const status = String(request.body.status || '').toUpperCase()
-  const allowed = ['ACTIVE', 'REJECTED', 'SUSPENDED']
-  if (!allowed.includes(status)) return response.status(400).json({ error: 'INVALID_STATUS' })
-  const reason = status === 'REJECTED' ? String(request.body.reason || '').trim().slice(0, 500) : null
+  if (!isPartnerCompanyStatus(status) || status === 'PENDING') return response.status(400).json({ error: 'INVALID_STATUS' })
+  const reason = ['REJECTED', 'SUSPENDED'].includes(status) ? String(request.body.reason || '').trim().slice(0, 500) || null : null
   const result = await withTransaction(async (connection) => {
     const [companies] = await connection.execute('SELECT id FROM partner_companies WHERE id = ? FOR UPDATE', [request.params.id])
     if (companies.length === 0) return false
     await connection.execute('UPDATE partner_companies SET status = ?, rejection_reason = ?, approved_at = IF(? = \'ACTIVE\', UTC_TIMESTAMP(), approved_at), approved_by = IF(? = \'ACTIVE\', ?, approved_by), updated_at = UTC_TIMESTAMP() WHERE id = ?', [status, reason, status, status, request.auth.user.id, request.params.id])
-    await connection.execute(`UPDATE users u JOIN company_members cm ON cm.user_id = u.id SET u.status = ?, u.approved_at = IF(? = 'ACTIVE', UTC_TIMESTAMP(), u.approved_at), u.approved_by = IF(? = 'ACTIVE', ?, u.approved_by), u.updated_at = UTC_TIMESTAMP() WHERE cm.company_id = ?`, [status === 'ACTIVE' ? 'ACTIVE' : status === 'SUSPENDED' ? 'SUSPENDED' : 'DISABLED', status, status, request.auth.user.id, request.params.id])
+    await connection.execute(`UPDATE users u JOIN company_members cm ON cm.user_id = u.id SET u.status = ?, u.approved_at = IF(? = 'ACTIVE', UTC_TIMESTAMP(), u.approved_at), u.approved_by = IF(? = 'ACTIVE', ?, u.approved_by), u.updated_at = UTC_TIMESTAMP() WHERE cm.company_id = ?`, [partnerUserStatusForCompanyStatus(status), status, status, request.auth.user.id, request.params.id])
     return true
   })
   if (!result) return response.status(404).json({ error: 'PARTNER_NOT_FOUND' })
@@ -274,6 +276,12 @@ app.patch('/api/admin/partners/:id/status', databaseRequired, requireRole('ADMIN
 app.get('/api/partner/dashboard', databaseRequired, requireRole('PARTNER'), activeAccount, asyncRoute(async (request, response) => {
   const [rows] = await getDatabasePool().execute(`SELECT c.id, c.legal_name, c.trade_name, c.person_type, c.cpf_cnpj, c.email, c.whatsapp, c.segment, c.status, cm.company_role FROM partner_companies c JOIN company_members cm ON cm.company_id = c.id WHERE cm.user_id = ? LIMIT 1`, [request.auth.user.id])
   response.json({ user: request.auth.user, company: rows[0] || null })
+}))
+
+app.get('/api/partner/status', databaseRequired, requireRole('PARTNER'), asyncRoute(async (request, response) => {
+  const [rows] = await getDatabasePool().execute(`SELECT c.id, c.legal_name, c.trade_name, c.person_type, c.status, c.segment, c.city, c.state, c.created_at, c.rejection_reason, cm.company_role FROM partner_companies c JOIN company_members cm ON cm.company_id = c.id WHERE cm.user_id = ? LIMIT 1`, [request.auth.user.id])
+  if (rows.length === 0) return response.status(404).json({ error: 'PARTNER_COMPANY_NOT_FOUND' })
+  response.json({ user: request.auth.user, company: rows[0] })
 }))
 
 app.get('/api/partner/members', databaseRequired, requireRole('PARTNER'), activeAccount, asyncRoute(async (request, response) => {

@@ -49,6 +49,20 @@ Não executar migrations no startup, não usar SSH como requisito e não importa
 
 ## Checklist de testes online
 
+## Fase 3.3 — correção do fluxo de parceiros
+
+A versão `0.3.1` não exige migration. As migrations 001, 002 e 003 permanecem instaladas e não devem ser reexecutadas. Após integrar a branch de correção na `main`, aguardar a propagação e validar `/api/health` com `version=0.3.1`.
+
+Validação funcional mínima, com contas fictícias e sessão autorizada:
+
+- `/cadastro-parceiro` persiste empresa, responsável, vínculo `OWNER` e status `PENDING`.
+- `/area-do-parceiro` leva anônimos ao login, pendentes ao `/aguardando-aprovacao` e ativos ao `/parceiro`.
+- `/api/partner/status` retorna somente os dados da própria empresa e é inacessível sem sessão de parceiro.
+- O administrador pesquisa/filtra parceiros e aprova, recusa, suspende ou reativa com confirmação e motivo quando aplicável.
+- A alteração de status é refletida no usuário vinculado e registrada em auditoria.
+
+Não considerar o push no GitHub como deploy concluído sem confirmar a versão no `/api/health`.
+
 - [ ] Deploy da branch `main` concluído na Hostinger.
 - [ ] `GET /api/health` retorna `status: ok`, `environment: staging` e a versão esperada.
 - [ ] Header `X-Robots-Tag` contém `noindex, nofollow`.

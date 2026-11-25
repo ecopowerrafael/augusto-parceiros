@@ -11,6 +11,8 @@
    Ajustes 0.2.1: políticas de senha por perfil, colaboradores, mostrar/ocultar senha e status traduzidos.
 3. Painel administrativo e configurações comerciais — Fase 3.1 implementada; Fase 3.2 em homologação autenticada / versão 0.3.0 publicada.
    Construtor no-code, composição de cobranças, regras declarativas e simulador implementados. Migrations 001, 002 e 003 confirmadas no MySQL remoto; pendente apenas a execução dos cenários pelo proprietário e a criação do segundo serviço demonstrativo pela interface.
+3.3. Fluxo de cadastro e aprovação de parceiros — correção 0.3.1 preparada.
+   Integração dos CTAs comerciais com o cadastro real, acompanhamento seguro de pendentes, busca/filtros administrativos e transições de status com auditoria. Pendente validar o fluxo completo online com contas fictícias.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.

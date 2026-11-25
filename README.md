@@ -36,9 +36,9 @@ O formulário da Fase 1 não grava dados. Não utilize dados reais de clientes d
 
 ## Fase 3 — construtor no-code e homologação
 
-A branch contém o painel administrativo para configurar serviços, versões, seções, campos, fontes simuladas, cobranças, regras, documentos e o simulador. O backend valida todos os contratos e é a autoridade para o cálculo. Não há integração real com a Simples API, emissão de orçamento, PDF ou armazenamento de documentos nesta fase.
+A branch contém o painel administrativo para configurar serviços, versões, seções, campos, fontes simuladas, cobranças, regras, documentos e o simulador. O backend valida todos os contratos e é a autoridade para o cálculo. O fluxo comercial de parceiros usa `/cadastro-parceiro`; `/area-do-parceiro` direciona cada perfil conforme a sessão e o status real. Não há integração real com a Simples API, emissão de orçamento, PDF ou armazenamento de documentos nesta fase.
 
-Para um banco Fase 2 existente, execute no phpMyAdmin, nesta ordem: `database/updates/002_services_pricing_rules_precheck.sql`, `database/updates/002_services_pricing_rules.sql` e `database/updates/002_services_pricing_rules_verify.sql`. A publicação na `main` e o deploy permanecem bloqueados até a confirmação da importação.
+Para um banco Fase 2 existente, as migrations 002 e 003 já confirmadas não devem ser reexecutadas. A Fase 3.3 não exige alteração de schema ou nova migration.
 
 O arquivo `database/install.sql` já contém o schema Fase 2 + Fase 3 para bancos novos. Não executar `DROP`, migrations automáticas ou operações remotas pelo projeto.
 
@@ -54,4 +54,4 @@ Para a instalação atual da Hostinger, siga `database/README.md`: importe os SQ
 
 ## Escopo da Fase 1
 
-Inclui home comercial, navegação por âncoras, FAQ, formulário de parceria que monta mensagem e abre o WhatsApp, CTAs por serviço, SEO técnico básico, sitemap, robots, manifest PWA e página de área do parceiro ainda não implementada (sem autenticação falsa).
+Inclui home comercial, navegação por âncoras, FAQ, atendimento geral por WhatsApp, CTAs por serviço, cadastro real de parceiros, SEO técnico básico, sitemap, robots, manifest PWA e área autenticada do parceiro com acompanhamento de status.

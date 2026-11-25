@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1] — Fase 3.3 — Fluxo de parceiros — 2026-11-25
+
+- Conectados os CTAs comerciais de parceiro ao cadastro real e à área autenticada.
+- Adicionado acompanhamento seguro do status do próprio parceiro pendente.
+- Ampliada a gestão administrativa com pesquisa, filtros por status/segmento/UF, indicadores por status e confirmações de mutação.
+- Preservadas as migrations existentes, o construtor no-code e a integração exclusiva por WhatsApp para atendimento geral.
+
 ## [0.3.0] — Fase 3 — Construtor no-code — 2026-11-25
 
 - Revisado o schema Fase 3 para versões de serviço, formulários dinâmicos, fontes simuladas, catálogo de cobranças, ações, documentos e mensagens.
