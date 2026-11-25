@@ -234,7 +234,7 @@ app.get('/api/admin/partners', databaseRequired, requireRole('ADMINISTRATOR'), a
   if (request.query.segment) { filters.push('segment = ?'); params.push(String(request.query.segment).trim().slice(0, 120)) }
   if (request.query.state) { filters.push('state = ?'); params.push(String(request.query.state).trim().toUpperCase().slice(0, 2)) }
   const where = filters.length ? `WHERE ${filters.join(' AND ')}` : ''
-  const [rows] = await getDatabasePool().execute(`SELECT id, person_type, legal_name, trade_name, cpf_cnpj, responsible_name, email, whatsapp, city, state, segment, status, rejection_reason, created_at FROM partner_companies ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`, [...params, pageSize, offset])
+  const [rows] = await getDatabasePool().execute(`SELECT id, person_type, legal_name, trade_name, cpf_cnpj, responsible_name, email, whatsapp, zip_code, address, address_number, complement, neighborhood, city, state, segment, status, rejection_reason, created_at FROM partner_companies ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`, [...params, pageSize, offset])
   const [countRows] = await getDatabasePool().query(`SELECT COUNT(*) AS total FROM partner_companies ${where}`, params)
   response.json({ items: rows, page, pageSize, total: countRows[0].total })
 }))
