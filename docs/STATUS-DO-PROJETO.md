@@ -22,7 +22,7 @@ Fase 1.3 — Homologação online e preparação para Fase 2.
 
 ## Pendente
 
-- Novo deploy na Hostinger após o commit desta correção.
+- Novo deploy na Hostinger após o commit desta correção; ainda não refletido no domínio durante a revalidação HTTP.
 - Conferência visual manual pelo proprietário.
 - Domínio/canonical definitivo.
 - Teste visual real em navegador e screenshots: tentativa feita, mas o navegador embutido retornou uma tela offline e o sandbox bloqueou acesso ao socket local.
@@ -44,8 +44,8 @@ Fase 1.3 — Homologação online e preparação para Fase 2.
 - Inspeção de assets: os arquivos da logo, hero, serviços e parceria existem em `public/assets` e foram incluídos em `dist/assets`.
 - Navegador automatizado: não utilizado conforme orientação; conferência visual manual pendente.
 - Homologação online inicial: HTTPS, HTML, health, runtime-config, fallback e assets aprovados.
-- Homologação online inicial: robots.txt e MIME do manifest reprovados e corrigidos no código; aguardam novo deploy para revalidação.
+- Homologação online inicial: robots.txt e MIME do manifest reprovados e corrigidos no código; o domínio continuou entregando a versão anterior após duas consultas, aguardando redeploy efetivo/cache da Hostinger.
 
 ## Próxima missão
 
-Publicar a correção, revalidar robots/manifest/headers online e então iniciar a Fase 2 de autenticação, banco e permissões. Não implementar Simples API, motor de regras, orçamentos ou financeiro.
+Confirmar o redeploy da Hostinger, revalidar robots/manifest/headers online e então iniciar a Fase 2 de autenticação, banco e permissões. Não implementar Simples API, motor de regras, orçamentos ou financeiro enquanto os requisitos técnicos essenciais não forem confirmados.

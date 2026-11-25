@@ -47,6 +47,8 @@ Não preencher senha de banco neste repositório ou nesta documentação. O banc
 
 Os endpoints podem ser validados por `curl.exe` ou `Invoke-WebRequest`; não dependem de navegador automatizado. A conferência visual permanece manual quando o controle do navegador não estiver disponível.
 
+Se o domínio continuar entregando `robots.txt` antigo, MIME `text/plain` no manifest ou não mostrar os novos headers após um push em `main`, verificar o histórico de deployments/auto-deploy no painel Hostinger e executar um redeploy manual. Não considerar o commit publicado como deploy concluído sem essa evidência HTTP.
+
 ## Limitações relevantes
 
 Requests têm timeout de 120 s; não há WebSockets de entrada nem workers sempre ativos. Cron jobs existem, rodam em UTC e têm limite de 30 minutos. Uploads privados e documentos pessoais não devem ficar em `public` nem no cache offline. Limites específicos de upload e recursos variam por plano e precisam ser conferidos no painel contratado antes da Fase 8.
