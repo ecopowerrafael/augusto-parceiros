@@ -7,9 +7,13 @@ export function validateCommissionConfig(config) {
   return config
 }
 
+export function resolveCommissionConfig(globalConfig, partnerOverride) {
+  return partnerOverride && partnerOverride.model ? partnerOverride : globalConfig
+}
+
 export function evaluateCommission(config, charges) {
   validateCommissionConfig(config)
-  const normalized = charges.map((charge) => ({ ...charge, amountCents: charge.amountCents === null || charge.amountCents === undefined ? NaN : Number(charge.amountCents), isHonorarium: Boolean(charge.isHonorarium), isPublicFee: Boolean(charge.isPublicFee) }))
+  const normalized = charges.map((charge) => ({ ...charge, amountCents: charge.amountCents === null || charge.amountCents === undefined ? NaN : Number(charge.amountCents), isHonorarium: charge.chargeNature ? charge.chargeNature === 'HONORARY' : Boolean(charge.isHonorarium), isPublicFee: Boolean(charge.isPublicFee) }))
   if (normalized.some((charge) => !Number.isSafeInteger(charge.amountCents) || charge.amountCents < 0)) throw new Error('UNDEFINED_CHARGE_AMOUNT')
   const total = normalized.reduce((sum, charge) => sum + charge.amountCents, 0)
   const honorarium = normalized.filter((charge) => charge.isHonorarium && !charge.isPublicFee).reduce((sum, charge) => sum + charge.amountCents, 0)

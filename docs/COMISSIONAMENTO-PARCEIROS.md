@@ -6,7 +6,7 @@ A Fase 3.5 prepara um modelo genérico de comissão, mas o modelo inicial é `NO
 
 ## Modelos previstos
 
-`NONE`, `SERVICE_PERCENTAGE`, `HONORARIUM_PERCENTAGE`, `FULL_HONORARIUM` e `FIXED_AMOUNT`. Os valores são calculados em centavos no backend e os itens elegíveis dependem de classificação semântica (`charge_nature` e `is_public_fee`), não do nome do serviço.
+`NONE`, `SERVICE_PERCENTAGE`, `HONORARIUM_PERCENTAGE`, `FULL_HONORARIUM` e `FIXED_AMOUNT`. Os valores são calculados em centavos no backend e os itens elegíveis dependem de classificação semântica (`charge_nature = HONORARY` e `is_public_fee`), não do nome do serviço. Sem override individual, aplica-se a configuração global; `NONE` é uma escolha explícita de desativação.
 
 ## Banco
 

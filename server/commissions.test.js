@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { evaluateCommission } from './commissions.js'
+import { evaluateCommission, resolveCommissionConfig } from './commissions.js'
 
-const charges = [{ amountCents: 29580, isPublicFee: true }, { amountCents: 16000, isHonorarium: true }, { amountCents: 30000, isHonorarium: true }]
+const charges = [{ amountCents: 29580, isPublicFee: true, chargeNature: 'THIRD_PARTY' }, { amountCents: 16000, chargeNature: 'HONORARY' }, { amountCents: 30000, chargeNature: 'HONORARY' }]
 
 describe('commission evaluator', () => {
   it('does not commission by default', () => expect(evaluateCommission({ model: 'NONE' }, charges).commissionCents).toBe(0))
@@ -15,4 +15,5 @@ describe('commission evaluator', () => {
     expect(() => evaluateCommission({ model: 'SERVICE_PERCENTAGE', percentage: 10 }, [{ amountCents: null }])).toThrow('UNDEFINED_CHARGE_AMOUNT')
   })
   it('rejects commission above eligible balance', () => expect(() => evaluateCommission({ model: 'FIXED_AMOUNT', fixedAmountCents: 50000 }, charges)).toThrow('COMMISSION_EXCEEDS_BALANCE'))
+  it('uses the global configuration when no partner override exists', () => expect(resolveCommissionConfig({ model: 'SERVICE_PERCENTAGE', percentage: 10 }, null)).toEqual({ model: 'SERVICE_PERCENTAGE', percentage: 10 }))
 })
