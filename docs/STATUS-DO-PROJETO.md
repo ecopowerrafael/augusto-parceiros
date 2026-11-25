@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 1.4 — Identidade visual oficial e encerramento da homologação inicial.
+Fase 1.4 — Identidade visual oficial e encerramento da homologação inicial — concluída.
 
 ## Implementado
 
@@ -27,10 +27,9 @@ Fase 1.4 — Identidade visual oficial e encerramento da homologação inicial.
 
 ## Pendente
 
-- Novo deploy na Hostinger após o commit desta correção; a substituição da marca ainda aguarda o redeploy desta Fase 1.4.
-- Conferência visual manual pelo proprietário.
+- Deploy da Fase 1.4 refletido na Hostinger com versão `0.1.1`.
+- Conferência visual manual pelo proprietário aprovada.
 - Domínio/canonical definitivo.
-- Teste visual real em navegador e screenshots: tentativa feita, mas o navegador embutido retornou uma tela offline e o sandbox bloqueou acesso ao socket local.
 - Fase 2 em diante, sob autorização.
 
 ## Problemas conhecidos/limitações
@@ -49,9 +48,10 @@ Fase 1.4 — Identidade visual oficial e encerramento da homologação inicial.
 - Inspeção de assets: os arquivos da logo, hero, serviços e parceria existem em `public/assets` e foram incluídos em `dist/assets`.
 - Navegador automatizado: não utilizado conforme orientação; conferência visual manual pendente.
 - Homologação online inicial: HTTPS, HTML, health, runtime-config, fallback e assets aprovados.
-- Homologação online inicial: robots.txt e MIME do manifest reprovados e corrigidos no código; o domínio continuou entregando a versão anterior após duas consultas, aguardando redeploy efetivo/cache da Hostinger.
-- Fase 1.4: validação visual aprovada pelo proprietário; pendente apenas validar tecnicamente os novos assets após o redeploy.
+- Homologação online inicial: robots.txt e MIME do manifest foram corrigidos e revalidados após o redeploy.
+- Fase 1.4: validação visual aprovada pelo proprietário e validação técnica online concluída por HTTP.
+- Revalidação online: versão `0.1.1`, health/runtime-config, robots, manifest, headers e todos os assets oficiais retornaram respostas esperadas.
 
 ## Próxima missão
 
-Publicar a Fase 1.4, validar novos assets e headers por HTTP após o redeploy e aguardar autorização explícita antes da Fase 2.
+Aguardar autorização explícita antes da Fase 2. Não iniciar Simples API, motor de regras, orçamentos ou financeiro nesta etapa.

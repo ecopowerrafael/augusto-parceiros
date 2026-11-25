@@ -1,9 +1,9 @@
 # Roadmap
 
 1. Fundação e site comercial — concluída.
-1.1. Preparação do ambiente online de homologação — concluída tecnicamente; validação visual manual pendente.
-2. Autenticação segura e base operacional — próxima fase autorizada, sem incluir ainda Simples API, motor de regras, orçamentos ou financeiro.
-2. Autenticação segura e PWA instalável.
+1.1. Preparação do ambiente online de homologação — concluída.
+1.4. Identidade visual oficial e encerramento da homologação inicial — concluída.
+2. Autenticação segura e PWA instalável — próxima fase, aguardando autorização explícita.
 3. Painel administrativo e configurações comerciais.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
