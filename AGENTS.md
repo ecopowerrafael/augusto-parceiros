@@ -4,7 +4,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 
 ## Regras locais
 
-- Trabalhe por fases; a Fase 2 foi autorizada na missão 2.0. Não iniciar a Fase 3 sem nova autorização explícita.
+- Trabalhe por fases; a Fase 3 foi autorizada para preparação, mas permanece em duas etapas: primeiro importar e verificar o SQL manual; só depois implementar/publicar código que dependa das novas tabelas. Não iniciar a Fase 4 sem nova autorização explícita.
 - O backend é a autoridade para autenticação, autorização, tenant, limites e regras de negócio.
 - Não versionar `.env`, credenciais, tokens ou documentos pessoais.
 - Ao mudar schema, atualizar `docs/BANCO-DE-DADOS.md` e planejar migration/rollback.
@@ -19,6 +19,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - Para autenticação, use sessões opacas persistidas no MySQL, cookies HttpOnly/Secure/SameSite, CSRF e rate limit persistido; não use tokens de autenticação em localStorage.
 - A recuperação de senha depende de SMTP configurado no ambiente; nunca retornar o token de recuperação na API.
 - A instalação inicial do MySQL desta fase é manual pelo phpMyAdmin usando `database/install.sql`; não executar migrations, provisionamento ou operações remotas sem autorização explícita da missão.
+- Para a Fase 3, executar `database/updates/002_services_pricing_rules_precheck.sql`, depois `database/updates/002_services_pricing_rules.sql` e por fim `database/updates/002_services_pricing_rules_verify.sql`. O proprietário deve confirmar a importação antes de publicar endpoints/telas dependentes.
 
 ## Comandos
 

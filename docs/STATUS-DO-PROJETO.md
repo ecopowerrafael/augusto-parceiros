@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 2.1 — Ajustes de autenticação e provisionamento administrativo — implementação local concluída; aguardando criação do administrador e homologação dos parceiros.
+Fase 3.0 — preparação do schema de serviços, preços e regras técnicas — SQL/documentação preparados em branch de desenvolvimento; aguardando importação manual pelo phpMyAdmin antes do código dependente.
 
 ## Implementado
 
@@ -74,7 +74,9 @@ Fase 2.1 — Ajustes de autenticação e provisionamento administrativo — impl
 - Políticas de senha por perfil: cliente com mínimo de 6 caracteres, parceiro/colaborador com mínimo de 8 e administrador com mínimo de 12 e complexidade.
 - Alteração e redefinição de senha validam o perfil real no backend; login de usuários existentes não é afetado.
 - SQL administrativo temporário é gerado localmente por `scripts/generate-admin-sql.ps1`, fora do repositório.
+- Schema Fase 3 preparado sem preços reais: catálogo de serviços, categorias, UFs, disponibilidade, relações, tabelas de preço, componentes e regras técnicas preliminares em `DRAFT`.
+- Pacote manual Fase 3 criado em `database/updates/002_services_pricing_rules_precheck.sql`, `database/updates/002_services_pricing_rules.sql` e `database/updates/002_services_pricing_rules_verify.sql`.
 
 ## Próxima missão
 
-Importar os SQLs pelo phpMyAdmin, criar o primeiro administrador com `scripts/generate-admin-sql.ps1` e realizar a homologação HTTP da Fase 2. Não iniciar Fase 3 nem Simples API, motor de regras, orçamentos ou financeiro.
+Importar e verificar o SQL da Fase 3 pelo phpMyAdmin. Após confirmação do proprietário, implementar o painel administrativo de serviços, preços e regras. Não iniciar Fase 4/Simples API, motor automático, orçamentos ou financeiro.

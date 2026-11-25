@@ -1,6 +1,6 @@
 # Arquitetura
 
-## Estado atual — Fase 2
+## Estado atual — Fase 2.1 / preparação Fase 3
 
 Monorepo simples, um único deploy Node.js. O build do Vite gera o frontend estático e o Express serve `dist` no mesmo domínio, com fallback para SPA. A API REST da Fase 2 está no mesmo processo e usa MySQL via `mysql2`.
 
@@ -12,7 +12,7 @@ O computador local é usado para edição, lint, testes unitários e build. A Ho
 
 ## Direção futura
 
-Migrations SQL versionadas foram escolhidas para reduzir dependência de binários no ambiente compartilhado. Prisma não é necessário para o schema inicial. Documentos, veículos, serviços, regras, orçamentos e solicitações serão adicionados em fases próprias.
+Migrations SQL versionadas foram escolhidas para reduzir dependência de binários no ambiente compartilhado. Prisma não é necessário para o schema inicial. A Fase 3 prepara tabelas de serviços, preços e regras em SQL manual, sem consultar essas tabelas na aplicação até a confirmação de importação. A aplicação seguirá como um único deploy Express/Vite e o backend continuará sendo a autoridade para permissões, escopo de parceiro e estado das configurações.
 
 ## Limites da infraestrutura
 

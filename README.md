@@ -32,6 +32,12 @@ O formulário da Fase 1 não grava dados. Não utilize dados reais de clientes d
 - `scripts/migrate.mjs` e `scripts/provision-admin.mjs`: operações explícitas de infraestrutura.
 - `docs/`: decisões, regras, roadmap, segurança e status persistente.
 
+## Preparação da Fase 3
+
+A Fase 3 está autorizada somente para preparar o catálogo de serviços, disponibilidade, preços e regras técnicas. O código da aplicação ainda não consulta essas tabelas. Para um banco Fase 2 existente, execute no phpMyAdmin, nesta ordem: `database/updates/002_services_pricing_rules_precheck.sql`, `database/updates/002_services_pricing_rules.sql` e `database/updates/002_services_pricing_rules_verify.sql`. Após a confirmação do proprietário, será implementado o painel administrativo e a publicação dependerá dessas tabelas.
+
+O arquivo `database/install.sql` já contém o schema Fase 2 + Fase 3 para bancos novos. Não executar `DROP`, migrations automáticas ou operações remotas pelo projeto.
+
 ## Deploy
 
 Leia [`docs/DEPLOY-HOSTINGER.md`](docs/DEPLOY-HOSTINGER.md). Em produção, configure `npm run build` como build command, `dist` como output quando aplicável e `server/index.js` como entry file Node/Express.

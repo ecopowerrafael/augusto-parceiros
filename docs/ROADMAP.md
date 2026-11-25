@@ -9,7 +9,8 @@
    Pendente: importar o banco pelo phpMyAdmin, configurar SMTP/admin, executar testes HTTP com contas fictícias e validação visual manual.
    Conexão MySQL comprovada em ambiente real usando `127.0.0.1`; banco inicialmente vazio.
    Ajustes 0.2.1: políticas de senha por perfil, colaboradores, mostrar/ocultar senha e status traduzidos.
-3. Painel administrativo e configurações comerciais.
+3. Painel administrativo e configurações comerciais — preparação 0.3.0 autorizada.
+   SQL manual preparado; aguarda importação confirmada antes dos endpoints/telas dependentes.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.

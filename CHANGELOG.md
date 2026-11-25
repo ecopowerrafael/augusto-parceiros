@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0-prep] — Preparação de serviços, preços e regras técnicas — 2026-11-25
+
+- Preparado schema SQL para serviços, categorias, UFs, disponibilidade, relações, preços e regras técnicas.
+- Criados precheck, atualização manual e verificação pós-importação.
+- Regras preliminares entram inativas (`DRAFT`) e nenhum preço real é semeado.
+- Código da aplicação ainda não consulta as novas tabelas; aguarda confirmação do phpMyAdmin.
+
 ## [0.2.1] — Ajustes de autenticação e provisionamento administrativo
 
 - Ajustadas as políticas de senha por perfil: cliente (6), parceiro (8) e administrador (12 com complexidade).
