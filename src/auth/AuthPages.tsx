@@ -126,7 +126,3 @@ export function DashboardPage({ role }: { role: 'ADMINISTRATOR' | 'PARTNER' | 'C
   if (role === 'PARTNER') return <PartnerDashboard user={user} />
   return <ClientDashboard user={user} />
 }
-
-
-
-
