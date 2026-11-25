@@ -4,7 +4,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 
 ## Regras locais
 
-- Trabalhe por fases; a Fase 3.1 foi implementada na branch de desenvolvimento, mas permanece em duas etapas operacionais: primeiro importar e verificar o SQL manual; só depois publicar código dependente na `main`/Hostinger. Não iniciar a Fase 4 sem nova autorização explícita.
+- Trabalhe por fases; as migrations 001, 002 e 003 da Fase 3.1 foram confirmadas no banco remoto. A publicação na `main` deve seguir as verificações locais e online desta missão. Não iniciar a Fase 4 sem nova autorização explícita.
 - O backend é a autoridade para autenticação, autorização, tenant, limites e regras de negócio.
 - Não versionar `.env`, credenciais, tokens ou documentos pessoais.
 - Ao mudar schema, atualizar `docs/BANCO-DE-DADOS.md` e planejar migration/rollback.

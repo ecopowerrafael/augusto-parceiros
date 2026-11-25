@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.1 — construtor no-code de serviços, formulários, cobranças e regras — Migration 002 instalada e confirmada no MySQL remoto; branch de desenvolvimento aguardando aplicação incremental 003 e homologação antes da publicação na `main`.
+Fase 3.2 — publicação e homologação online do construtor no-code — Migrations 001, 002 e 003 confirmadas no MySQL remoto; código pronto para merge na `main` e deploy controlado.
 
 ## Implementado
 
@@ -44,7 +44,7 @@ Fase 3.1 — construtor no-code de serviços, formulários, cobranças e regras 
 
 ## Problemas conhecidos/limitações
 
-- A Migration 003 ainda não foi executada no banco remoto nesta missão; sua execução permanece manual pelo phpMyAdmin.
+- Homologar a versão 0.3.0 na Hostinger após o deploy.
 - Recuperação de senha exige SMTP configurado; sem SMTP, não é possível concluir o envio real.
 - Links institucionais de política/termos são âncoras temporárias até conteúdo jurídico aprovado.
 - Formulário não persiste dados.
@@ -82,9 +82,9 @@ Fase 3.1 — construtor no-code de serviços, formulários, cobranças e regras 
 - Construtor administrativo genérico implementado com versões, seções, campos, opções, catálogo de cobranças, regras, documentos e simulador.
 - Avaliador declarativo backend implementado sem execução arbitrária de código; fontes externas permanecem simuladas e a Simples API não foi integrada.
 - Confirmação do proprietário: Migration 002 instalada no banco `u891593158_doc`, com 23 tabelas, 27 UFs, 6 categorias, 6 serviços, 6 itens de cobrança, 13 campos, 8 regras DRAFT, 1 versão, 2 documentos e 4 ações; zero relacionamentos inválidos.
-- Auditoria identificou e preparou Migration 003 para cálculo de potência, placa, UF, consultas/mapeamentos externos, CSV sem valor e regras de redução, combustível e cilindrada divergente.
+- Migration 003 confirmada pelo proprietário: 12 tabelas esperadas, 7 colunas compatíveis, 27 UFs, 2 consultas, 8 mapeamentos, cálculo persistido, CSV sem valor e 11 regras técnicas.
 - SQLs manuais agora são gerados com seleção explícita e referências qualificadas pelo `scripts/generate-hostinger-sql.mjs`.
 
 ## Próxima missão
 
-Aplicar e verificar a Migration 003 pelo phpMyAdmin; depois homologar o editor e criar o segundo serviço de demonstração exclusivamente pela interface. Só então preparar merge/deploy na `main`. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.
+Publicar a versão 0.3.0 na `main`, validar online e criar o segundo serviço de demonstração exclusivamente pela interface. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.
