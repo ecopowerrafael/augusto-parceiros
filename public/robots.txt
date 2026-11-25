@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://docmotor.com.br/sitemap.xml
