@@ -280,6 +280,42 @@ app.put('/api/admin/commissions', databaseRequired, requireRole('ADMINISTRATOR')
   response.json({ status: 'updated', model })
 }))
 
+app.get('/api/admin/partners/:id/details', databaseRequired, requireRole('ADMINISTRATOR'), asyncRoute(async (request, response) => {
+  const [companies] = await getDatabasePool().execute('SELECT id, person_type, legal_name, trade_name, cpf_cnpj, responsible_name, email, whatsapp, zip_code, address, address_number, complement, neighborhood, city, state, segment, status, rejection_reason, approved_at, approved_by, created_at, updated_at FROM partner_companies WHERE id = ? LIMIT 1', [request.params.id])
+  if (!companies[0]) return response.status(404).json({ error: 'PARTNER_NOT_FOUND' })
+  const [members] = await getDatabasePool().execute('SELECT u.id, u.name, u.email, u.status, cm.company_role, cm.created_at FROM users u JOIN company_members cm ON cm.user_id = u.id WHERE cm.company_id = ? ORDER BY cm.created_at', [request.params.id])
+  const [history] = await getDatabasePool().execute('SELECT action, entity_type, entity_id, metadata, created_at FROM audit_logs WHERE entity_type = \'partner_company\' AND entity_id = ? ORDER BY created_at DESC LIMIT 50', [request.params.id])
+  response.json({ company: companies[0], members, history })
+}))
+
+app.patch('/api/admin/partners/:id', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
+  const allowed = { legalName: 'legal_name', tradeName: 'trade_name', responsibleName: 'responsible_name', email: 'email', whatsapp: 'whatsapp', segment: 'segment', zipCode: 'zip_code', address: 'address', addressNumber: 'address_number', complement: 'complement', neighborhood: 'neighborhood', city: 'city', state: 'state' }
+  const fields = Object.entries(allowed).filter(([key]) => Object.prototype.hasOwnProperty.call(request.body || {}, key))
+  if (fields.length === 0) return response.status(400).json({ error: 'NO_EDITABLE_FIELDS' })
+  const values = fields.map(([key]) => { const value = request.body[key]; return value === null || value === '' ? null : String(value).trim().slice(0, key === 'email' ? 255 : 180) })
+  const assignments = fields.map(([, column]) => `\`${column}\` = ?`).join(', ')
+  const [result] = await getDatabasePool().execute(`UPDATE partner_companies SET ${assignments}, updated_at = UTC_TIMESTAMP() WHERE id = ?`, [...values, request.params.id])
+  if (!result.affectedRows) return response.status(404).json({ error: 'PARTNER_NOT_FOUND' })
+  await writeAudit(request.auth.user.id, 'PARTNER_UPDATED', 'partner_company', request.params.id, { fields: fields.map(([key]) => key) })
+  response.json({ status: 'updated' })
+}))
+
+app.get('/api/admin/partners/:id/commission', databaseRequired, requireRole('ADMINISTRATOR'), asyncRoute(async (request, response) => {
+  const [rows] = await getDatabasePool().execute('SELECT id, partner_company_id, model, percentage, fixed_amount_cents, honorarium_only, notes, valid_from, valid_until, updated_at FROM partner_commission_overrides WHERE partner_company_id = ? LIMIT 1', [request.params.id])
+  response.json({ override: rows[0] || null })
+}))
+
+app.put('/api/admin/partners/:id/commission', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
+  const body = request.body || {}; const model = String(body.model || 'NONE').toUpperCase(); const percentage = body.percentage === null || body.percentage === undefined || body.percentage === '' ? null : Number(body.percentage); const fixedAmountCents = body.fixedAmountCents === null || body.fixedAmountCents === undefined || body.fixedAmountCents === '' ? null : Number(body.fixedAmountCents)
+  try { validateCommissionConfig({ model, percentage, fixedAmountCents }) } catch (error) { return response.status(400).json({ error: error.message }) }
+  const [companies] = await getDatabasePool().execute('SELECT id FROM partner_companies WHERE id = ? LIMIT 1', [request.params.id]); if (!companies[0]) return response.status(404).json({ error: 'PARTNER_NOT_FOUND' })
+  await getDatabasePool().execute(`INSERT INTO partner_commission_overrides (id, partner_company_id, model, percentage, fixed_amount_cents, honorarium_only, notes, valid_from, valid_until, created_by, updated_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE model = VALUES(model), percentage = VALUES(percentage), fixed_amount_cents = VALUES(fixed_amount_cents), honorarium_only = VALUES(honorarium_only), notes = VALUES(notes), valid_from = VALUES(valid_from), valid_until = VALUES(valid_until), updated_by = VALUES(updated_by), updated_at = UTC_TIMESTAMP()`, [cryptoRandomId(), request.params.id, model, percentage, fixedAmountCents, body.honorariumOnly ? 1 : 0, body.notes ? String(body.notes).trim().slice(0, 500) : null, body.validFrom || null, body.validUntil || null, request.auth.user.id, request.auth.user.id])
+  await writeAudit(request.auth.user.id, 'PARTNER_COMMISSION_UPDATED', 'partner_company', request.params.id, { model })
+  response.json({ status: 'updated', model })
+}))
+
 app.patch('/api/admin/partners/:id/status', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
   const status = String(request.body.status || '').toUpperCase()
   if (!isPartnerCompanyStatus(status) || status === 'PENDING') return response.status(400).json({ error: 'INVALID_STATUS' })

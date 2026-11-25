@@ -55,6 +55,8 @@ A versão `0.3.3` está em homologação na branch `feature/fase-3-5-admin-comis
 
 Em falha na aprovação administrativa, registrar o `X-Request-ID` devolvido pela API e consultar os logs privados da aplicação; o log estruturado informa código/estado SQL sem credenciais ou PII.
 
+Na última tentativa automatizada local, `Invoke-WebRequest` não resolveu `docmotor.online`; essa limitação não é evidência de indisponibilidade da Hostinger. A conferência deve ser repetida de uma rede com DNS funcional.
+
 Confirmar também que erros como `DOCUMENT_TYPE_MISMATCH`, `INVALID_DOCUMENT`, `REGISTRATION_CONFLICT`, `INVALID_CREDENTIALS`, `AUTHENTICATION_REQUIRED` e `INTERNAL_ERROR` aparecem em português claro na interface, sem expor os códigos.
 
 ## Fase 3.3 — correção do fluxo de parceiros
