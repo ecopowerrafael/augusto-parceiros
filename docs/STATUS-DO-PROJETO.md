@@ -21,6 +21,7 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 - Override individual agora suporta herança global, configuração customizada e desativação sem nova migration.
 - Documento permanente do design system em `docs/DESIGN-SYSTEM.md`.
 - Endpoint protegido `/api/admin/commissions/simulate` com o mesmo avaliador de comissão usado pela regra operacional, sem criar registros financeiros.
+- O simulador aceita parceiro ativo opcional e resolve a configuração efetiva no servidor, sem confiar no modelo escolhido no frontend.
 - Módulo protegido `/api/admin/settings` para dados comerciais persistidos, com fallback explícito `SETTINGS_MIGRATION_REQUIRED` antes da importação da Migration 005.
 - Pacote manual da Migration 005: `database/updates/005_application_settings_precheck.sql`, `005_application_settings.sql` e `005_application_settings_verify.sql`; `database/install.sql` atualizado para bancos novos.
 

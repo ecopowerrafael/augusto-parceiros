@@ -7,6 +7,7 @@
 - Tornada a configuração global de comissão condicional ao modelo, com valor fixo exibido em reais e conversão para centavos no envio.
 - Itens operacionais futuros permanecem explicitamente indisponíveis; não foram criadas operações simuladas nem integração real com a Simples API.
 - Adicionado simulador de comissão sem persistência financeira, usando o avaliador backend e exibindo total, base elegível, honorários e comissão.
+- O simulador permite selecionar um parceiro ativo e calcula a regra efetiva global, personalizada ou desativada.
 - Preparada Migration 005 para configurações gerais comerciais persistidas, com precheck, atualização e verify manuais.
 
 ## [0.3.3] — Fase 3.5 — Administração e comissionamento — 2026-11-25

@@ -9,7 +9,7 @@ import { config } from './config.js'
 import { getDatabasePool, isDatabaseConfigured, withTransaction } from './database.js'
 import { createPublicServiceRouter, createServiceRouter } from './services.js'
 import { isPartnerCompanyStatus, partnerUserStatusForCompanyStatus } from './partner-flow.js'
-import { COMMISSION_MODELS, evaluateCommission, validateCommissionConfig } from './commissions.js'
+import { COMMISSION_MODELS, evaluateCommission, resolveCommissionConfig, validateCommissionConfig } from './commissions.js'
 import {
   assertSameOrigin,
   bcrypt,
@@ -320,13 +320,18 @@ app.put('/api/admin/commissions', databaseRequired, requireRole('ADMINISTRATOR')
 
 app.post('/api/admin/commissions/simulate', databaseRequired, requireRole('ADMINISTRATOR'), requireCsrf, asyncRoute(async (request, response) => {
   const body = request.body || {}
-  const model = String(body.model || 'NONE').toUpperCase()
-  const percentage = body.percentage === null || body.percentage === undefined || body.percentage === '' ? null : Number(body.percentage)
-  const fixedAmountCents = body.fixedAmountCents === null || body.fixedAmountCents === undefined || body.fixedAmountCents === '' ? null : Number(body.fixedAmountCents)
+  const inputConfig = { model: String(body.model || 'NONE').toUpperCase(), percentage: body.percentage === null || body.percentage === undefined || body.percentage === '' ? null : Number(body.percentage), fixedAmountCents: body.fixedAmountCents === null || body.fixedAmountCents === undefined || body.fixedAmountCents === '' ? null : Number(body.fixedAmountCents) }
+  let effectiveConfig = inputConfig
+  if (body.partnerCompanyId) {
+    const [globalRows] = await getDatabasePool().execute('SELECT default_model AS model, default_percentage AS percentage, default_fixed_amount_cents AS fixedAmountCents, honorarium_only AS honorariumOnly FROM commission_settings WHERE id = ? LIMIT 1', ['45000000-0000-4000-8000-000000000001'])
+    const [overrideRows] = await getDatabasePool().execute('SELECT model, percentage, fixed_amount_cents AS fixedAmountCents, honorarium_only AS honorariumOnly FROM partner_commission_overrides WHERE partner_company_id = ? LIMIT 1', [String(body.partnerCompanyId)])
+    const globalConfig = globalRows[0] ? { ...globalRows[0], model: String(globalRows[0].model).toUpperCase() } : { model: 'NONE' }
+    effectiveConfig = resolveCommissionConfig(globalConfig, overrideRows[0] || null)
+  }
   const charges = Array.isArray(body.charges) ? body.charges.map((charge) => ({ amountCents: charge.amountCents, chargeNature: charge.chargeNature, isPublicFee: Boolean(charge.isPublicFee) })) : []
   try {
-    const result = evaluateCommission({ model, percentage, fixedAmountCents }, charges)
-    response.json({ simulated: true, result })
+    const result = evaluateCommission(effectiveConfig, charges)
+    response.json({ simulated: true, config: effectiveConfig, result })
   } catch (error) {
     return response.status(400).json({ error: error.message })
   }
