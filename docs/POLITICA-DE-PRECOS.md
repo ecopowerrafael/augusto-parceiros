@@ -2,9 +2,9 @@
 
 ## Modelo preparado
 
-`price_tables` representa uma versão comercial identificável, com status e validade. `service_prices` permite preço por serviço, perfil comercial, parceiro, categoria de veículo e UF. `service_price_components` permite separar honorários, taxas, inspeção e outros componentes sem misturar valores.
+`price_tables` permanece disponível para políticas por vigência. O catálogo reutilizável está em `billing_items`, e a composição de cada versão em `service_billing_items`. Assim, um serviço soma vários itens aplicáveis; não existe um único `service.price` como fonte definitiva.
 
-Nenhum preço real é inserido pelo SQL da Fase 3. Os registros usam `amount_cents` para evitar problemas de arredondamento e permanecem vazios até definição administrativa.
+Os itens comerciais autorizados pelo proprietário são semeados como `DRAFT`, em centavos, com natureza e status de valor explícitos. Itens como CSV sem valor continuam ausentes/sob consulta. Eles não são apresentados como taxas públicas oficiais.
 
 ## Princípios
 

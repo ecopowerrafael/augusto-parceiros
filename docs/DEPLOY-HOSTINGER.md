@@ -39,7 +39,7 @@ Não preencher senhas neste repositório ou nesta documentação. A instalação
 
 ## Fase 3 — implantação em duas etapas
 
-Enquanto o proprietário não confirmar a importação, publicar somente o pacote SQL/documentação na branch de desenvolvimento. No phpMyAdmin do banco correto, executar: (1) `database/updates/002_services_pricing_rules_precheck.sql`; (2) `database/updates/002_services_pricing_rules.sql`; (3) `database/updates/002_services_pricing_rules_verify.sql`. Depois confirmar que as onze tabelas e a migration `002_services_pricing_rules.sql` existem. Só então o código do painel que depende dessas tabelas poderá ser publicado na `main`.
+Enquanto o proprietário não confirmar a importação, manter o código na branch de desenvolvimento. No phpMyAdmin do banco correto, executar: (1) `database/updates/002_services_pricing_rules_precheck.sql`; (2) `database/updates/002_services_pricing_rules.sql`; (3) `database/updates/002_services_pricing_rules_verify.sql`. Depois confirmar que as 23 tabelas e a migration `002_services_pricing_rules.sql` existem. Só então o código do painel que depende dessas tabelas poderá ser publicado na `main`.
 
 Não executar migrations no startup, não usar SSH como requisito e não importar o SQL Fase 3 em produção sem conferência do banco selecionado. Em caso de falha parcial, preservar o erro do phpMyAdmin e interromper a sequência.
 

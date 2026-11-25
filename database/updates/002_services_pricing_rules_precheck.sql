@@ -9,8 +9,10 @@ WHERE table_schema = DATABASE()
   AND table_name IN (
     'brazilian_states', 'vehicle_categories', 'services',
     'service_vehicle_categories', 'service_ufs', 'service_relations',
-    'price_tables', 'service_prices', 'service_price_components',
-    'technical_rules', 'technical_rule_services'
+    'service_versions', 'service_form_sections', 'service_form_fields', 'service_field_options',
+    'service_data_sources', 'service_external_queries', 'service_query_mappings',
+    'price_tables', 'billing_items', 'service_prices', 'service_price_components', 'service_billing_items',
+    'technical_rules', 'technical_rule_actions', 'technical_rule_services', 'service_documents', 'service_messages'
   )
 ORDER BY table_name;
 

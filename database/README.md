@@ -39,7 +39,7 @@ Cada atualização deve ser um novo arquivo SQL versionado, por exemplo `002_nom
 Para um banco que já recebeu a Fase 2, selecione o banco correto no phpMyAdmin e execute exatamente nesta ordem:
 
 1. `updates/002_services_pricing_rules_precheck.sql` — somente leitura; confirma o banco e se a migration não foi registrada.
-2. `updates/002_services_pricing_rules.sql` — cria onze tabelas, seeds de UFs/categorias/serviços e oito regras preliminares `DRAFT`; não cria preços reais.
+2. `updates/002_services_pricing_rules.sql` — cria 23 tabelas, seeds de UFs/categorias/serviços, formulário inicial genérico, itens comerciais informados pelo proprietário e oito regras preliminares `DRAFT`; os itens permanecem em `DRAFT` e não são preços publicados.
 3. `updates/002_services_pricing_rules_verify.sql` — somente leitura; confirma tabelas, migration, serviços, regras e contagens.
 
 Para um banco novo, `database/install.sql` já contém a Fase 2 e a Fase 3 completas. Não execute o instalador completo sobre um banco existente sem análise.
