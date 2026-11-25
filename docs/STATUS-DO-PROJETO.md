@@ -11,6 +11,7 @@ Fase 3.5 — reestruturação administrativa e preparação de comissionamento �
 - Commit da `main` antes da integração, usado como rollback: `c98aa17f4bd1c82d13bd333876c30778d9a2c67e`.
 - Branch integrada: `feature/fase-3-5-admin-comissoes`; versão no código: `0.3.3`.
 - Propagação na Hostinger: pendente de confirmação HTTP; homologação autenticada da aprovação: pendente.
+- Após a publicação da `main` em `44ca97339c1f4dd24caded242cb4631de92865e7`, a validação com `Invoke-WebRequest` foi tentada para todas as rotas previstas, mas o ambiente local continuou sem resolver `docmotor.online`; propagação permanece não confirmada.
 
 ## Implementado
 

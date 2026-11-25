@@ -55,6 +55,8 @@ A versão `0.3.3` foi integrada na `main`. A Migration 004 foi importada manualm
 
 Após o deploy, confirmar por HTTP `version=0.3.3`, `APP_ENV=staging` e `allowIndexing=false`. A publicação do commit não é evidência de propagação da Web App.
 
+Tentativa pós-publicação do commit `44ca973` nesta sessão: `Invoke-WebRequest` não resolveu `docmotor.online` em nenhuma das rotas testadas. Resultado registrado como propagação pendente, não como falha confirmada da Hostinger.
+
 Em falha na aprovação administrativa, registrar o `X-Request-ID` devolvido pela API e consultar os logs privados da aplicação; o log estruturado informa código/estado SQL sem credenciais ou PII.
 
 Na última tentativa automatizada local, `Invoke-WebRequest` não resolveu `docmotor.online`; essa limitação não é evidência de indisponibilidade da Hostinger. A conferência deve ser repetida de uma rede com DNS funcional.
