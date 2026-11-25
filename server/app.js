@@ -152,7 +152,7 @@ app.post('/api/auth/login', databaseRequired, asyncRoute(async (request, respons
   if (!await consumeRateLimit(`login:${request.ip}:${email}`, 8, 900)) return response.status(429).json({ error: 'TOO_MANY_REQUESTS' })
   const [rows] = await getDatabasePool().execute('SELECT id, role, status, name, email, cpf, whatsapp, password_hash FROM users WHERE email = ? LIMIT 1', [email])
   const user = rows[0]
-  const valid = user ? await verifyPassword(parsed.data.password, user.password_hash) : await bcrypt.compare(parsed.data.password, '$2b$12$C6UzMDM.H6dfI/f/IKcEe.0pQ5qF5f0z5mVfJpKqP0D/1A1G8cE6G')
+  const valid = user ? await verifyPassword(parsed.data.password, user.password_hash) : await bcrypt.compare(parsed.data.password, '$2b$12$P8sShDEiMudMS8KHptdtEuvg3TeNonKxaLu6TCBtvKUV15zY5.UIC')
   if (!user || !valid || ['SUSPENDED', 'DISABLED'].includes(user.status)) return response.status(401).json({ error: 'INVALID_CREDENTIALS' })
   await getDatabasePool().execute('UPDATE users SET last_login_at = UTC_TIMESTAMP() WHERE id = ?', [user.id])
   const csrfToken = await createSession(publicUser(user), request, response)
