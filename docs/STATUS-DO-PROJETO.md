@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.3 — correção do fluxo de cadastro e aprovação de parceiros — código publicado na `main`, versão `0.3.1` propagada na Hostinger; homologação funcional com conta fictícia pendente.
+Fase 3.4 — correções de usabilidade, cadastro e mensagens — implementação em branch de correção, versão `0.3.2` preparada para homologação.
 
 ## Implementado
 
@@ -34,6 +34,7 @@ Fase 3.3 — correção do fluxo de cadastro e aprovação de parceiros — cód
 ## Pendente
 
 - Criar/usar uma conta fictícia de parceiro e validar cadastro, status pendente, aprovação, recusa, suspensão e reativação com o administrador.
+- Validar cadastro de parceiro com CPF e CNPJ pela máscara dinâmica e confirmar a versão `0.3.2` online.
 - Conferência visual manual do menu, cadastro e painéis em mobile e desktop.
 - Configurar SMTP para validar recuperação de senha real.
 - Conferência visual manual das novas telas.
@@ -46,6 +47,7 @@ Fase 3.3 — correção do fluxo de cadastro e aprovação de parceiros — cód
 - Recuperação de senha exige SMTP configurado; sem SMTP, não é possível concluir o envio real.
 - Links institucionais de política/termos são âncoras temporárias até conteúdo jurídico aprovado.
 - O formulário comercial geral continua encaminhando atendimento para o WhatsApp; o cadastro de parceiro usa `/cadastro-parceiro` e persiste no MySQL.
+- O navegador local não foi usado para homologação visual; essa conferência permanece manual.
 
 ## Testes realizados
 
@@ -80,6 +82,7 @@ Fase 3.3 — correção do fluxo de cadastro e aprovação de parceiros — cód
 - Auditoria da Fase 3.3 confirmou os links provisórios no `src/App.tsx`, a infraestrutura de autenticação/admin existente e a ausência de endpoint de acompanhamento próprio para parceiros pendentes.
 - Publicação Fase 3.3: commit `b99ed33` integrado na `main`; em 25/11/2026 `/api/health` retornou `0.3.1`, o HTML referenciou `index-Bpu536if.js`, e `/api/partner/status` e `/api/admin/partners` retornaram `401 AUTHENTICATION_REQUIRED` sem sessão.
 - Correção final de detalhes completos publicada no commit `1d1bdeb`; após a propagação, o HTML referenciou `index-qbH4Hyei.js`, health/runtime permaneceram em `0.3.1` e as rotas privadas continuaram retornando `401` sem sessão.
+- Fase 3.4: causa de `DOCUMENT_TYPE_MISMATCH` identificada no seletor `PJ` fixo do frontend; adicionados tipo automático, normalização, máscaras CPF/CNPJ, remoção de nome de acesso, máscaras de telefone/CEP e tradução centralizada de erros. Verificação local: 48 testes, lint, typecheck e build aprovados.
 - Homologação HTTP online: `/api/admin/summary` sem sessão retornou `401`; após correção do hash bcrypt dummy, tentativa de login fictícia retorna `503 DATABASE_NOT_READY`. O backend está acessível e diagnostica explicitamente que a conexão/schema MySQL ainda não está pronto.
 - Diagnóstico temporário de conexão MySQL executado na Hostinger: `DATABASE_CONNECTED`, `connected=1`, banco `u891593158_doc` e `DATABASE_CONNECTED_EMPTY_SCHEMA` com `table_count=0`.
 - Políticas de senha por perfil: cliente com mínimo de 6 caracteres, parceiro/colaborador com mínimo de 8 e administrador com mínimo de 12 e complexidade.
@@ -95,4 +98,4 @@ Fase 3.3 — correção do fluxo de cadastro e aprovação de parceiros — cód
 
 ## Próxima missão
 
-Publicar a branch de correção 0.3.1, validar online o cadastro pelo site comercial e concluir a homologação administrativa do fluxo de parceiros. Depois retomar o roteiro em `docs/HOMOLOGACAO-FASE-3.2.md`. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.
+Publicar a branch de correção 0.3.2, validar online os formulários de parceiro com CPF/CNPJ e concluir a homologação administrativa do fluxo de parceiros. Depois retomar o roteiro em `docs/HOMOLOGACAO-FASE-3.2.md`. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.

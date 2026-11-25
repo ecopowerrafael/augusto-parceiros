@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { changePasswordSchema, clientRegistrationSchema, collaboratorRegistrationSchema, isCnpj, isCpf, loginSchema, partnerRegistrationSchema, passwordPolicyError, passwordSchemaForRole, resetPasswordSchema } from './auth.js'
+import { changePasswordSchema, clientRegistrationSchema, collaboratorRegistrationSchema, inferDocumentType, isCnpj, isCpf, loginSchema, normalizeDocument, partnerRegistrationSchema, passwordPolicyError, passwordSchemaForRole, resetPasswordSchema } from './auth.js'
 
 describe('document validation', () => {
   it('accepts valid CPF and rejects repeated or invalid digits', () => {
@@ -12,6 +12,12 @@ describe('document validation', () => {
     expect(isCnpj('04.252.011/0001-10')).toBe(true)
     expect(isCnpj('11.111.111/1111-11')).toBe(false)
     expect(isCnpj('04.252.011/0001-11')).toBe(false)
+  })
+
+  it('normalizes the single document field and infers its person type', () => {
+    expect(normalizeDocument('001.002.003-04')).toBe('00100200304')
+    expect(inferDocumentType('001.002.003-04')).toBe('PF')
+    expect(inferDocumentType('04.252.011/0001-10')).toBe('PJ')
   })
 })
 
@@ -29,7 +35,7 @@ describe('authentication input contracts', () => {
   })
 
   it('accepts a partner password with eight characters without complexity requirements', () => {
-    const result = partnerRegistrationSchema.safeParse({ personType: 'PJ', legalName: 'Empresa Teste', tradeName: '', cpfCnpj: '04252011000110', responsibleName: 'Responsável Teste', state: 'SP', segment: 'Desmanche', name: 'Responsável Teste', email: 'parceiro@example.com', whatsapp: '15997118125', password: '24681357', passwordConfirmation: '24681357', acceptTerms: true, privacyAcknowledgement: true })
+    const result = partnerRegistrationSchema.safeParse({ legalName: 'Empresa Teste', tradeName: '', cpfCnpj: '04252011000110', responsibleName: 'Responsável Teste', state: 'SP', segment: 'Desmanche', email: 'parceiro@example.com', whatsapp: '15997118125', password: '24681357', passwordConfirmation: '24681357', acceptTerms: true, privacyAcknowledgement: true })
     expect(result.success).toBe(true)
     expect(passwordPolicyError('1234567', 'PARTNER')).toContain('8')
   })

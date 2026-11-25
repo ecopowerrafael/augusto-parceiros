@@ -11,6 +11,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - Ao mudar autenticação ou autorização, atualizar `docs/AUTENTICACAO-E-PERMISSOES.md` e revisar a matriz de acesso.
 - Ao concluir uma missão, atualize `CHANGELOG.md` e `docs/STATUS-DO-PROJETO.md`.
 - Toda funcionalidade já implementada deve estar conectada aos respectivos botões, menus e fluxos de navegação; não manter CTAs provisórios apontando para recursos existentes apenas no backend.
+- Todas as interfaces devem usar português brasileiro, traduzir códigos técnicos antes de exibi-los, usar mensagens contextualizadas, aplicar máscaras reutilizáveis em campos com formato conhecido, evitar dados redundantes e validar sempre no frontend e no backend.
 - Execute `npm run lint`, `npm run typecheck`, `npm run build` e os testes relevantes antes de entregar.
 - Não afirmar que algo foi testado sem executar a verificação.
 - O ambiente de homologação oficial é a Hostinger; depois de publicar na `main`, registrar se o teste online foi realmente executado.

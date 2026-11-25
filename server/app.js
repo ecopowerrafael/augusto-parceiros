@@ -25,6 +25,8 @@ import {
   issuePasswordReset,
   loadSession,
   loginSchema,
+  inferDocumentType,
+  normalizeDocument,
   partnerRegistrationSchema,
   passwordPolicyError,
   publicUser,
@@ -119,8 +121,10 @@ app.post('/api/auth/register/partner', databaseRequired, asyncRoute(async (reque
   if (!parsed.success) return response.status(400).json(validationError(parsed.error))
   if (!await consumeRateLimit(`register-partner:${request.ip}`, 5, 900)) return response.status(429).json({ error: 'TOO_MANY_REQUESTS' })
   const data = parsed.data
-  const document = digits(data.cpfCnpj)
-  if ((data.personType === 'PF' && document.length !== 11) || (data.personType === 'PJ' && document.length !== 14)) return response.status(400).json({ error: 'DOCUMENT_TYPE_MISMATCH' })
+  const document = normalizeDocument(data.cpfCnpj)
+  const inferredPersonType = inferDocumentType(document)
+  if (!inferredPersonType) return response.status(400).json({ error: 'INVALID_DOCUMENT' })
+  if (data.personType && data.personType !== inferredPersonType) return response.status(400).json({ error: 'DOCUMENT_TYPE_MISMATCH' })
   const email = data.email.toLowerCase()
   try {
     const user = await withTransaction(async (connection) => {
@@ -135,7 +139,7 @@ app.post('/api/auth/register/partner', databaseRequired, asyncRoute(async (reque
       await connection.execute(
         `INSERT INTO partner_companies (id, person_type, legal_name, trade_name, cpf_cnpj, responsible_name, email, whatsapp, zip_code, address, address_number, complement, neighborhood, city, state, segment)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [companyId, data.personType, data.legalName, data.tradeName || null, document, data.responsibleName, email, data.whatsapp, data.zipCode || null, data.address || null, data.addressNumber || null, data.complement || null, data.neighborhood || null, data.city || null, data.state, data.segment],
+        [companyId, inferredPersonType, data.legalName, data.tradeName || null, document, data.responsibleName, email, data.whatsapp, data.zipCode || null, data.address || null, data.addressNumber || null, data.complement || null, data.neighborhood || null, data.city || null, data.state, data.segment],
       )
       await connection.execute('INSERT INTO company_members (company_id, user_id, company_role) VALUES (?, ?, \'OWNER\')', [companyId, userId])
       return { id: userId, role: 'PARTNER', status: 'PENDING', name: data.responsibleName, email, cpf: null, whatsapp: data.whatsapp, companyId }

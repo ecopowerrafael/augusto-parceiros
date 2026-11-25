@@ -56,11 +56,17 @@ export const clientRegistrationSchema = matchingPasswords(basePersonSchema(clien
   cpf: z.string().trim().refine(isCpf, 'CPF inválido.'),
 }))
 
-export const partnerRegistrationSchema = matchingPasswords(basePersonSchema(partnerPasswordSchema).extend({
-  personType: z.enum(['PF', 'PJ']),
+export const partnerRegistrationSchema = matchingPasswords(z.object({
+  email: z.string().trim().email().max(255),
+  whatsapp: z.string().trim().min(8).max(30),
+  password: partnerPasswordSchema,
+  passwordConfirmation: z.string(),
+  acceptTerms: z.literal(true),
+  privacyAcknowledgement: z.literal(true),
+  personType: z.enum(['PF', 'PJ']).optional(),
   legalName: z.string().trim().min(3).max(180),
   tradeName: z.string().trim().max(180).optional().or(z.literal('')),
-  cpfCnpj: z.string().trim().refine((value) => isCpf(value) || isCnpj(value), 'CPF ou CNPJ inválido.'),
+  cpfCnpj: z.string().trim().min(1, 'Informe o CPF ou CNPJ.').max(32),
   responsibleName: z.string().trim().min(3).max(180),
   zipCode: z.string().trim().max(10).optional().or(z.literal('')),
   address: z.string().trim().max(180).optional().or(z.literal('')),
@@ -70,7 +76,13 @@ export const partnerRegistrationSchema = matchingPasswords(basePersonSchema(part
   city: z.string().trim().max(120).optional().or(z.literal('')),
   state: z.string().trim().length(2).toUpperCase(),
   segment: z.enum(['Desmanche', 'Revenda de motores', 'Autopeças', 'Oficina mecânica', 'Centro automotivo', 'Revenda de veículos', 'Prestador de serviços', 'Outros']),
-}))
+})).superRefine((data, context) => {
+  const document = normalizeDocument(data.cpfCnpj)
+  const type = inferDocumentType(document)
+  if (!type) context.addIssue({ code: z.ZodIssueCode.custom, path: ['cpfCnpj'], message: 'CPF ou CNPJ inválido.' })
+  else if (type === 'PF' && !isCpf(document)) context.addIssue({ code: z.ZodIssueCode.custom, path: ['cpfCnpj'], message: 'CPF inválido. Confira os números digitados.' })
+  else if (type === 'PJ' && !isCnpj(document)) context.addIssue({ code: z.ZodIssueCode.custom, path: ['cpfCnpj'], message: 'CNPJ inválido. Confira os dados digitados.' })
+})
 
 export const collaboratorRegistrationSchema = matchingPasswords(z.object({
   name: z.string().trim().min(3).max(180),
@@ -89,6 +101,17 @@ export function digits(value) {
   return String(value || '').replace(/\D/g, '')
 }
 
+export function normalizeDocument(value) {
+  return String(value || '').toUpperCase().replace(/[^0-9A-Z]/g, '')
+}
+
+export function inferDocumentType(value) {
+  const normalized = normalizeDocument(value)
+  if (/^[0-9]{11}$/.test(normalized)) return 'PF'
+  if (/^[A-Z0-9]{14}$/.test(normalized)) return 'PJ'
+  return null
+}
+
 export function isCpf(value) {
   const cpf = digits(value)
   if (cpf.length !== 11 || /^([0-9])\1+$/.test(cpf)) return false
@@ -102,13 +125,14 @@ export function isCpf(value) {
 }
 
 export function isCnpj(value) {
-  const cnpj = digits(value)
-  if (cnpj.length !== 14 || /^([0-9])\1+$/.test(cnpj)) return false
+  const cnpj = normalizeDocument(value)
+  if (!/^[A-Z0-9]{14}$/.test(cnpj) || /^([A-Z0-9])\1+$/.test(cnpj) || !/[0-9]{2}$/.test(cnpj)) return false
+  const valueOf = (character) => /[0-9]/.test(character) ? Number(character) : character.charCodeAt(0) - 55
   const calculate = (length) => {
     let weight = length - 7
     let total = 0
     for (let index = 0; index < length; index += 1) {
-      total += Number(cnpj[index]) * weight
+      total += valueOf(cnpj[index]) * weight
       weight -= 1
       if (weight < 2) weight = 9
     }

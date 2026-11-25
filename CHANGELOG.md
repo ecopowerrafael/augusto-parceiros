@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2] — Fase 3.4 — Usabilidade, cadastro e mensagens — 2026-11-25
+
+- Corrigido o fluxo que deixava `PJ` fixo e causava `DOCUMENT_TYPE_MISMATCH` ao informar CPF.
+- Adicionada máscara automática CPF/CNPJ, inferência PF/PJ, normalização no backend e suporte à validação de CNPJ alfanumérico.
+- Removido o campo redundante de nome de acesso do cadastro de parceiros.
+- Centralizadas mensagens amigáveis para erros da API e adicionadas máscaras reutilizáveis de documento, telefone e CEP.
+
 ## [0.3.1] — Fase 3.3 — Fluxo de parceiros — 2026-11-25
 
 - Conectados os CTAs comerciais de parceiro ao cadastro real e à área autenticada.

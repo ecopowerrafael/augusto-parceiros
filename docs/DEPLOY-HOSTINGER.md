@@ -49,6 +49,12 @@ Não executar migrations no startup, não usar SSH como requisito e não importa
 
 ## Checklist de testes online
 
+## Fase 3.4 — cadastro e mensagens
+
+A versão `0.3.2` não exige migration. O documento único do cadastro infere PF/PJ no backend e o frontend aplica máscara apenas para apresentação. Validar CPF e CNPJ com dados fictícios, incluindo colagem formatada, documento incompleto e retorno de CNPJ para CPF ao apagar caracteres.
+
+Confirmar também que erros como `DOCUMENT_TYPE_MISMATCH`, `INVALID_DOCUMENT`, `REGISTRATION_CONFLICT`, `INVALID_CREDENTIALS`, `AUTHENTICATION_REQUIRED` e `INTERNAL_ERROR` aparecem em português claro na interface, sem expor os códigos.
+
 ## Fase 3.3 — correção do fluxo de parceiros
 
 A versão `0.3.1` não exige migration. As migrations 001, 002 e 003 permanecem instaladas e não devem ser reexecutadas. Os commits `b99ed33` e `1d1bdeb` foram integrados na `main` e propagaram na Hostinger; `/api/health` retornou `version=0.3.1` e o bundle final `index-qbH4Hyei.js` foi entregue.

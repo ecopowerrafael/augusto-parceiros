@@ -26,6 +26,8 @@ Parceiros são criados como `PENDING`, com empresa, responsável e vínculo `OWN
 
 Os links comerciais `/cadastro-parceiro` e `/area-do-parceiro` usam o cadastro e a sessão existentes. A área encaminha usuários não autenticados ao login, parceiros pendentes ao acompanhamento e parceiros ativos ao painel. A autoridade dessas decisões permanece no backend.
 
+O cadastro de parceiro usa um único documento; o tipo PF/PJ é inferido pelo backend a partir do CPF/CNPJ normalizado. A máscara do frontend é apenas apresentação e não substitui a validação dos dígitos verificadores.
+
 ## Recuperação
 
 O reset depende de SMTP configurado. O token é aleatório, armazenado como hash, expira em 30 minutos e é marcado como usado na mesma transação da troca de senha. A resposta de solicitação é genérica para evitar enumeração de contas.
