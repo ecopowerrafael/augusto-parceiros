@@ -2,7 +2,15 @@
 
 ## Fase atual
 
-Fase 3.4 — correções de usabilidade, cadastro e mensagens — implementação em branch de correção, versão `0.3.2` preparada para homologação.
+Fase 3.5 — reestruturação administrativa e preparação de comissionamento — versão `0.3.3` integrada na `main`; propagação online e homologação autenticada ainda pendentes.
+
+## Fase 3.5 — estado da publicação
+
+- Migration 004 instalada e validada pelo proprietário no banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`.
+- `commission_settings` e `partner_commission_overrides` existem; configuração inicial permanece `NONE`, sem valores comerciais ativos.
+- Commit da `main` antes da integração, usado como rollback: `c98aa17f4bd1c82d13bd333876c30778d9a2c67e`.
+- Branch integrada: `feature/fase-3-5-admin-comissoes`; versão no código: `0.3.3`.
+- Propagação na Hostinger: pendente de confirmação HTTP; homologação autenticada da aprovação: pendente.
 
 ## Implementado
 
@@ -97,10 +105,12 @@ Fase 3.4 — correções de usabilidade, cadastro e mensagens — implementaçã
 - Confirmação do proprietário: Migration 002 instalada no banco `u891593158_doc`, com 23 tabelas, 27 UFs, 6 categorias, 6 serviços, 6 itens de cobrança, 13 campos, 8 regras DRAFT, 1 versão, 2 documentos e 4 ações; zero relacionamentos inválidos.
 - Migration 003 confirmada pelo proprietário: 12 tabelas esperadas, 7 colunas compatíveis, 27 UFs, 2 consultas, 8 mapeamentos, cálculo persistido, CSV sem valor e 11 regras técnicas.
 - SQLs manuais agora são gerados com seleção explícita e referências qualificadas pelo `scripts/generate-hostinger-sql.mjs`.
+- Pré-merge da Fase 3.5: lint, typecheck, 55 testes, build, sintaxe Node.js, validação SQL e `git diff --check` aprovados.
+- Instalação real da Migration 004 confirmada pelo proprietário: precheck sem registro prévio, duas tabelas criadas, registro `004_partner_commissions.sql`, configuração `NONE` e zero overrides inválidos.
 
 ## Próxima missão
 
-Publicar a branch de correção 0.3.2, validar online os formulários de parceiro com CPF/CNPJ e concluir a homologação administrativa do fluxo de parceiros. Depois retomar o roteiro em `docs/HOMOLOGACAO-FASE-3.2.md`. Não iniciar Fase 4/Simples API real, orçamento definitivo, documentos de clientes ou financeiro.
+Confirmar a propagação da versão `0.3.3` no Hostinger e executar `docs/HOMOLOGACAO-APROVACAO-PARCEIRO.md` com dados fictícios. Não iniciar a Fase 4/Simples API real, orçamento definitivo, documentação digital ou financeiro.
 - Fase atual: Fase 3.5 em branch `feature/fase-3-5-admin-comissoes`, aguardando validação da migration 004 no Hostinger.
 - Nesta etapa: aprovação administrativa com diagnóstico seguro, navegação administrativa separada e avaliador genérico de comissão sem ativação comercial.
 - Pendente: importar `migrations/004_partner_commissions.sql`, validar aprovação real de parceiro e só então publicar a integração em `main`.

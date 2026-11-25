@@ -13,8 +13,9 @@
    Construtor no-code, composição de cobranças, regras declarativas e simulador implementados. Migrations 001, 002 e 003 confirmadas no MySQL remoto; pendente apenas a execução dos cenários pelo proprietário e a criação do segundo serviço demonstrativo pela interface.
 3.3. Fluxo de cadastro e aprovação de parceiros — correção 0.3.1 preparada.
    Integração dos CTAs comerciais com o cadastro real, acompanhamento seguro de pendentes, busca/filtros administrativos e transições de status com auditoria. Pendente validar o fluxo completo online com contas fictícias.
-3.4. Usabilidade, cadastro e mensagens — correção 0.3.2 preparada.
+3.4. Usabilidade, cadastro e mensagens — correção 0.3.2 publicada.
    Documento CPF/CNPJ automático, remoção de nome de acesso, máscaras reutilizáveis e tradução centralizada de erros; sem alteração de schema.
+3.5. Reestruturação administrativa e comissionamento — versão 0.3.3 integrada na `main`; Migration 004 instalada e validada, pendente propagação e homologação autenticada.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.
@@ -24,4 +25,4 @@
 10. Financeiro, relatórios e expansão.
 
 Fases posteriores dependem de validação das regras operacionais e não devem ser inferidas como aprovação pelo Detran.
-- Fase 3.5: reestruturação administrativa e preparação de comissionamento concluídas na branch `feature/fase-3-5-admin-comissoes`; aguardando importação manual da migration 004 e homologação online antes da integração na `main`.
+- Fase 3.5: reestruturação administrativa e preparação de comissionamento integradas na `main`; Migration 004 confirmada pelo proprietário. Pendentes propagação online e homologação autenticada.

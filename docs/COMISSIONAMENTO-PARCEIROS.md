@@ -2,7 +2,7 @@
 
 ## Estado
 
-A Fase 3.5 prepara um modelo genérico de comissão, mas o modelo inicial é `NONE`: nenhum valor comercial é calculado ou publicado. A API nunca deve confiar em valores enviados pelo frontend.
+A Fase 3.5 implementa o modelo genérico de comissão, mas o modelo inicial instalado é `NONE`: nenhum valor comercial é calculado ou publicado. A API nunca deve confiar em valores enviados pelo frontend.
 
 ## Modelos previstos
 
@@ -10,7 +10,7 @@ A Fase 3.5 prepara um modelo genérico de comissão, mas o modelo inicial é `NO
 
 ## Banco
 
-Importe `migrations/004_partner_commissions.sql` manualmente pelo phpMyAdmin, após verificar que as migrations 001, 002 e 003 estão registradas. A migration cria configuração global e override por parceiro, sem preços reais e sem comandos destrutivos.
+O proprietário importou `migrations/004_partner_commissions.sql` manualmente pelo phpMyAdmin no banco `u891593158_doc`. O verify confirmou as duas tabelas, registro da migration, configuração `NONE` e zero overrides inválidos. Não importe novamente.
 
 ## Homologação
 

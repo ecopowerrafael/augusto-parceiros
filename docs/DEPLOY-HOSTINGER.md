@@ -51,7 +51,9 @@ Não executar migrations no startup, não usar SSH como requisito e não importa
 
 ## Fase 3.4 — cadastro e mensagens
 
-A versão `0.3.3` está em homologação na branch `feature/fase-3-5-admin-comissoes`. Antes de publicar em `main`, executar o precheck 004, importar `migrations/004_partner_commissions.sql` pelo phpMyAdmin e executar o verify 004. Não executar migrations no startup.
+A versão `0.3.3` foi integrada na `main`. A Migration 004 foi importada manualmente no banco `u891593158_doc` e verificada pelo proprietário em MariaDB `11.8.9-MariaDB-log`. Não executar migrations no startup nem repetir a importação.
+
+Após o deploy, confirmar por HTTP `version=0.3.3`, `APP_ENV=staging` e `allowIndexing=false`. A publicação do commit não é evidência de propagação da Web App.
 
 Em falha na aprovação administrativa, registrar o `X-Request-ID` devolvido pela API e consultar os logs privados da aplicação; o log estruturado informa código/estado SQL sem credenciais ou PII.
 
