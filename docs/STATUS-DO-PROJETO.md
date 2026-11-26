@@ -1,5 +1,14 @@
 # Status do projeto
 
+## Hotfix 0.4.3 — regressão HTTP 503 no editor — 26/11/2026
+
+- Branch de trabalho: `fix/fase-3-9-editor-http-503`.
+- Causa estrutural confirmada: o endpoint do editor executava uma função assíncrona diretamente no Express 4; rejeições SQL ficavam sem tratamento e podiam encerrar/reiniciar o processo, produzindo a página HTML `server busy` da Hostinger.
+- Correção aplicada: wrapper assíncrono no endpoint, resposta JSON pelo middleware de erro e logs privados com request ID, operação, duração e código SQL.
+- Mitigação de compatibilidade: regras e ações são carregadas por consultas separadas; removida a agregação `JSON_ARRAYAGG` combinada com `GROUP BY r.id`.
+- Teste MariaDB real: não executado neste ambiente. Os testes do editor usam pool mockado e estão identificados como tal.
+- Homologação Hostinger: pendente de publicação e de o proprietário abrir o construtor, simular e gerar o PDF online.
+
 ## Publicação da Fase 3.9 — 26/11/2026
 
 - Ajustes locais preparados para contato configurável de análise manual, seleção visual restrita a São Paulo/Outros estados e PDF comercial A4 com logotipo oficial.

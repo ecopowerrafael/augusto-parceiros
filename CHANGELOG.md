@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.3] — Hotfix do editor de serviços — 2026-11-26
+
+- Corrigido o tratamento assíncrono do endpoint `/api/admin/services/:serviceId/editor`, evitando rejeições não tratadas no Express.
+- Adicionado diagnóstico privado por request ID, etapa, duração e código SQL, sem credenciais ou dados pessoais.
+- Substituída a consulta agregada de regras por carregamento separado de regras e ações, preservando o contrato do editor e melhorando a compatibilidade MariaDB.
+- Adicionados testes de contrato do carregamento completo do editor e de propagação controlada de falhas SQL.
+- A versão do PWA foi sincronizada para `0.4.3`; homologação real na Hostinger ainda não foi executada.
+
 ## [0.4.2] — Publicação da Fase 3.9 — 2026-11-26
 
 - Migration 007 instalada e verificada pelo proprietário no banco remoto.

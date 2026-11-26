@@ -111,5 +111,9 @@ Status possíveis: `DATABASE_CONFIG_MISSING`, `DATABASE_CONFIG_INVALID`, `ECONNR
 
 O proprietário confirmou a instalação e verificação da Migration 007 no banco `u891593158_doc`. Não reimportar a migration, não executar SQL remoto e não iniciar a Fase 4. A Fase 3.9 foi publicada na `main` pelo commit `fa90ef0539bce813a613151d90ab6fd0684fe02b`; rollback: `rollback-before-fase-3-9-20261126`. A homologação funcional online ainda depende de evidência HTTP e testes manuais do proprietário.
 
+## Hotfix 0.4.3
+
+O hotfix do editor deve ser publicado somente após `lint`, `typecheck`, testes, build e sintaxe Node.js. A publicação não exige nova migration. Após o deploy, validar no painel administrativo o carregamento do editor, a simulação e a geração do PDF; registrar falhas SQL pelos logs privados usando o `X-Request-ID` retornado pela aplicação.
+
 Para o estado parcial confirmado, não excluir as colunas `manual_whatsapp`, `manual_team_name` ou `manual_message_template`; a Migration 007 usa `ADD COLUMN IF NOT EXISTS` e `ON DUPLICATE KEY UPDATE` para permitir a recuperação segura.
 
