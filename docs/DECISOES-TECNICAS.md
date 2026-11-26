@@ -34,3 +34,11 @@ As migrations canônicas não fixam o schema MySQL. Para a Hostinger, `scripts/g
 - Usar request IDs e códigos MySQL em logs estruturados, sem registrar payload sensível.
 - Preparar comissões por modelo semântico e centavos, com `NONE` como padrão até homologação e sem dependência de nomes de serviços.
 - Bloquear a integração em `main` até a importação manual e verificação da migration 004.
+
+## 2026-11-26 — aplicabilidade declarativa da identificação do motor
+
+A obrigatoriedade de `engine.identification_mode` deve ser controlada por `visibility_condition` e `required_condition` persistidas, aplicáveis somente a automóveis, caminhões e ônibus. Motocicletas seguem o fluxo de declaração de compatibilidade e não recebem campos técnicos do motor de origem. A correção foi preparada na Migration 008 porque o defeito estava no estado persistido do construtor, não em uma regra comercial fixa do código.
+
+## 2026-11-26 — logo incorporado ao bundle do PDF
+
+O logo oficial é lido pelo Vite durante o build e incorporado ao bundle como bytes base64; o gerador `pdf-lib` embute esses bytes no documento antes de finalizar o PDF. Assim, a geração não depende de URL, cache ou disponibilidade de rede no momento do download.

@@ -890,3 +890,32 @@ WHERE NOT EXISTS (SELECT 1 FROM `u891593158_doc`.`schema_migrations` WHERE name 
   AND (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = 'u891593158_doc' AND table_name = 'application_settings' AND column_name IN ('manual_whatsapp', 'manual_team_name', 'manual_message_template')) = 3
   AND (SELECT COUNT(*) FROM `u891593158_doc`.`service_billing_items` sbi JOIN `u891593158_doc`.`billing_items` bi ON bi.id = sbi.billing_item_id WHERE sbi.service_version_id = '33000000-0000-4000-8000-000000000001' AND bi.code = 'MODIFICATION_REQUEST') = 1
   AND (SELECT COUNT(*) FROM `u891593158_doc`.`service_billing_items` sbi JOIN `u891593158_doc`.`billing_items` bi ON bi.id = sbi.billing_item_id WHERE sbi.service_version_id = '33000000-0000-4000-8000-000000000001' AND bi.code = 'ITL_CSV_INSPECTION' AND sbi.include_in_total = 0 AND sbi.visible_to_client = 0 AND sbi.visible_to_partner = 0) = 1;
+
+
+-- Doc Motor Fase 3.11: tornar a identificação do motor não aplicável a motocicletas.
+-- Migration incremental e não destrutiva. Não executar migrations anteriores novamente.
+
+UPDATE `u891593158_doc`.`service_form_fields`
+SET is_required = 1,
+    visibility_condition = JSON_OBJECT('field', 'vehicle_target.category', 'operator', 'IN_LIST', 'values', JSON_ARRAY('AUTOMOBILE', 'TRUCK', 'BUS')),
+    required_condition = JSON_OBJECT('field', 'vehicle_target.category', 'operator', 'IN_LIST', 'values', JSON_ARRAY('AUTOMOBILE', 'TRUCK', 'BUS')),
+    updated_at = UTC_TIMESTAMP()
+WHERE service_version_id = '33000000-0000-4000-8000-000000000001'
+  AND field_key = 'engine.identification_mode';
+
+UPDATE `u891593158_doc`.`service_form_fields`
+SET description = 'Ambiente de simulação: informe dados técnicos fictícios do veículo de origem. A integração operacional com provedor externo será implementada na Fase 4.',
+    updated_at = UTC_TIMESTAMP()
+WHERE service_version_id = '33000000-0000-4000-8000-000000000001'
+  AND field_key = 'engine.identification_mode';
+
+UPDATE `u891593158_doc`.`service_form_fields`
+SET description = 'Atenção: motocicletas somente podem ser cadastradas automaticamente com motor de mesma cilindrada original, independentemente do ano de fabricação do motor ou da motocicleta. Um motor de 150 ou 160 cilindradas não pode ser cadastrado automaticamente em motocicleta de 125 cilindradas, ou vice-versa.',
+    updated_at = UTC_TIMESTAMP()
+WHERE service_version_id = '33000000-0000-4000-8000-000000000001'
+  AND field_key = 'motorcycle.compatibility_declaration';
+
+INSERT INTO `u891593158_doc`.`schema_migrations` (name)
+SELECT '008_motorcycle_visibility_consistency.sql'
+WHERE NOT EXISTS (SELECT 1 FROM `u891593158_doc`.`schema_migrations` WHERE name = '008_motorcycle_visibility_consistency.sql')
+  AND (SELECT COUNT(*) FROM `u891593158_doc`.`service_form_fields` WHERE service_version_id = '33000000-0000-4000-8000-000000000001' AND field_key = 'engine.identification_mode' AND is_required = 1 AND visibility_condition IS NOT NULL AND required_condition IS NOT NULL) = 1;

@@ -46,6 +46,13 @@ Não preencher senhas neste repositório ou nesta documentação. A instalação
 - A confirmação de deploy exige `/api/health` com `environment: staging`, `allowIndexing: false` e versão `0.4.6`; o push no GitHub isoladamente não comprova a propagação da Hostinger.
 - A tentativa HTTP local de 26/11/2026 não resolveu `docmotor.online`; a homologação funcional permanece pendente de rede/DNS funcional e conferência manual do proprietário.
 
+## Fase 3.11 — Migration 008 verificada
+
+- A versão `0.4.7` está na branch `feature/fase-3-11-homologacao-simulador` e sua publicação foi autorizada.
+- A causa da falha de motocicleta foi confirmada na configuração persistida de `engine.identification_mode`; os arquivos `008_motorcycle_visibility_consistency_precheck.sql`, `008_motorcycle_visibility_consistency.sql` e `008_motorcycle_visibility_consistency_verify.sql` foram gerados pelo comando oficial e importados/verificados manualmente pelo proprietário.
+- Não executar novamente a Migration 008, não executar migrations anteriores, não usar `node scripts/migrate.mjs` e não executar SQL pelo backend. Evidências: `migration_007_registered=1`, `migration_008_count=1`, três updates concluídos, uma linha inserida e `motorcycle_mode_not_required=1`.
+- A Migration 008 não altera preços, regras comerciais, usuários ou configurações de atendimento; apenas torna a aplicabilidade declarativa da identificação do motor consistente.
+
 ## Fase 3 — implantação em duas etapas
 
 O proprietário confirmou a importação da Migration 002 e das 23 tabelas no banco correto. Não reimportar a 002. Para esta missão, usar somente: (1) `database/updates/003_complete_engine_service_seed_precheck.sql`; (2) `database/updates/003_complete_engine_service_seed.sql`; (3) `database/updates/003_complete_engine_service_seed_verify.sql`. Só depois da confirmação da 003 o código do painel que depende dessas configurações poderá ser publicado na `main`.

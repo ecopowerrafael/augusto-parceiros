@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.7] — Correção funcional do simulador — 26/11/2026
+
+- Corrigida a inconsistência entre visibilidade e obrigatoriedade de `engine.identification_mode` para motocicletas.
+- Preparada a Migration 008 para tornar a configuração persistida consistente sem alterar migrations anteriores.
+- Adicionado teste de regressão para o erro real da Hostinger e cenários de declaração ausente, troca de categoria e descarte de valores ocultos.
+- O logotipo oficial passou a ser incorporado no bundle do frontend e embutido no PDF sem requisição durante a geração.
+- Modal de análise manual refinado com identidade visual, mensagem orientativa e ação de WhatsApp configurável.
+- 17 arquivos de teste e 135 testes aprovados localmente; Migration 008 importada e verificada manualmente pelo proprietário. Publicação na `main` autorizada; homologação online permanece pendente.
+
 ## [0.4.6] — Fluxo condicional, análise manual e PDF — 2026-11-26
 
 - Campos condicionais agora são ocultados no simulador e valores ocultos são descartados também no backend.
