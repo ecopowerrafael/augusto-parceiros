@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.9] — Suspensão e catálogo de modificações — 26/11/2026
+
+- Corrigida a inicialização do primeiro DRAFT no construtor para serviços existentes ainda sem versão.
+- Adicionado catálogo central reutilizável de modificações, com CRUD administrativo protegido, status ativo/inativo e bloqueio de cadastro de motor como adicional.
+- Preparada a configuração declarativa de regularização de suspensão, rodas/pneus e grupo repetível de modificações adicionais.
+- Adicionada cobrança declarativa por quantidade e validação backend contra catálogo ativo, duplicidade e descrições obrigatórias.
+- Criada a Migration 010 e os SQLs Hostinger; não executados remotamente.
+- Validações locais aprovadas; homologação online, importação manual e publicação na `main` permanecem pendentes.
+
 ## [0.4.8] — Ajustes finais do simulador — 26/11/2026
 
 - Alinhadas as condições declarativas dos campos do motor no modo PLATE/MANUAL e mantida a limpeza de valores ocultos.

@@ -1,5 +1,15 @@
 # Status do projeto
 
+## Fase 3.13 — implementação local em branch, Migration 010 pendente — 26/11/2026
+
+- Branch de trabalho: `feature/fase-3-13-suspensao-modificacoes`; versão local `0.4.9`. A `main` não foi alterada e não houve SQL remoto.
+- Corrigida a causa do `SERVICE_NOT_FOUND` no construtor: serviço existente sem versão agora recebe uma única versão DRAFT inicializada dentro de transação, preservando o versionamento.
+- Implementado o catálogo central declarativo de modificações, endpoints administrativos protegidos e menu `Catálogo de modificações`. Cadastro de motor continua bloqueado como modificação adicional.
+- Preparada a Migration 010, os artefatos Hostinger e o serviço de regularização de suspensão com campos, cobranças, regras, checklist condicional e grupo repetível. Os valores comerciais ficam no banco, não no frontend.
+- Validação estática da Migration 010 aprovada: 30 linhas `INSERT`, correspondência de colunas/valores e `JSON_OBJECT` verificados pelo validador do projeto. MariaDB descartável não está disponível; execução SQL real e importação manual ainda não foram realizadas.
+- Verificações locais executadas: `npm run lint`, `npm run typecheck`, `npm run test` (141 testes após os novos testes), `npm run build`, `node --check server/services.js` e `git diff --check` aprovados. O build mantém apenas o aviso existente de bundle acima de 500 kB.
+- Pendências: revisão funcional/visual, importação e verificação da Migration 010 pelo proprietário, testes online na Hostinger e publicação posterior na `main` somente com autorização explícita. Não iniciar a Fase 4.
+
 ## Fase 3.12 — publicada na main, homologação online pendente — 26/11/2026
 
 - Branch de implementação: `feature/fase-3-12-ajustes-finais-simulador`; versão `0.4.8`; publicação na `main` no commit `3373ee5845ca0a25a6091c4f4fa715ec50281cb7`.

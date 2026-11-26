@@ -1,5 +1,11 @@
 # Banco de dados
 
+## Migration 010 — catálogo de modificações e suspensão
+
+A Migration 010 cria o catálogo reutilizável `vehicle_modifications`, suas relações de categorias/UFs, documentos e mensagens, além de `quantity_expression` para cobranças declarativas. Também renomeia o serviço existente `LOWERED_SUSPENSION` sem duplicá-lo e inicializa sua primeira versão DRAFT, campos, opções, regras e cobranças.
+
+Importação manual: `database/updates/010_suspension_modification_catalog_precheck.sql`, depois `010_suspension_modification_catalog.sql`, depois `010_suspension_modification_catalog_verify.sql`. Não executar remotamente nem reexecutar migrations 001–009. A migration registra-se somente quando as tabelas, catálogo, serviço e campos esperados existirem.
+
 ## Fase 2 — schema inicial
 
 MySQL da Hostinger é conectado por `DATABASE_URL`. `migrations/001_initial.sql` cria usuários, parceiros, membros, clientes, sessões, tokens de reset, rate limits e auditoria, com chaves estrangeiras, índices e unicidade de e-mail/documento.

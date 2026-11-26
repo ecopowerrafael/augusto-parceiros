@@ -10,7 +10,7 @@ const root = process.cwd()
 const quoteDatabase = `\`${databaseName}\``
 const applicationTables = new Set([
   'schema_migrations', 'users', 'partner_companies', 'company_members', 'client_profiles', 'sessions', 'password_reset_tokens', 'rate_limit_events', 'audit_logs',
-  'brazilian_states', 'vehicle_categories', 'services', 'service_vehicle_categories', 'service_ufs', 'service_relations', 'service_versions', 'service_form_sections', 'service_form_fields', 'service_field_options', 'service_data_sources', 'service_external_queries', 'service_query_mappings', 'price_tables', 'billing_items', 'service_prices', 'service_price_components', 'service_billing_items', 'technical_rules', 'technical_rule_actions', 'technical_rule_services', 'service_documents', 'service_messages', 'commission_settings', 'partner_commission_overrides', 'application_settings',
+  'brazilian_states', 'vehicle_categories', 'services', 'service_vehicle_categories', 'service_ufs', 'service_relations', 'service_versions', 'service_form_sections', 'service_form_fields', 'service_field_options', 'service_data_sources', 'service_external_queries', 'service_query_mappings', 'price_tables', 'billing_items', 'service_prices', 'service_price_components', 'service_billing_items', 'technical_rules', 'technical_rule_actions', 'technical_rule_services', 'service_documents', 'service_messages', 'commission_settings', 'partner_commission_overrides', 'application_settings', 'vehicle_modifications', 'vehicle_modification_categories', 'vehicle_modification_ufs', 'vehicle_modification_documents', 'vehicle_modification_messages',
 ])
 
 function qualifyCode(code) {
@@ -68,19 +68,22 @@ const migration006 = await read('migrations/006_simulator_input_normalization.sq
 const migration007 = await read('migrations/007_engine_rules_and_documents.sql')
 const migration008 = await read('migrations/008_motorcycle_visibility_consistency.sql')
 const migration009 = await read('migrations/009_simulator_final_visibility.sql')
+const migration010 = await read('migrations/010_suspension_modification_catalog.sql')
 const precheck007 = await read('database/hostinger/007_engine_rules_and_documents_precheck.source.sql')
 const verify007 = await read('database/hostinger/007_engine_rules_and_documents_verify.source.sql')
 const precheck008 = await read('database/hostinger/008_motorcycle_visibility_consistency_precheck.source.sql')
 const verify008 = await read('database/hostinger/008_motorcycle_visibility_consistency_verify.source.sql')
 const precheck009 = await read('database/hostinger/009_simulator_final_visibility_precheck.source.sql')
 const verify009 = await read('database/hostinger/009_simulator_final_visibility_verify.source.sql')
+const precheck010 = await read('database/hostinger/010_suspension_modification_catalog_precheck.source.sql')
+const verify010 = await read('database/hostinger/010_suspension_modification_catalog_verify.source.sql')
 const migration001 = await read('migrations/001_initial.sql')
 const precheck005 = `-- Pré-verificação somente leitura da Migration 005.\n\nSELECT VERSION() AS mysql_version;\nSELECT COUNT(*) AS migration_005_already_registered FROM schema_migrations WHERE name = '005_application_settings.sql';\nSELECT COUNT(*) AS required_base_tables_present FROM information_schema.tables WHERE table_schema = '${databaseName}' AND table_name IN ('users', 'schema_migrations');\nSELECT COUNT(*) AS application_settings_present FROM information_schema.tables WHERE table_schema = '${databaseName}' AND table_name = 'application_settings';`
 const verify005 = `-- Verificação posterior somente leitura da Migration 005.\n\nSELECT VERSION() AS mysql_version;\nSELECT COUNT(*) AS migration_005_count FROM schema_migrations WHERE name = '005_application_settings.sql';\nSELECT COUNT(*) AS application_settings_count FROM information_schema.tables WHERE table_schema = '${databaseName}' AND table_name = 'application_settings';\nSELECT id, company_name, timezone FROM application_settings WHERE id = '55000000-0000-4000-8000-000000000001';`
 
 const schemaMigrations = `CREATE TABLE IF NOT EXISTS schema_migrations (name VARCHAR(255) NOT NULL PRIMARY KEY, applied_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`
 const migration001Registration = `INSERT INTO schema_migrations (name)\nSELECT '001_initial.sql'\nFROM information_schema.tables\nWHERE table_schema = '${databaseName}'\n  AND table_name IN ('users', 'partner_companies', 'company_members', 'client_profiles', 'sessions', 'password_reset_tokens', 'rate_limit_events', 'audit_logs')\nGROUP BY table_schema\nHAVING COUNT(*) = 8\n   AND NOT EXISTS (SELECT 1 FROM schema_migrations WHERE name = '001_initial.sql');`
-const installSource = `${schemaMigrations}\n\n${migration001}\n\n-- Registra a migration somente se as oito tabelas da Fase 2 existirem.\n${migration001Registration}\n\n${migration002}\n\n${migration003}\n\n${migration004}\n\n${migration005}\n\n${migration006}\n\n${migration007}\n\n${migration008}\n\n${migration009}`
+const installSource = `${schemaMigrations}\n\n${migration001}\n\n-- Registra a migration somente se as oito tabelas da Fase 2 existirem.\n${migration001Registration}\n\n${migration002}\n\n${migration003}\n\n${migration004}\n\n${migration005}\n\n${migration006}\n\n${migration007}\n\n${migration008}\n\n${migration009}\n\n${migration010}`
 // Os artefatos 002–004 já foram validados e publicados; não os reescrevemos para evitar
 // qualificação cumulativa quando o gerador é executado novamente.
 await write(path.join(outputDirectory, '005_application_settings_precheck.sql'), header('Pré-verificação da Migration 005') + qualifySql(precheck005))
@@ -97,5 +100,8 @@ await write(path.join(outputDirectory, '008_motorcycle_visibility_consistency_ve
 await write(path.join(outputDirectory, '009_simulator_final_visibility_precheck.sql'), header('Pré-verificação da Migration 009') + qualifySql(precheck009))
 await write(path.join(outputDirectory, '009_simulator_final_visibility.sql'), header('Atualização da Migration 009') + qualifySql(migration009))
 await write(path.join(outputDirectory, '009_simulator_final_visibility_verify.sql'), header('Verificação da Migration 009') + qualifySql(verify009))
+await write(path.join(outputDirectory, '010_suspension_modification_catalog_precheck.sql'), header('Pré-verificação da Migration 010') + qualifySql(precheck010))
+await write(path.join(outputDirectory, '010_suspension_modification_catalog.sql'), header('Atualização da Migration 010') + qualifySql(migration010))
+await write(path.join(outputDirectory, '010_suspension_modification_catalog_verify.sql'), header('Verificação da Migration 010') + qualifySql(verify010))
 await write('database/install.sql', header('Instalação completa da estrutura Doc Motor') + qualifySql(installSource))
 process.stdout.write(`SQLs Hostinger gerados para ${databaseName} em ${outputDirectory}\n`)

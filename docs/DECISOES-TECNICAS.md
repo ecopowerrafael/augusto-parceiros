@@ -42,3 +42,7 @@ A obrigatoriedade de `engine.identification_mode` deve ser controlada por `visib
 ## 2026-11-26 — logo incorporado ao bundle do PDF
 
 O logo oficial é lido pelo Vite durante o build e incorporado ao bundle como bytes base64; o gerador `pdf-lib` embute esses bytes no documento antes de finalizar o PDF. Assim, a geração não depende de URL, cache ou disponibilidade de rede no momento do download.
+
+## 2026-11-26 — catálogo de modificações e quantidade declarativa
+
+Modificações adicionais são entidades persistidas em catálogo próprio, com status, exigências, referências e cobrança vinculada. O serviço de suspensão apenas seleciona essas entidades por campo repetível no-code; não reproduz a lista nem valores no React. A cobrança por quantidade usa `quantity_expression` e o operador fechado `COUNT_FILLED`, calculado no backend.

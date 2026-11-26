@@ -1,9 +1,9 @@
 import { z } from 'zod'
 import { normalizePlate as normalizePlateInput, normalizeSimulationAnswers } from './simulator-normalizers.js'
 
-export const FIELD_TYPES = ['TEXT', 'LONG_TEXT', 'INTEGER', 'DECIMAL', 'MONEY', 'PERCENT', 'DATE', 'PHONE', 'EMAIL', 'CPF_CNPJ', 'VEHICLE_PLATE', 'SINGLE_SELECT', 'MULTI_SELECT', 'RADIO', 'CHECKBOX', 'YES_NO', 'CALCULATED', 'API_FIELD', 'INFO', 'DOCUMENT_REQUIREMENT']
+export const FIELD_TYPES = ['TEXT', 'LONG_TEXT', 'INTEGER', 'DECIMAL', 'MONEY', 'PERCENT', 'DATE', 'PHONE', 'EMAIL', 'CPF_CNPJ', 'VEHICLE_PLATE', 'SINGLE_SELECT', 'MULTI_SELECT', 'REPEATABLE_MODIFICATIONS', 'RADIO', 'CHECKBOX', 'YES_NO', 'CALCULATED', 'API_FIELD', 'INFO', 'DOCUMENT_REQUIREMENT']
 export const DATA_ORIGINS = ['MANUAL', 'EXTERNAL', 'CALCULATED', 'ADMIN_CONFIRMED', 'UNAVAILABLE']
-export const OPERATORS = ['EQUALS', 'NOT_EQUALS', 'GREATER_THAN', 'LESS_THAN', 'GREATER_OR_EQUAL', 'LESS_OR_EQUAL', 'BETWEEN', 'CONTAINS', 'NOT_CONTAINS', 'FILLED', 'EMPTY', 'TRUE', 'FALSE', 'IN_LIST', 'NOT_IN_LIST', 'PERCENTAGE_COMPARISON']
+export const OPERATORS = ['EQUALS', 'NOT_EQUALS', 'GREATER_THAN', 'LESS_THAN', 'GREATER_OR_EQUAL', 'LESS_OR_EQUAL', 'BETWEEN', 'CONTAINS', 'NOT_CONTAINS', 'FILLED', 'EMPTY', 'TRUE', 'FALSE', 'IN_LIST', 'NOT_IN_LIST', 'COUNT_FILLED', 'PERCENTAGE_COMPARISON']
 export const ACTION_TYPES = ['ADD_BILLING_ITEM', 'REMOVE_BILLING_ITEM', 'SET_QUANTITY', 'SET_AMOUNT', 'REQUIRE_FIELD', 'SHOW_FIELD', 'HIDE_FIELD', 'REQUIRE_DOCUMENT', 'SHOW_GUIDANCE', 'SHOW_ALERT', 'REQUIRE_EXTERNAL_QUERY', 'MANUAL_REVIEW', 'BLOCK_AUTOMATED_QUOTE', 'CLASSIFY_VIABILITY', 'REQUIRE_ADMIN_APPROVAL']
 export const DERIVED_FIELD_KEYS = ['vehicle_target.plate_pattern', 'vehicle_donor.plate_pattern']
 const DERIVED_FIELD_SOURCES = { 'vehicle_target.plate_pattern': 'vehicle_target.plate', 'vehicle_donor.plate_pattern': 'vehicle_donor.plate' }
@@ -74,7 +74,7 @@ export const billingItemSchema = z.object({
   chargeNature: z.enum(['HONORARY', 'PUBLIC_FEE', 'OWN_SERVICE', 'THIRD_PARTY', 'ADDITIONAL_EXPENSE']), amountStatus: z.enum(['FIXED', 'ESTIMATED', 'QUOTE_ONLY', 'CLIENT_DIRECT', 'NOT_DEFINED']), paymentMode: z.string().trim().max(32).default('UNDEFINED'), isPublicFee: z.boolean().default(false), uf: z.string().regex(/^[A-Z]{2}$/).nullable().optional(), vehicleCategoryId: z.string().uuid().nullable().optional(), commercialProfile: z.string().trim().max(16).nullable().optional(), partnerCompanyId: z.string().uuid().nullable().optional(), validFrom: z.string().date().nullable().optional(), validUntil: z.string().date().nullable().optional(),
 })
 
-export const serviceBillingSchema = z.object({ billingItemId: z.string().uuid(), billingMode: z.enum(['REQUIRED', 'OPTIONAL', 'CONDITIONAL']), quantity: z.coerce.number().positive().max(1000).default(1), amountOverrideCents: z.coerce.number().int().min(0).max(999999999999).nullable().optional(), discountAllowed: z.boolean().default(false), visibleToPartner: z.boolean().default(true), visibleToClient: z.boolean().default(true), includeInTotal: z.boolean().default(true), conditionExpression: conditionSchema.nullable().optional(), displayOrder: z.coerce.number().int().min(0).max(100000).default(0) })
+export const serviceBillingSchema = z.object({ billingItemId: z.string().uuid(), billingMode: z.enum(['REQUIRED', 'OPTIONAL', 'CONDITIONAL']), quantity: z.coerce.number().positive().max(1000).default(1), quantityExpression: conditionSchema.nullable().optional(), amountOverrideCents: z.coerce.number().int().min(0).max(999999999999).nullable().optional(), discountAllowed: z.boolean().default(false), visibleToPartner: z.boolean().default(true), visibleToClient: z.boolean().default(true), includeInTotal: z.boolean().default(true), conditionExpression: conditionSchema.nullable().optional(), displayOrder: z.coerce.number().int().min(0).max(100000).default(0) })
 export const ruleSchema = z.object({ serviceId: z.string().uuid(), serviceVersionId: z.string().uuid().nullable().optional(), name: z.string().trim().min(2).max(180), description: z.string().trim().max(10000).optional().or(z.literal('')), vehicleCategoryId: z.string().uuid().nullable().optional(), uf: z.string().regex(/^[A-Z]{2}$/).nullable().optional(), conditions: conditionSchema, technicalLimits: z.record(z.unknown()).default({}), expectedResult: z.enum(['VIABLE', 'OUT_OF_CRITERIA', 'VIABLE_WITH_REQUIREMENTS', 'MANUAL_REVIEW']), status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).default('DRAFT'), priority: z.coerce.number().int().min(0).max(100000).default(100), referenceText: z.string().trim().max(500).optional().or(z.literal('')) })
 export const actionSchema = z.object({ actionType: z.enum(ACTION_TYPES), targetKey: z.string().trim().max(180).nullable().optional(), payload: z.record(z.unknown()).default({}), displayOrder: z.coerce.number().int().min(0).max(100000).default(0) })
 export const documentSchema = z.object({ documentCode: z.string().trim().regex(/^[A-Z0-9_]{2,80}$/), name: z.string().trim().min(2).max(180), description: z.string().trim().max(500).optional().or(z.literal('')), requirementType: z.enum(['REQUIRED', 'OPTIONAL', 'CONDITIONAL', 'MANUAL_REVIEW']), conditionExpression: conditionSchema.nullable().optional(), displayOrder: z.coerce.number().int().min(0).max(100000).default(0) })
@@ -82,6 +82,24 @@ export const externalQuerySchema = z.object({ sourceId: z.string().uuid(), query
 export const queryMappingSchema = z.object({ targetFieldKey: z.string().trim().regex(/^[a-zA-Z][a-zA-Z0-9_.-]{1,99}$/), normalizedPath: z.string().trim().min(1).max(180), dataOrigin: z.enum(['EXTERNAL', 'ADMIN_CONFIRMED']).default('EXTERNAL') })
 export const messageSchema = z.object({ messageKey: z.string().trim().regex(/^[A-Z0-9_]{2,80}$/), severity: z.enum(['INFO', 'WARNING', 'ERROR', 'SUCCESS']).default('INFO'), content: z.string().trim().min(2).max(5000), conditionExpression: conditionSchema.nullable().optional(), displayOrder: z.coerce.number().int().min(0).max(100000).default(0) })
 export const simulationRequestSchema = z.object({ answers: z.record(z.unknown()).default({}), fixtureContext: z.record(z.unknown()).default({}) }).strict()
+
+export const vehicleModificationSchema = z.object({
+  code: z.string().trim().regex(/^[A-Z0-9_]{3,80}$/),
+  name: z.string().trim().min(3).max(180),
+  category: z.string().trim().min(2).max(80),
+  description: z.string().trim().max(500).optional().or(z.literal('')),
+  status: z.enum(['ACTIVE', 'INACTIVE']).default('ACTIVE'),
+  displayOrder: z.coerce.number().int().min(0).max(100000).default(0),
+  billingItemId: z.string().uuid().nullable().optional(),
+  requiresPriorAuthorization: z.boolean().default(false),
+  requiresCsv: z.boolean().default(false),
+  requiresEcv: z.boolean().default(false),
+  requiresManualReview: z.boolean().default(false),
+  requiresDescription: z.boolean().default(false),
+  officialReferenceUrl: z.string().url().max(500).nullable().optional(),
+  guidance: z.string().trim().max(5000).optional().or(z.literal('')),
+  legalStatus: z.enum(['CONFIRMED', 'A_CONFIRMAR', 'NOT_APPLICABLE']).default('A_CONFIRMAR'),
+}).strict()
 
 function depth(value, current = 0) { if (!value || typeof value !== 'object') return current; if (current > 8) return current; const values = Array.isArray(value) ? value : Object.values(value); return values.reduce((max, item) => Math.max(max, depth(item, current + 1)), current) }
 function lookup(value, key) { return Object.prototype.hasOwnProperty.call(value, key) ? value[key] : undefined }
@@ -103,6 +121,7 @@ export function evaluateCondition(condition, values) {
   if (op === 'EMPTY') return isEmpty(left)
   if (op === 'TRUE') return left === true
   if (op === 'FALSE') return left === false
+  if (op === 'COUNT_FILLED') return Array.isArray(left) && left.some((entry) => entry && typeof entry === 'object' && String(entry.code || '').trim() !== '')
   if (op === 'IN_LIST') return Array.isArray(condition.values) && condition.values.includes(left)
   if (op === 'NOT_IN_LIST') return Array.isArray(condition.values) && !condition.values.includes(left)
   if (op === 'CONTAINS' || op === 'NOT_CONTAINS') { const result = Array.isArray(left) ? left.includes(right) : String(left ?? '').includes(String(right ?? '')); return op === 'CONTAINS' ? result : !result }
@@ -141,6 +160,16 @@ export function calculateFields(fields, input) {
   return values
 }
 
+function quantityFor(item, values) {
+  const expression = item.quantity_expression ? (typeof item.quantity_expression === 'string' ? JSON.parse(item.quantity_expression) : item.quantity_expression) : null
+  if (!expression) return Number(item.quantity || 1)
+  if (expression.operator === 'COUNT_FILLED') {
+    const value = values[expression.field]
+    return Array.isArray(value) ? value.filter((entry) => entry && typeof entry === 'object' && String(entry.code || '').trim()).length : 0
+  }
+  return Number(item.quantity || 1)
+}
+
 export function validateConfiguration(fields, conditions = []) {
   const errors = []
   if (!Array.isArray(fields)) return ['A configuração de campos do serviço é inválida.']
@@ -168,7 +197,30 @@ export function validateConfiguration(fields, conditions = []) {
   return [...new Set(errors)]
 }
 
-export function evaluateService({ fields, options = [], billingItems = [], rules = [], documents = [], messages = [], answers = {}, context = {} }) {
+function validateModificationAnswers(values, catalog = []) {
+  const entries = values['modifications.additional']
+  if (entries === undefined || entries === null || entries === '') return []
+  if (!Array.isArray(entries)) return [{ field: 'modifications.additional', code: 'INVALID_MODIFICATIONS', message: 'Selecione as modificações adicionais em uma lista válida.' }]
+  const catalogByCode = new Map(catalog.filter((item) => item && item.code).map((item) => [String(item.code), item]))
+  const seen = new Set()
+  const errors = []
+  for (const entry of entries) {
+    const code = String(entry?.code || '').trim().toUpperCase()
+    const description = String(entry?.description || '').trim()
+    if (!code) continue
+    if (seen.has(code) && code !== 'OTHER_MODIFICATION') errors.push({ field: 'modifications.additional', code: 'DUPLICATE_MODIFICATION', message: 'Não repita a mesma modificação adicional.' })
+    seen.add(code)
+    if (['ENGINE_REGISTRATION', 'ENGINE_NO_INVOICE', 'SUSPENSION_LOWERING', 'SUSPENSION_LIFT', 'SUSPENSION_OTHER', 'WHEELS_TIRES'].includes(code)) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_NOT_ALLOWED', message: 'Esta modificação possui fluxo próprio e não pode ser adicionada aqui.' })
+    const item = catalogByCode.get(code)
+    if (catalog.length && !item) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_NOT_FOUND', message: 'A modificação selecionada não está disponível no catálogo.' })
+    if (item && String(item.status).toUpperCase() !== 'ACTIVE') errors.push({ field: 'modifications.additional', code: 'MODIFICATION_INACTIVE', message: 'A modificação selecionada está inativa.' })
+    if (item?.requires_description && !description) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_DESCRIPTION_REQUIRED', message: 'Descreva a alteração realizada.' })
+  }
+  if (values['wheels.include'] === 'YES' && seen.has('WHEELS_TIRES')) errors.push({ field: 'modifications.additional', code: 'DUPLICATE_WHEELS_MODIFICATION', message: 'Rodas e pneus já foram selecionados como serviço adicional.' })
+  return errors
+}
+
+export function evaluateService({ fields, options = [], billingItems = [], rules = [], documents = [], messages = [], answers = {}, context = {}, modificationCatalog = [] }) {
   const input = { ...context, ...answers }
   const category = String(input['vehicle_target.category'] || '').toUpperCase()
   const identificationMode = String(input['engine.identification_mode'] || '').toUpperCase()
@@ -187,6 +239,7 @@ export function evaluateService({ fields, options = [], billingItems = [], rules
     const value = normalized.values[field.field_key]
     if (applies && field.is_required && (value === undefined || value === null || value === '')) normalized.errors.push({ field: field.field_key, code: 'REQUIRED_FIELD', message: 'Preencha este campo para continuar.' })
   }
+  normalized.errors.push(...validateModificationAnswers(normalized.values, modificationCatalog))
   if (normalized.errors.length) { const error = new Error('INVALID_SIMULATION_INPUT'); error.code = 'INVALID_SIMULATION_INPUT'; error.details = normalized.errors; throw error }
   const values = calculateFields(fields, normalized.values); for (const field of fields) if (!visibleFields.has(field.field_key)) delete values[field.field_key]; const targetPlate = normalizePlate(values['vehicle_target.plate']); if (targetPlate.pattern !== 'UNKNOWN') values['vehicle_target.plate_pattern'] = targetPlate.pattern; const donorPlate = normalizePlate(values['vehicle_donor.plate']); if (donorPlate.pattern !== 'UNKNOWN') values['vehicle_donor.plate_pattern'] = donorPlate.pattern; const trace = []; const appliedItems = new Map(); const documentsResult = []; const actions = []; let blocked = false; let manualReview = false; let viability = null
   for (const item of billingItems) { const condition = item.condition_expression ? (typeof item.condition_expression === 'string' ? JSON.parse(item.condition_expression) : item.condition_expression) : null; const applies = item.billing_mode === 'REQUIRED' || Boolean(condition && evaluateCondition(condition, values)); if (applies) appliedItems.set(item.code, { ...item, reason: item.billing_mode === 'REQUIRED' ? 'Obrigatório' : 'Condição atendida' }) }
@@ -194,7 +247,7 @@ export function evaluateService({ fields, options = [], billingItems = [], rules
     const ruleActions = (rule.actions || []).filter((action) => action && action.action_type); for (const action of ruleActions) { actions.push(action); if (action.action_type === 'BLOCK_AUTOMATED_QUOTE') blocked = true; if (action.action_type === 'MANUAL_REVIEW' || action.action_type === 'REQUIRE_ADMIN_APPROVAL') manualReview = true; if (action.action_type === 'CLASSIFY_VIABILITY') viability = action.payload?.result || viability; if (action.action_type === 'ADD_BILLING_ITEM' && action.target_key && !appliedItems.has(action.target_key)) { const target = billingItems.find((item) => item.code === action.target_key); if (target) appliedItems.set(target.code, { ...target, reason: 'Regra atendida' }) } if (action.action_type === 'REMOVE_BILLING_ITEM' && action.target_key) appliedItems.delete(action.target_key) }
   }
   for (const document of documents) { const condition = document.condition_expression ? (typeof document.condition_expression === 'string' ? JSON.parse(document.condition_expression) : document.condition_expression) : null; if (document.requirement_type === 'REQUIRED' || (condition && evaluateCondition(condition, values))) documentsResult.push(document) }
-  const items = [...appliedItems.values()].map((item) => ({ ...item, amount_cents: item.amount_override_cents ?? item.default_amount_cents, total_cents: item.amount_override_cents !== null && item.amount_override_cents !== undefined ? Number(item.amount_override_cents) * Number(item.quantity || 1) : (item.default_amount_cents === null ? null : Number(item.default_amount_cents) * Number(item.quantity || 1)) }))
+  const items = [...appliedItems.values()].map((item) => { const quantity = quantityFor(item, values); return { ...item, quantity, amount_cents: item.amount_override_cents ?? item.default_amount_cents, total_cents: item.amount_override_cents !== null && item.amount_override_cents !== undefined ? Number(item.amount_override_cents) * quantity : (item.default_amount_cents === null ? null : Number(item.default_amount_cents) * quantity) } })
   const commercialAvailable = !blocked && !manualReview && (viability === 'VIABLE' || viability === 'VIABLE_WITH_REQUIREMENTS')
   const commercialItems = commercialAvailable ? items : []
   const finalViability = blocked ? 'OUT_OF_CRITERIA' : manualReview ? 'MANUAL_REVIEW' : viability || 'UNCLASSIFIED'
