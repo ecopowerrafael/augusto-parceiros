@@ -9,6 +9,7 @@
 - Versão local/PWA `0.4.8`; homologação visual e publicação na `main` ainda não autorizadas.
 - Revisão posterior: normalização de visibilidade passou para layout effect; PDF revisado com acentuação, espaçamento compacto e exemplos regenerados em uma página.
 - Migration 009 importada e verificada manualmente pelo proprietário na Hostinger: banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`, cinco campos presentes/atualizados, registro `schema_migrations` confirmado e `migration_009_count = 1`, sem erro SQL.
+- Publicada na `main` no commit `3373ee5845ca0a25a6091c4f4fa715ec50281cb7`; rollback `rollback-before-0-4-8-20261126` aponta para a main anterior. Health check online não pôde ser resolvido por DNS neste ambiente; homologação funcional permanece pendente.
 
 ## [0.4.7] — Correção funcional do simulador — 26/11/2026
 

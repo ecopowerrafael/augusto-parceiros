@@ -2,7 +2,7 @@
 
 ## Fase 3.12
 
-O código está na versão `0.4.8`. A Migration 008 e, posteriormente, a Migration 009 foram importadas e verificadas manualmente pelo proprietário; não devem ser reexecutadas. A Migration 009 foi confirmada com cinco campos atualizados, registro único em `schema_migrations` e `migration_009_count = 1`. A publicação da branch `feature/fase-3-12-ajustes-finais-simulador` foi autorizada. A homologação funcional online permanece pendente dos testes reais do proprietário.
+O código está na versão `0.4.8`, publicada na `main` no commit `3373ee5845ca0a25a6091c4f4fa715ec50281cb7`. A Migration 008 e, posteriormente, a Migration 009 foram importadas e verificadas manualmente pelo proprietário; não devem ser reexecutadas. A Migration 009 foi confirmada com cinco campos atualizados, registro único em `schema_migrations` e `migration_009_count = 1`. Rollback: `rollback-before-0-4-8-20261126` (`03d263d738df59e5e683464344b4d3de7caf4528`). O health check local não resolveu `docmotor.online`; a homologação funcional permanece pendente dos testes reais do proprietário.
 
 Baseado na documentação oficial consultada em 25/11/2026: Hostinger Web Apps Node.js suporta planos Business/Unlimited e Cloud; presets React, Vite e Express; Node 18, 20, 22 e 24; deploy via GitHub; variáveis de ambiente no painel; e MySQL com `127.0.0.1`.
 

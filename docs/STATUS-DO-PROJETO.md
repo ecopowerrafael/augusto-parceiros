@@ -1,13 +1,14 @@
 # Status do projeto
 
-## Fase 3.12 — implementação local aguardando autorização de publicação — 26/11/2026
+## Fase 3.12 — publicada na main, homologação online pendente — 26/11/2026
 
-- Branch: `feature/fase-3-12-ajustes-finais-simulador`; versão `0.4.8`.
+- Branch de implementação: `feature/fase-3-12-ajustes-finais-simulador`; versão `0.4.8`; publicação na `main` no commit `3373ee5845ca0a25a6091c4f4fa715ec50281cb7`.
 - A causa persistida identificada foi a visibilidade de potência, cilindrada e combustível do doador limitada ao modo MANUAL. A Migration 009 corrige isso para PLATE/MANUAL em automóveis, caminhões e ônibus, mantendo a placa doadora apenas em PLATE.
 - A declaração de motocicleta recebeu texto configurável com alerta, exemplos e orientação de compatibilidade; a identificação do motor continua não aplicável a motocicletas conforme a Migration 008 já instalada.
-- Não foram executados SQL remoto, Migration 008 novamente, Migration 009, chamadas à Simples API ou alterações na `main`.
+- Não foram executados SQL remoto pelo agente, migrations anteriores não foram reimportadas e nenhuma chamada à Simples API foi realizada.
 - Testes locais específicos: 4 regressões da Fase 3.12 aprovadas. Lint, typecheck, build, sintaxe Node e `git diff --check` aprovados; a suíte completa deve ser executada novamente após a correção final.
-- Homologação online e conferência visual humana pendentes. Próxima etapa: revisar/publicar somente com autorização explícita e, depois, importar a Migration 009 manualmente se aprovada. Não iniciar a Fase 4.
+- Tag de rollback: `rollback-before-0-4-8-20261126`, apontando para `03d263d738df59e5e683464344b4d3de7caf4528`.
+- Health check HTTP em `https://docmotor.online/` e `/api/health` foi tentado em 26/11/2026, mas o ambiente local não resolveu o domínio (`curl: (6) Could not resolve host`). Homologação funcional online e conferência humana continuam pendentes. Não iniciar a Fase 4.
 - Revisão visual local dos três PDFs de exemplo: renderização aprovada sem sobreposição, com cabeçalho/rodapé presentes e uma página por arquivo. A validação visual online ainda depende do proprietário.
 
 ### Evidência de banco e publicação autorizada
