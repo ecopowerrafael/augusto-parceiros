@@ -1,5 +1,14 @@
 # Status do projeto
 
+## Fase 3.12 — implementação local aguardando autorização de publicação — 26/11/2026
+
+- Branch: `feature/fase-3-12-ajustes-finais-simulador`; versão `0.4.8`.
+- A causa persistida identificada foi a visibilidade de potência, cilindrada e combustível do doador limitada ao modo MANUAL. A Migration 009 corrige isso para PLATE/MANUAL em automóveis, caminhões e ônibus, mantendo a placa doadora apenas em PLATE.
+- A declaração de motocicleta recebeu texto configurável com alerta, exemplos e orientação de compatibilidade; a identificação do motor continua não aplicável a motocicletas conforme a Migration 008 já instalada.
+- Não foram executados SQL remoto, Migration 008 novamente, Migration 009, chamadas à Simples API ou alterações na `main`.
+- Testes locais específicos: 4 regressões da Fase 3.12 aprovadas. Lint, typecheck, build, sintaxe Node e `git diff --check` aprovados; a suíte completa deve ser executada novamente após a correção final.
+- Homologação online e conferência visual humana pendentes. Próxima etapa: revisar/publicar somente com autorização explícita e, depois, importar a Migration 009 manualmente se aprovada. Não iniciar a Fase 4.
+
 ## Fase 3.11 — Migration 008 verificada e publicação autorizada — 26/11/2026
 
 - Branch: `feature/fase-3-11-homologacao-simulador`; versão `0.4.7`; commit aprovado `5d7160569d3e38f556e992a83fb6d13275e294a8`; integração publicada no merge `365980a`.

@@ -8,6 +8,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - O backend é a autoridade para autenticação, autorização, tenant, limites e regras de negócio.
 - Não versionar `.env`, credenciais, tokens ou documentos pessoais.
 - Ao mudar schema, atualizar `docs/BANCO-DE-DADOS.md` e planejar migration/rollback.
+- Para cada migration futura, validar estaticamente a correspondência entre colunas e valores de todos os `INSERT`s e, quando possível, executar em MariaDB descartável; nunca declarar validação SQL com base apenas em testes JavaScript.
 - Toda migration futura deve ter validação estática da correspondência entre colunas e valores em cada `INSERT`, além de validação SQL real quando houver MariaDB disponível; testes de aplicação não substituem execução SQL.
 - A Migration 008 da Fase 3.11 está apenas preparada localmente; não executar SQL remoto, não reimportar a 007 e aguardar confirmação explícita do proprietário antes de qualquer importação manual.
 - Nenhuma migration é considerada pronta sem `precheck`, SQL, `verify` e execução do gerador `npm run generate:hostinger-sql -- u891593158_doc database/updates`; preservar `information_schema` fora da qualificação do banco da aplicação.

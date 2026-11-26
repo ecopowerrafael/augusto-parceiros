@@ -1,5 +1,7 @@
 # Roadmap
 
+3.12. Ajustes finais do simulador — implementação local `0.4.8` preparada na branch `feature/fase-3-12-ajustes-finais-simulador`; Migration 009 pendente de autorização e importação manual. Homologação visual online pendente.
+
 1. Fundação e site comercial — concluída.
 1.1. Preparação do ambiente online de homologação — concluída.
 1.4. Identidade visual oficial e encerramento da homologação inicial — concluída.
