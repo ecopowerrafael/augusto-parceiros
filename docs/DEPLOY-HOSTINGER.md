@@ -46,11 +46,11 @@ Não preencher senhas neste repositório ou nesta documentação. A instalação
 - A confirmação de deploy exige `/api/health` com `environment: staging`, `allowIndexing: false` e versão `0.4.6`; o push no GitHub isoladamente não comprova a propagação da Hostinger.
 - A tentativa HTTP local de 26/11/2026 não resolveu `docmotor.online`; a homologação funcional permanece pendente de rede/DNS funcional e conferência manual do proprietário.
 
-## Fase 3.11 — Migration 008 pendente
+## Fase 3.11 — Migration 008 verificada
 
-- A versão prevista é `0.4.7`, na branch `feature/fase-3-11-homologacao-simulador`.
-- A causa da falha de motocicleta foi confirmada na configuração persistida de `engine.identification_mode`; os arquivos `008_motorcycle_visibility_consistency_precheck.sql`, `008_motorcycle_visibility_consistency.sql` e `008_motorcycle_visibility_consistency_verify.sql` foram gerados pelo comando oficial.
-- Ordem após autorização: precheck no phpMyAdmin → `008_motorcycle_visibility_consistency.sql` → verify. Não executar migrations anteriores, não usar `node scripts/migrate.mjs` e não executar SQL pelo backend.
+- A versão `0.4.7` está na branch `feature/fase-3-11-homologacao-simulador` e sua publicação foi autorizada.
+- A causa da falha de motocicleta foi confirmada na configuração persistida de `engine.identification_mode`; os arquivos `008_motorcycle_visibility_consistency_precheck.sql`, `008_motorcycle_visibility_consistency.sql` e `008_motorcycle_visibility_consistency_verify.sql` foram gerados pelo comando oficial e importados/verificados manualmente pelo proprietário.
+- Não executar novamente a Migration 008, não executar migrations anteriores, não usar `node scripts/migrate.mjs` e não executar SQL pelo backend. Evidências: `migration_007_registered=1`, `migration_008_count=1`, três updates concluídos, uma linha inserida e `motorcycle_mode_not_required=1`.
 - A Migration 008 não altera preços, regras comerciais, usuários ou configurações de atendimento; apenas torna a aplicabilidade declarativa da identificação do motor consistente.
 
 ## Fase 3 — implantação em duas etapas
