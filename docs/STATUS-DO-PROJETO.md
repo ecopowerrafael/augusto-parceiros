@@ -1,5 +1,23 @@
 # Status do projeto
 
+## Fase 3.12 — implementação local aguardando autorização de publicação — 26/11/2026
+
+- Branch: `feature/fase-3-12-ajustes-finais-simulador`; versão `0.4.8`.
+- A causa persistida identificada foi a visibilidade de potência, cilindrada e combustível do doador limitada ao modo MANUAL. A Migration 009 corrige isso para PLATE/MANUAL em automóveis, caminhões e ônibus, mantendo a placa doadora apenas em PLATE.
+- A declaração de motocicleta recebeu texto configurável com alerta, exemplos e orientação de compatibilidade; a identificação do motor continua não aplicável a motocicletas conforme a Migration 008 já instalada.
+- Não foram executados SQL remoto, Migration 008 novamente, Migration 009, chamadas à Simples API ou alterações na `main`.
+- Testes locais específicos: 4 regressões da Fase 3.12 aprovadas. Lint, typecheck, build, sintaxe Node e `git diff --check` aprovados; a suíte completa deve ser executada novamente após a correção final.
+- Homologação online e conferência visual humana pendentes. Próxima etapa: revisar/publicar somente com autorização explícita e, depois, importar a Migration 009 manualmente se aprovada. Não iniciar a Fase 4.
+- Revisão visual local dos três PDFs de exemplo: renderização aprovada sem sobreposição, com cabeçalho/rodapé presentes e uma página por arquivo. A validação visual online ainda depende do proprietário.
+
+### Evidência de banco e publicação autorizada
+
+- Migration 009 foi importada manualmente e verificada pelo proprietário no banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`.
+- Precheck: `migration_009_already_registered = 0`, `required_fields_present = 5` e `migration_008_registered = 1`.
+- Execução: cinco campos atualizados, uma linha inserida em `schema_migrations`, sem erro SQL.
+- Verify: `migration_009_count = 1` e cinco campos retornados.
+- Não executar novamente a Migration 009 ou migrations anteriores. A branch foi autorizada para integração na `main` na versão `0.4.8`; a homologação funcional online continua pendente dos testes reais do proprietário.
+
 ## Fase 3.11 — Migration 008 verificada e publicação autorizada — 26/11/2026
 
 - Branch: `feature/fase-3-11-homologacao-simulador`; versão `0.4.7`; commit aprovado `5d7160569d3e38f556e992a83fb6d13275e294a8`; integração publicada no merge `365980a`.

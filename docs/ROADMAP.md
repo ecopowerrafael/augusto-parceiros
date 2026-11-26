@@ -1,5 +1,7 @@
 # Roadmap
 
+3.12. Ajustes finais do simulador — versão `0.4.8` autorizada para publicação; Migration 009 importada/verificada manualmente na Hostinger. Homologação funcional online pendente dos testes do proprietário.
+
 1. Fundação e site comercial — concluída.
 1.1. Preparação do ambiente online de homologação — concluída.
 1.4. Identidade visual oficial e encerramento da homologação inicial — concluída.
