@@ -65,22 +65,25 @@ const migration003 = await read('migrations/003_complete_engine_service_seed.sql
 const migration004 = await read('migrations/004_partner_commissions.sql')
 const migration005 = await read('migrations/005_application_settings.sql')
 const migration006 = await read('migrations/006_simulator_input_normalization.sql')
-const precheck006 = await read('database/updates/006_simulator_input_normalization_precheck.sql')
-const verify006 = await read('database/updates/006_simulator_input_normalization_verify.sql')
+const migration007 = await read('migrations/007_engine_rules_and_documents.sql')
+const precheck007 = await read('database/hostinger/007_engine_rules_and_documents_precheck.source.sql')
+const verify007 = await read('database/hostinger/007_engine_rules_and_documents_verify.source.sql')
 const migration001 = await read('migrations/001_initial.sql')
 const precheck005 = `-- Pré-verificação somente leitura da Migration 005.\n\nSELECT VERSION() AS mysql_version;\nSELECT COUNT(*) AS migration_005_already_registered FROM schema_migrations WHERE name = '005_application_settings.sql';\nSELECT COUNT(*) AS required_base_tables_present FROM information_schema.tables WHERE table_schema = '${databaseName}' AND table_name IN ('users', 'schema_migrations');\nSELECT COUNT(*) AS application_settings_present FROM information_schema.tables WHERE table_schema = '${databaseName}' AND table_name = 'application_settings';`
 const verify005 = `-- Verificação posterior somente leitura da Migration 005.\n\nSELECT VERSION() AS mysql_version;\nSELECT COUNT(*) AS migration_005_count FROM schema_migrations WHERE name = '005_application_settings.sql';\nSELECT COUNT(*) AS application_settings_count FROM information_schema.tables WHERE table_schema = '${databaseName}' AND table_name = 'application_settings';\nSELECT id, company_name, timezone FROM application_settings WHERE id = '55000000-0000-4000-8000-000000000001';`
 
 const schemaMigrations = `CREATE TABLE IF NOT EXISTS schema_migrations (name VARCHAR(255) NOT NULL PRIMARY KEY, applied_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`
 const migration001Registration = `INSERT INTO schema_migrations (name)\nSELECT '001_initial.sql'\nFROM information_schema.tables\nWHERE table_schema = '${databaseName}'\n  AND table_name IN ('users', 'partner_companies', 'company_members', 'client_profiles', 'sessions', 'password_reset_tokens', 'rate_limit_events', 'audit_logs')\nGROUP BY table_schema\nHAVING COUNT(*) = 8\n   AND NOT EXISTS (SELECT 1 FROM schema_migrations WHERE name = '001_initial.sql');`
-const installSource = `${schemaMigrations}\n\n${migration001}\n\n-- Registra a migration somente se as oito tabelas da Fase 2 existirem.\n${migration001Registration}\n\n${migration002}\n\n${migration003}\n\n${migration004}\n\n${migration005}\n\n${migration006}`
+const installSource = `${schemaMigrations}\n\n${migration001}\n\n-- Registra a migration somente se as oito tabelas da Fase 2 existirem.\n${migration001Registration}\n\n${migration002}\n\n${migration003}\n\n${migration004}\n\n${migration005}\n\n${migration006}\n\n${migration007}`
 // Os artefatos 002–004 já foram validados e publicados; não os reescrevemos para evitar
 // qualificação cumulativa quando o gerador é executado novamente.
 await write(path.join(outputDirectory, '005_application_settings_precheck.sql'), header('Pré-verificação da Migration 005') + qualifySql(precheck005))
 await write(path.join(outputDirectory, '005_application_settings.sql'), header('Atualização da Migration 005') + qualifySql(migration005))
 await write(path.join(outputDirectory, '005_application_settings_verify.sql'), header('Verificação da Migration 005') + qualifySql(verify005))
-await write(path.join(outputDirectory, '006_simulator_input_normalization_precheck.sql'), header('Pré-verificação da Migration 006') + qualifySql(precheck006))
-await write(path.join(outputDirectory, '006_simulator_input_normalization.sql'), header('Atualização da Migration 006') + qualifySql(migration006))
-await write(path.join(outputDirectory, '006_simulator_input_normalization_verify.sql'), header('Verificação da Migration 006') + qualifySql(verify006))
+// O pacote 006 já foi gerado e validado; não o reescrevemos, pois seus artefatos
+// publicados já possuem referências qualificadas e uma segunda qualificação seria cumulativa.
+await write(path.join(outputDirectory, '007_engine_rules_and_documents_precheck.sql'), header('Pré-verificação da Migration 007') + qualifySql(precheck007))
+await write(path.join(outputDirectory, '007_engine_rules_and_documents.sql'), header('Atualização da Migration 007') + qualifySql(migration007))
+await write(path.join(outputDirectory, '007_engine_rules_and_documents_verify.sql'), header('Verificação da Migration 007') + qualifySql(verify007))
 await write('database/install.sql', header('Instalação completa da estrutura Doc Motor') + qualifySql(installSource))
 process.stdout.write(`SQLs Hostinger gerados para ${databaseName} em ${outputDirectory}\n`)

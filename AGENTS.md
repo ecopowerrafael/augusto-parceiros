@@ -8,6 +8,10 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - O backend é a autoridade para autenticação, autorização, tenant, limites e regras de negócio.
 - Não versionar `.env`, credenciais, tokens ou documentos pessoais.
 - Ao mudar schema, atualizar `docs/BANCO-DE-DADOS.md` e planejar migration/rollback.
+- Nenhuma migration é considerada pronta sem `precheck`, SQL, `verify` e execução do gerador `npm run generate:hostinger-sql -- u891593158_doc database/updates`; preservar `information_schema` fora da qualificação do banco da aplicação.
+- Antes de aprovar qualquer migration, executar `node scripts/validate-migration-inserts.mjs migrations/<arquivo>.sql` e registrar a validação de correspondência entre colunas e valores de todos os `INSERT`s.
+- O mesmo validador deve ser ampliado ou executado junto das verificações de balanceamento e argumentos pares de `JSON_OBJECT`; JSON serializado usado em condições deve ser parseado e confrontado com o avaliador declarativo antes da entrega.
+- Para a Migration 007, executar também `node scripts/validate-migration-config.mjs migrations/007_engine_rules_and_documents.sql` para validar a condição persistida da cobrança com o avaliador real.
 - Ao mudar autenticação ou autorização, atualizar `docs/AUTENTICACAO-E-PERMISSOES.md` e revisar a matriz de acesso.
 - Ao concluir uma missão, atualize `CHANGELOG.md` e `docs/STATUS-DO-PROJETO.md`.
 - Toda funcionalidade já implementada deve estar conectada aos respectivos botões, menus e fluxos de navegação; não manter CTAs provisórios apontando para recursos existentes apenas no backend.
@@ -22,6 +26,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - Para autenticação, use sessões opacas persistidas no MySQL, cookies HttpOnly/Secure/SameSite, CSRF e rate limit persistido; não use tokens de autenticação em localStorage.
 - A recuperação de senha depende de SMTP configurado no ambiente; nunca retornar o token de recuperação na API.
 - A instalação inicial do MySQL desta fase é manual pelo phpMyAdmin usando `database/install.sql`; não executar migrations, provisionamento ou operações remotas sem autorização explícita da missão.
+- Para a Migration 007, a publicação fica suspensa até confirmação manual do proprietário no phpMyAdmin; não executar SQL remoto pelo agente.
 - Na Fase 3.5, a migration `004_partner_commissions.sql` também é manual: executar precheck, importar, verificar e aguardar confirmação do proprietário antes de integrar dependências de schema na `main`.
 - Aprovação administrativa deve ser atômica, sincronizar empresa e usuários vinculados, registrar auditoria e, em falha SQL, registrar apenas request ID/código SQL sem PII ou credenciais.
 - A Migration 002 já está instalada no banco remoto e não deve ser reimportada; a Migration 003 também foi confirmada. Não executar novamente esses SQLs. Qualquer alteração estrutural futura exige nova migration e confirmação explícita antes da publicação.

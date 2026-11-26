@@ -266,7 +266,7 @@ app.get('/api/admin/audit', databaseRequired, requireRole('ADMINISTRATOR'), asyn
 
 app.get('/api/admin/settings', databaseRequired, requireRole('ADMINISTRATOR'), asyncRoute(async (_request, response) => {
   try {
-    const [rows] = await getDatabasePool().execute('SELECT id, company_name, support_whatsapp, support_email, city, state, privacy_url, terms_url, timezone, updated_at FROM application_settings WHERE id = ? LIMIT 1', ['55000000-0000-4000-8000-000000000001'])
+    const [rows] = await getDatabasePool().execute('SELECT id, company_name, support_whatsapp, support_email, manual_whatsapp, manual_team_name, manual_message_template, city, state, privacy_url, terms_url, timezone, updated_at FROM application_settings WHERE id = ? LIMIT 1', ['55000000-0000-4000-8000-000000000001'])
     response.json({ settings: rows[0] || null, migrationRequired: !rows[0], runtime: { appEnv: config.appEnv, version: config.version, allowIndexing: config.allowIndexing } })
   } catch (error) {
     if (error.code === 'ER_NO_SUCH_TABLE') return response.json({ settings: null, migrationRequired: true, runtime: { appEnv: config.appEnv, version: config.version, allowIndexing: config.allowIndexing } })
@@ -284,12 +284,15 @@ app.put('/api/admin/settings', databaseRequired, requireRole('ADMINISTRATOR'), r
     state: String(body.state || '').trim().toUpperCase().slice(0, 2) || null,
     privacyUrl: String(body.privacyUrl || '').trim().slice(0, 500) || null,
     termsUrl: String(body.termsUrl || '').trim().slice(0, 500) || null,
+    manualWhatsapp: String(body.manualWhatsapp || '').trim().slice(0, 30) || null,
+    manualTeamName: String(body.manualTeamName || '').trim().slice(0, 180) || null,
+    manualMessageTemplate: String(body.manualMessageTemplate || '').trim().slice(0, 1000) || null,
   }
   if (!values.companyName) return response.status(400).json({ error: 'COMPANY_NAME_REQUIRED' })
   if (values.state && !/^[A-Z]{2}$/.test(values.state)) return response.status(400).json({ error: 'INVALID_STATE' })
   if (values.supportEmail && !/^\S+@\S+\.\S+$/.test(values.supportEmail)) return response.status(400).json({ error: 'INVALID_EMAIL' })
   try {
-    await getDatabasePool().execute(`UPDATE application_settings SET company_name = ?, support_whatsapp = ?, support_email = ?, city = ?, state = ?, privacy_url = ?, terms_url = ?, updated_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?`, [values.companyName, values.supportWhatsapp, values.supportEmail, values.city, values.state, values.privacyUrl, values.termsUrl, request.auth.user.id, '55000000-0000-4000-8000-000000000001'])
+    await getDatabasePool().execute(`UPDATE application_settings SET company_name = ?, support_whatsapp = ?, support_email = ?, manual_whatsapp = ?, manual_team_name = ?, manual_message_template = ?, city = ?, state = ?, privacy_url = ?, terms_url = ?, updated_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?`, [values.companyName, values.supportWhatsapp, values.supportEmail, values.manualWhatsapp, values.manualTeamName, values.manualMessageTemplate, values.city, values.state, values.privacyUrl, values.termsUrl, request.auth.user.id, '55000000-0000-4000-8000-000000000001'])
   } catch (error) {
     if (error.code === 'ER_NO_SUCH_TABLE') return response.status(409).json({ error: 'SETTINGS_MIGRATION_REQUIRED' })
     throw error

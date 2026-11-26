@@ -41,3 +41,7 @@ O módulo `/api/admin/settings` lê e atualiza somente os campos comerciais perm
 A Migration 006 (`migrations/006_simulator_input_normalization.sql`) é incremental e não destrutiva. Ela transforma os campos persistidos de combustível em `SINGLE_SELECT`, registra quatro opções padronizadas e marca as cilindradas com unidade `cm³`. Foi importada e validada pelo proprietário no banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`: registro anterior `0`, registro posterior `1`, dois campos de combustível convertidos, dois campos de cilindrada atualizados, oito opções inseridas e campos de placa preservados como `VEHICLE_PLATE`.
 
 Use, nesta ordem, `database/updates/006_simulator_input_normalization_precheck.sql`, `006_simulator_input_normalization.sql` e `006_simulator_input_normalization_verify.sql`. Não execute migrations anteriores novamente.
+# Migration 007 — regras e documentos comerciais
+
+A comunicação com o MySQL remoto foi comprovada anteriormente usando `127.0.0.1`. A Migration 007 é incremental e deve ser aplicada manualmente pelo phpMyAdmin somente após o `007_engine_rules_and_documents_precheck.sql`. Em seguida, importar `007_engine_rules_and_documents.sql` e executar `007_engine_rules_and_documents_verify.sql`. Nenhum desses arquivos contém `DROP`, `TRUNCATE` ou credenciais. A migration não deve ser marcada como aplicada se os campos, regras, cobrança única de modificação, exclusão de ITL/CSV e quatro documentos não estiverem presentes.
+

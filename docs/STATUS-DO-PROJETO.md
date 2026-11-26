@@ -1,5 +1,27 @@
 # Status do projeto
 
+## Atualização da missão 3.9 — 26/11/2026
+
+- Migration 007 foi corrigida localmente e os artefatos `database/updates/007_engine_rules_and_documents_{precheck,sql,verify}.sql` foram regenerados para o banco `u891593158_doc`.
+- O gerador foi validado para inserir `USE \`u891593158_doc\`;`, qualificar tabelas da aplicação e não transformar `information_schema` em tabela do banco da aplicação.
+- As regras ficam em `DRAFT`; ITL/CSV não entra em itens, totais, pendências ou comissão; a cobrança de modificação é única e categoria-aware.
+- Nenhuma operação foi executada no MySQL remoto. A publicação na `main` está suspensa até o proprietário executar precheck, migration e verify no phpMyAdmin e confirmar os resultados.
+- Limitação: a suíte local usa o avaliador e fixtures equivalentes; não há instância MariaDB local disponível nesta validação.
+
+## Correção da Migration 007 — estado parcial Hostinger
+
+- O proprietário confirmou que `application_settings` recebeu as três colunas de contato antes da falha, enquanto os dois novos campos ainda não existiam e `007_engine_rules_and_documents.sql` não foi registrada.
+- Causa confirmada do erro `#1136`: a segunda linha do `INSERT INTO service_form_fields` tinha 13 valores para 14 colunas; foi adicionada a descrição ausente.
+- A Migration 007 foi revisada para reexecução segura nesse estado parcial, sem remover colunas nem repetir registros.
+- Validação estática: 20 linhas de `INSERT` conferidas; UUIDs, qualificação Hostinger e `information_schema` aprovados.
+- MariaDB local descartável não está instalado/disponível; não foi possível executar os três cenários SQL reais. Os testes JavaScript não são apresentados como validação SQL.
+
+## Recuperação após erro MariaDB #1582
+
+- Causa corrigida: a condição da cobrança `MODIFICATION_REQUEST` deixou de depender de uma construção profundamente aninhada de `JSON_OBJECT`/`JSON_ARRAY` e passou a usar JSON serializado válido no `UPDATE`.
+- O validador permanente agora verifica balanceamento, quantidade par de argumentos de `JSON_OBJECT` e correspondência de colunas/valores dos `INSERT`s.
+- A validação atual confirma 20 linhas de `INSERT` e todas as chamadas `JSON_OBJECT` da Migration 007; ainda não é validação de execução MariaDB.
+
 ## Fase atual
 
 Fase 3.8 — resultado visual, PDF e compartilhamento — versão `0.3.9`; Migrations 005 e 006 instaladas e validadas pelo proprietário no banco remoto.

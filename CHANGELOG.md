@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.4.2] — Recuperação da Migration 007 após erro #1582 — 2026-11-26
+
+- Substituída a condição aninhada da cobrança `MODIFICATION_REQUEST` por JSON serializado validado, eliminando a chamada `JSON_OBJECT` que falhava no MariaDB da Hostinger.
+- Reauditadas as expressões JSON e mantido o avaliador declarativo como referência semântica.
+- A Migration 007 continua idempotente para o estado parcial informado; nenhuma migration anterior foi alterada.
+
+## [0.4.1] — Correção definitiva da Migration 007 — 2026-11-26
+
+- Corrigida a linha `motorcycle.compatibility_declaration`, que tinha 13 valores para 14 colunas.
+- Reauditados todos os `INSERT`s da Migration 007; 20 linhas tiveram correspondência de colunas e valores validada por script estático.
+- Corrigidos UUIDs de documentos e mensagens e reforçada a condição de registro em `schema_migrations` somente após a estrutura completa existir.
+- Preparada recuperação idempotente para o estado parcial real da Hostinger, preservando as três colunas de contato já criadas.
+- Confirmada a limitação: MariaDB descartável não está disponível neste ambiente; não houve execução SQL remota.
+
+## [0.4.0] — Fase 3.9 — Correção de regras e pacote SQL Hostinger — 2026-11-26
+
+- Preparada a Migration 007 incremental, sem operações destrutivas, para regras comerciais autorizadas, documentos, mensagens e contato de análise manual.
+- Corrigida a geração dos artefatos Hostinger com `USE`, referências qualificadas ao banco e preservação de `information_schema`.
+- O orçamento automático agora exclui ITL/CSV e cobra no máximo uma solicitação de modificação quando aplicável.
+- Adicionados testes locais para limites de 10%, dados ausentes, deduplicação e validação de configuração.
+- Publicação na `main` permanece suspensa até a importação manual e confirmação do proprietário no phpMyAdmin.
+
 ## [0.3.5] — Fase 3.6 — Auditoria do simulador NO-CODE — 2026-11-25
 
 - Confirmada a Migration 005 instalada pelo proprietário no banco remoto.

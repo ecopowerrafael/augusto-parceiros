@@ -22,10 +22,10 @@ const billingItems = [
   { code: 'ENGINE_NO_INVOICE', name: 'Análise sem nota fiscal', billing_mode: 'CONDITIONAL', default_amount_cents: 30000, quantity: 1, include_in_total: 1, condition_expression: { all: [{ field: 'engine.has_invoice', operator: 'EQUALS', value: 'NO' }] } },
   { code: 'OLD_PLATE_AUTHORIZATION', name: 'Tratamento de placa antiga', billing_mode: 'CONDITIONAL', default_amount_cents: 22000, quantity: 1, include_in_total: 1, condition_expression: { all: [{ field: 'vehicle_target.plate_pattern', operator: 'EQUALS', value: 'OLD' }] } },
   { code: 'MODIFICATION_REQUEST', name: 'Solicitação de modificação', billing_mode: 'CONDITIONAL', default_amount_cents: 30000, quantity: 1, include_in_total: 1, condition_expression: { all: [{ field: 'engine.power_variation_percent', operator: 'GREATER_THAN', value: 0 }, { field: 'engine.power_variation_percent', operator: 'LESS_OR_EQUAL', value: 10 }] } },
-  { code: 'ITL_CSV_INSPECTION', name: 'Inspeção ITL/CSV', billing_mode: 'CONDITIONAL', default_amount_cents: null, quantity: 1, include_in_total: 1 },
 ]
 
 const rules = [
+  { name: 'motor equivalente', priority: 5, expected_result: 'VIABLE', conditions: { all: [{ field: 'engine.power_variation_percent', operator: 'EQUALS', value: 0 }] }, actions: [] },
   { name: 'acréscimo até 10%', priority: 10, expected_result: 'VIABLE_WITH_REQUIREMENTS', conditions: { all: [{ field: 'engine.power_variation_percent', operator: 'GREATER_THAN', value: 0 }, { field: 'engine.power_variation_percent', operator: 'LESS_OR_EQUAL', value: 10 }] }, actions: [{ action_type: 'ADD_BILLING_ITEM', target_key: 'ITL_CSV_INSPECTION' }] },
   { name: 'acréscimo acima de 10%', priority: 20, expected_result: 'OUT_OF_CRITERIA', conditions: { all: [{ field: 'engine.power_variation_percent', operator: 'GREATER_THAN', value: 10 }] }, actions: [{ action_type: 'BLOCK_AUTOMATED_QUOTE' }] },
   { name: 'redução de potência', priority: 30, expected_result: 'MANUAL_REVIEW', conditions: { all: [{ field: 'engine.power_variation_percent', operator: 'LESS_THAN', value: 0 }] }, actions: [{ action_type: 'ADD_BILLING_ITEM', target_key: 'ITL_CSV_INSPECTION' }, { action_type: 'MANUAL_REVIEW' }] },
@@ -40,12 +40,12 @@ const base = { 'vehicle_target.plate': 'ABC1D23', 'vehicle_donor.plate': 'ABC1D2
 
 describe('homologação do simulador de serviço no-code', () => {
   it.each([
-    ['motor equivalente com nota fiscal', { ...base }, 'UNCLASSIFIED', false],
-    ['motor equivalente sem nota fiscal', { ...base, 'engine.has_invoice': 'NO' }, 'UNCLASSIFIED', false],
-    ['veículo de destino com placa antiga', { ...base, 'vehicle_target.plate': 'ABC1234' }, 'UNCLASSIFIED', false],
-    ['motor antigo e destino Mercosul', { ...base, 'vehicle_target.plate': 'ABC1D23', 'vehicle_donor.plate': 'ABC1234' }, 'UNCLASSIFIED', false],
-    ['aumento de potência de 5%', { ...base, 'vehicle_target.power_cv': 105 }, 'MANUAL_REVIEW', false],
-    ['aumento de exatamente 10%', { ...base, 'vehicle_target.power_cv': 110 }, 'MANUAL_REVIEW', false],
+    ['motor equivalente com nota fiscal', { ...base }, 'VIABLE', false],
+    ['motor equivalente sem nota fiscal', { ...base, 'engine.has_invoice': 'NO' }, 'VIABLE', false],
+    ['veículo de destino com placa antiga', { ...base, 'vehicle_target.plate': 'ABC1234' }, 'VIABLE', false],
+    ['motor antigo e destino Mercosul', { ...base, 'vehicle_target.plate': 'ABC1D23', 'vehicle_donor.plate': 'ABC1234' }, 'VIABLE', false],
+    ['aumento de potência de 5%', { ...base, 'vehicle_target.power_cv': 105 }, 'VIABLE_WITH_REQUIREMENTS', false],
+    ['aumento de exatamente 10%', { ...base, 'vehicle_target.power_cv': 110 }, 'VIABLE_WITH_REQUIREMENTS', false],
     ['aumento superior a 10%', { ...base, 'vehicle_target.power_cv': 111 }, 'OUT_OF_CRITERIA', true],
     ['redução de potência', { ...base, 'vehicle_target.power_cv': 95 }, 'MANUAL_REVIEW', false],
     ['alteração de combustível', { ...base, 'vehicle_target.fuel': 'DIESEL' }, 'MANUAL_REVIEW', false],
@@ -68,7 +68,7 @@ describe('homologação do simulador de serviço no-code', () => {
 
   it('reproduz o cenário informado pelo proprietário com placas, combustível e cilindrada normalizados', () => {
     const result = evaluate({ ...base, 'vehicle_target.plate': ' abc-1234 ', 'vehicle_donor.plate': 'abc2345', 'vehicle_target.power_cv': '75', 'vehicle_donor.power_cv': '75', 'vehicle_target.cylinder_cc': '2,0', 'vehicle_donor.cylinder_cc': '2000', 'vehicle_target.fuel': 'Álcool', 'vehicle_donor.fuel': 'etanol' })
-    expect(result.viability).toBe('UNCLASSIFIED')
+    expect(result.viability).toBe('VIABLE')
     expect(result.values['vehicle_target.plate']).toBe('ABC1234')
     expect(result.values['vehicle_target.cylinder_cc']).toBe(2000)
     expect(result.values['vehicle_donor.cylinder_cc']).toBe(2000)
