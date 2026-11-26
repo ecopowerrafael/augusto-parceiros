@@ -1,5 +1,15 @@
 # Status do projeto
 
+## Hotfix 0.4.5 — correção da validação declarativa — 26/11/2026
+
+- Causa raiz confirmada pela Hostinger: `field.calculation.operands` estava indefinido para o campo `motorcycle.compatibility_declaration`, que é `CHECKBOX` e possui apenas `{ default: false }` no metadado legado da Migration 007.
+- O trecho `fields.filter((field) => field.calculation).map((field) => field.calculation.operands.map(...))` assumia operandos em qualquer campo com `calculation` e provocava `TypeError` na etapa `editor.validation_completed`.
+- Correção: somente campos `CALCULATED` entram no grafo; campos calculados sem operandos retornam erro declarativo específico; coleções obrigatórias ausentes também retornam erro, sem lançar `TypeError`.
+- Teste de regressão do fluxo `loadEditor`/`validateConfiguration`, além de testes de configuração válida, rascunho incompleto e coleção ausente.
+- Validações locais: 14 arquivos e 127 testes, lint, typecheck, build, sintaxe Node e `git diff --check` aprovados.
+- Nenhum SQL remoto executado, nenhuma migration alterada/importada e nenhuma chamada à Simples API.
+- Branch de trabalho: `fix/fase-3-9-configuration-validation`; publicação aguardando commit e integração na `main` após a revisão final.
+
 ## Hotfix 0.4.4 — diagnóstico do erro interno no editor — 26/11/2026
 
 - Branch de trabalho: `fix/fase-3-9-editor-internal-error`.
