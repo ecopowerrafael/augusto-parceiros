@@ -2,7 +2,7 @@
 
 ## Fase 3.12
 
-O código local está na versão `0.4.8` em branch de feature. A Migration 008 já foi importada e verificada pelo proprietário; não deve ser reexecutada. A Migration 009 (`database/updates/009_simulator_final_visibility.sql`) foi gerada pelo comando oficial e não foi executada remotamente. Antes de qualquer publicação/importação, aguardar autorização explícita e executar o precheck/SQL/verify manualmente no phpMyAdmin, se aprovado.
+O código está na versão `0.4.8`. A Migration 008 e, posteriormente, a Migration 009 foram importadas e verificadas manualmente pelo proprietário; não devem ser reexecutadas. A Migration 009 foi confirmada com cinco campos atualizados, registro único em `schema_migrations` e `migration_009_count = 1`. A publicação da branch `feature/fase-3-12-ajustes-finais-simulador` foi autorizada. A homologação funcional online permanece pendente dos testes reais do proprietário.
 
 Baseado na documentação oficial consultada em 25/11/2026: Hostinger Web Apps Node.js suporta planos Business/Unlimited e Cloud; presets React, Vite e Express; Node 18, 20, 22 e 24; deploy via GitHub; variáveis de ambiente no painel; e MySQL com `127.0.0.1`.
 

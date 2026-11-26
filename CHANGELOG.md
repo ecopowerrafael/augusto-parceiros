@@ -8,6 +8,7 @@
 - Adicionados quatro testes de regressão do fluxo; branch de trabalho `feature/fase-3-12-ajustes-finais-simulador`.
 - Versão local/PWA `0.4.8`; homologação visual e publicação na `main` ainda não autorizadas.
 - Revisão posterior: normalização de visibilidade passou para layout effect; PDF revisado com acentuação, espaçamento compacto e exemplos regenerados em uma página.
+- Migration 009 importada e verificada manualmente pelo proprietário na Hostinger: banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`, cinco campos presentes/atualizados, registro `schema_migrations` confirmado e `migration_009_count = 1`, sem erro SQL.
 
 ## [0.4.7] — Correção funcional do simulador — 26/11/2026
 

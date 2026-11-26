@@ -10,6 +10,14 @@
 - Homologação online e conferência visual humana pendentes. Próxima etapa: revisar/publicar somente com autorização explícita e, depois, importar a Migration 009 manualmente se aprovada. Não iniciar a Fase 4.
 - Revisão visual local dos três PDFs de exemplo: renderização aprovada sem sobreposição, com cabeçalho/rodapé presentes e uma página por arquivo. A validação visual online ainda depende do proprietário.
 
+### Evidência de banco e publicação autorizada
+
+- Migration 009 foi importada manualmente e verificada pelo proprietário no banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`.
+- Precheck: `migration_009_already_registered = 0`, `required_fields_present = 5` e `migration_008_registered = 1`.
+- Execução: cinco campos atualizados, uma linha inserida em `schema_migrations`, sem erro SQL.
+- Verify: `migration_009_count = 1` e cinco campos retornados.
+- Não executar novamente a Migration 009 ou migrations anteriores. A branch foi autorizada para integração na `main` na versão `0.4.8`; a homologação funcional online continua pendente dos testes reais do proprietário.
+
 ## Fase 3.11 — Migration 008 verificada e publicação autorizada — 26/11/2026
 
 - Branch: `feature/fase-3-11-homologacao-simulador`; versão `0.4.7`; commit aprovado `5d7160569d3e38f556e992a83fb6d13275e294a8`; integração publicada no merge `365980a`.
