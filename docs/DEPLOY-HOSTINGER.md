@@ -37,6 +37,15 @@ SMTP_FROM=...
 
 Não preencher senhas neste repositório ou nesta documentação. A instalação inicial da Fase 2 deve ser feita pelo phpMyAdmin conforme `database/README.md`, sem executar `node scripts/migrate.mjs` ou `node scripts/provision-admin.mjs` nesta etapa.
 
+## Publicação da versão 0.4.6
+
+- A branch `feature/fase-3-10-fluxo-resultado-pdf` foi integrada na `main` pelo merge `aa20697`; a atualização documental foi registrada em `c6a81e4`.
+- A tag `rollback-before-0-4-6-20261126` aponta para o commit anterior da `main` (`3448cba`).
+- A versão esperada após o deploy é `0.4.6`; o manifest PWA também está em `0.4.6`.
+- Não há Migration 008, migrations automáticas no startup, SQL remoto ou reimportação da Migration 007 nesta publicação.
+- A confirmação de deploy exige `/api/health` com `environment: staging`, `allowIndexing: false` e versão `0.4.6`; o push no GitHub isoladamente não comprova a propagação da Hostinger.
+- A tentativa HTTP local de 26/11/2026 não resolveu `docmotor.online`; a homologação funcional permanece pendente de rede/DNS funcional e conferência manual do proprietário.
+
 ## Fase 3 — implantação em duas etapas
 
 O proprietário confirmou a importação da Migration 002 e das 23 tabelas no banco correto. Não reimportar a 002. Para esta missão, usar somente: (1) `database/updates/003_complete_engine_service_seed_precheck.sql`; (2) `database/updates/003_complete_engine_service_seed.sql`; (3) `database/updates/003_complete_engine_service_seed_verify.sql`. Só depois da confirmação da 003 o código do painel que depende dessas configurações poderá ser publicado na `main`.
