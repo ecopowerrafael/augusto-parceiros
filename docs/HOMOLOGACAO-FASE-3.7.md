@@ -22,6 +22,10 @@ O fixture automatizado também cobre a equivalência Álcool/Etanol e litros/cm�
 
 O resultado é uma simulação operacional, não garantia de aprovação pelo Detran.
 
+## Causa raiz do erro anterior
+
+O endpoint estava recebendo respostas sem uma etapa central de normalização: combustível persistido como texto não tinha opções padronizadas, cilindradas digitadas com vírgula/litros podiam chegar em formatos diferentes e a interface renderizava campos genéricos sem máscara/seletor semântico. Além disso, o `catch` da rota convertia qualquer falha de avaliação em uma mensagem genérica, ocultando o código de entrada inválida. A correção passou a normalizar as respostas no backend antes de `calculateFields`/regras, enviar as opções persistidas ao avaliador, renderizar os controles de entrada apropriados e retornar erros específicos; a Simples API continua fora do fluxo e `externalCalls` permanece zero.
+
 ## Verificações executadas
 
 - `npm test -- --run --pool=threads --minWorkers=1 --maxWorkers=1`: 87 testes aprovados.
@@ -30,6 +34,12 @@ O resultado é uma simulação operacional, não garantia de aprovação pelo De
 - `npm run build`: aprovado.
 - `node --check` nos módulos Node alterados: aprovado.
 - `git diff --check`: aprovado.
+
+Os testes cobrem explicitamente `2.5 → 2500`, `2,5 → 2500`, `125 → 125` e `2500 → 2500`, além da simulação manual, simulação por placa fictícia, quatro combustíveis e cobrança baseada somente na placa de destino.
+
+## Homologação online
+
+O proprietário deve executar a conferência autenticada no ambiente Hostinger. A tentativa HTTP desta sessão não foi conclusiva porque o ambiente local não resolveu `docmotor.online`; não há evidência automatizada de propagação online nesta sessão.
 
 ## Migration 006
 

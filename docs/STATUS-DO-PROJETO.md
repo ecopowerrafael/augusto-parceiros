@@ -19,6 +19,7 @@ Fase 3.7 — correção do simulador no-code — versão `0.3.6`; Migrations 005
 - Frontend do construtor com seletor de combustível, máscara de placa e orientação de cilindrada; backend permanece como autoridade.
 - Erros específicos para placa, combustível e cilindrada inválidos, sem chamada externa ou consumo de créditos.
 - Fixture corrigido e teste do cenário informado pelo proprietário: Automóvel, 75 CV, 2000 cm³, combustível equivalente, placa antiga no destino e total conhecido de R$ 975,80.
+- Causa raiz documentada em `docs/HOMOLOGACAO-FASE-3.7.md`: respostas sem normalização central e rota que ocultava erros de avaliação atrás de mensagem genérica.
 
 - Shell SaaS responsivo para painéis autenticados, com navegação por perfil, topbar, largura integral, títulos objetivos e alteração de senha em Minha conta.
 - Correção do endpoint `/api/partner/dashboard` para retornar cidade, UF e CEP da empresa persistida.
@@ -108,6 +109,7 @@ Fase 3.7 — correção do simulador no-code — versão `0.3.6`; Migrations 005
 - `npm run typecheck`: passou após a implementação da Fase 2.
 - `npm test -- --run`: passou com os testes existentes e validações de CPF/CNPJ/contratos de autenticação.
 - Fase 3.7: `npm test -- --run --pool=threads --minWorkers=1 --maxWorkers=1` aprovou 87 testes; lint, typecheck, build, sintaxe Node e diff-check também aprovados.
+- Publicação da Fase 3.7: `main` em `8c1d8c8`, tag de rollback `rollback-before-fase-3-7-20261125`; validação HTTP pós-publicação não concluída por falha de resolução DNS neste ambiente.
 - `npm run build`: passou e gerou o build de produção.
 - `npm run lint`: passou após a atualização final do backend; validação MySQL online ainda não executada.
 - Navegador automatizado: não utilizado conforme orientação; telas da Fase 2 aguardam conferência visual manual.

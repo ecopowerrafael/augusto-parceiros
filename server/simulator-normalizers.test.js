@@ -11,7 +11,7 @@ describe('normalizadores do simulador no-code', () => {
   ])('normaliza placa digitada/colada %s', (input, value, pattern) => expect(normalizePlate(input)).toMatchObject({ value, pattern, valid: true }))
 
   it.each([
-    ['2', '', 2000], ['2,0', 'L', 2000], ['2000', 'CM3', 2000], ['2000', 'cm³', 2000],
+    ['2', '', 2000], ['2.5', '', 2500], ['2,5', 'L', 2500], ['125', '', 125], ['2500', '', 2500], ['2000', 'CM3', 2000], ['2000', 'cm³', 2000],
   ])('converte cilindrada %s %s para cm³', (input, unit, expected) => expect(normalizeCylinder(input, unit)).toMatchObject({ value: expected, valid: true }))
 
   it('rejeita valores inválidos sem inventar conversão', () => {
