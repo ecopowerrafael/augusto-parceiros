@@ -1,5 +1,15 @@
 # Status do projeto
 
+## Hotfix 0.4.4 — diagnóstico do erro interno no editor — 26/11/2026
+
+- Branch de trabalho: `fix/fase-3-9-editor-internal-error`.
+- Evidência real da Hostinger: as 11 consultas do editor concluíram; a exceção ocorreu no pós-processamento, após `editor.billing_items`.
+- Implementado diagnóstico privado por etapa, request ID, `error.name`, mensagem original, código, stack e tipo do valor, sem credenciais, tokens, PII ou conteúdo integral de registros.
+- O pós-processamento foi separado em etapas de seções, campos, opções, ações, regras, cobranças, documentos, mensagens, consultas externas, validação, construção e serialização da resposta.
+- O parser JSON agora aceita o formato retornado pelo driver como string, objeto ou `NULL`; JSON inválido permanece erro explícito e diagnosticável.
+- Testes locais: 14 arquivos e 124 testes aprovados; MariaDB remoto não foi acessado e a homologação online ainda não foi repetida.
+- Não houve SQL remoto, nova migration, alteração de schema ou consumo da Simples API.
+
 ## Hotfix 0.4.3 — regressão HTTP 503 no editor — 26/11/2026
 
 - Branch de trabalho: `fix/fase-3-9-editor-http-503`.

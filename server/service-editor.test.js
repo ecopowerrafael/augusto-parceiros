@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest'
+/* global console */
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { loadEditor } from './services.js'
 
 function createEditorPool() {
@@ -23,6 +24,8 @@ function createEditorPool() {
 }
 
 describe('carregamento do editor de serviços', () => {
+  afterEach(() => vi.restoreAllMocks())
+
   it('carrega versão, campos, cobranças, regras, ações, documentos e mensagens em um contrato completo', async () => {
     const pool = createEditorPool()
     const editor = await loadEditor('version-1', 'test-request', pool)
@@ -34,6 +37,48 @@ describe('carregamento do editor de serviços', () => {
     expect(editor.documents).toHaveLength(1)
     expect(editor.messages).toHaveLength(1)
     expect(pool.calls.some((sql) => sql.includes('JSON_ARRAYAGG'))).toBe(false)
+  })
+
+  it('normaliza resultados MariaDB como strings, objetos e NULL sem fazer JSON.parse em objetos', async () => {
+    const pool = createEditorPool()
+    const originalQuery = pool.query
+    pool.query = async (sql, params) => {
+      const [result, fields] = await originalQuery.call(pool, sql, params)
+      if (sql.includes('FROM service_form_fields')) { result[0].default_value = '{"mode":"MANUAL"}'; result[0].calculation = { operation: 'ADD', operands: [{ field: 'vehicle_target.power' }] } }
+      if (sql.includes('FROM technical_rules r')) { result[0].conditions = { field: 'vehicle_target.category', operator: 'EQUALS', value: 'MOTORCYCLE' }; result[0].technical_limits = '{"cylinderVariationPercent":10}' }
+      if (sql.includes('FROM technical_rule_actions')) result[0].payload = { result: 'MANUAL_REVIEW' }
+      if (sql.includes('FROM service_documents')) result[0].condition_expression = null
+      if (sql.includes('FROM service_messages')) result[0].condition_expression = { field: 'vehicle_target.category', operator: 'FILLED' }
+      return [result, fields]
+    }
+
+    const editor = await loadEditor('version-1', 'json-shape-request', pool)
+
+    expect(editor.fields[0].default_value).toEqual({ mode: 'MANUAL' })
+    expect(editor.fields[0].calculation).toEqual({ operation: 'ADD', operands: [{ field: 'vehicle_target.power' }] })
+    expect(editor.rules[0].conditions).toEqual({ field: 'vehicle_target.category', operator: 'EQUALS', value: 'MOTORCYCLE' })
+    expect(editor.rules[0].technical_limits).toEqual({ cylinderVariationPercent: 10 })
+    expect(editor.rules[0].actions[0].payload).toEqual({ result: 'MANUAL_REVIEW' })
+    expect(editor.documents[0].condition_expression).toBeNull()
+    expect(() => JSON.stringify(editor)).not.toThrow()
+  })
+
+  it('registra a mensagem e a etapa originais quando uma configuração JSON é inválida', async () => {
+    const pool = createEditorPool()
+    const originalQuery = pool.query
+    pool.query = async (sql, params) => {
+      const result = await originalQuery.call(pool, sql, params)
+      if (sql.includes('FROM technical_rules r')) result[0][0].conditions = '{invalid-json'
+      return result
+    }
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    await expect(loadEditor('version-1', 'invalid-json-request', pool)).rejects.toMatchObject({ code: 'EDITOR_CONFIG_JSON_INVALID' })
+
+    const diagnostic = errorSpy.mock.calls.map(([line]) => JSON.parse(line)).find((entry) => entry.event === 'editor_processing_failed' && entry.stage === 'editor.rules_mapped')
+    expect(diagnostic).toMatchObject({ requestId: 'invalid-json-request', errorName: 'SyntaxError', column: 'conditions', valueType: 'string' })
+    expect(diagnostic.message).toMatch(/JSON|property|Unexpected/i)
+    expect(diagnostic.stack).toContain('SyntaxError')
   })
 
   it('propaga a falha SQL para o wrapper da rota registrar como erro controlado', async () => {
