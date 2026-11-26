@@ -6,7 +6,8 @@
 - Adicionado diagnóstico privado por request ID, etapa, duração e código SQL, sem credenciais ou dados pessoais.
 - Substituída a consulta agregada de regras por carregamento separado de regras e ações, preservando o contrato do editor e melhorando a compatibilidade MariaDB.
 - Adicionados testes de contrato do carregamento completo do editor e de propagação controlada de falhas SQL.
-- A versão do PWA foi sincronizada para `0.4.3`; homologação real na Hostinger ainda não foi executada.
+- A versão do PWA foi sincronizada para `0.4.3`; hotfix publicado na `main` no commit `27c8b190938aa7f7b687a2c53282e28178aef3e2`.
+- Homologação real na Hostinger ainda não foi executada.
 
 ## [0.4.2] — Publicação da Fase 3.9 — 2026-11-26
 

@@ -7,7 +7,8 @@
 - Correção aplicada: wrapper assíncrono no endpoint, resposta JSON pelo middleware de erro e logs privados com request ID, operação, duração e código SQL.
 - Mitigação de compatibilidade: regras e ações são carregadas por consultas separadas; removida a agregação `JSON_ARRAYAGG` combinada com `GROUP BY r.id`.
 - Teste MariaDB real: não executado neste ambiente. Os testes do editor usam pool mockado e estão identificados como tal.
-- Homologação Hostinger: pendente de publicação e de o proprietário abrir o construtor, simular e gerar o PDF online.
+- Hotfix publicado na `main` no commit `27c8b190938aa7f7b687a2c53282e28178aef3e2`; rollback: `rollback-before-0.4.3-20261126` apontando para `45f72cc`.
+- Homologação Hostinger: pendente de o proprietário abrir o construtor, simular e gerar o PDF online.
 
 ## Publicação da Fase 3.9 — 26/11/2026
 
