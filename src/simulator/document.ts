@@ -19,10 +19,12 @@ const textOf = (value: unknown) => String(value ?? '').trim()
 
 function wrap(value: string, font: PDFFont, size: number, maxWidth: number) { const words = value.split(/\s+/); const lines: string[] = []; let line = ''; for (const word of words) { const next = line ? `${line} ${word}` : word; if (font.widthOfTextAtSize(next, size) <= maxWidth) line = next; else { if (line) lines.push(line); line = word } } if (line) lines.push(line); return lines.length ? lines : [''] }
 
+function bundledLogoBytes() { const binary = atob(__DOC_MOTOR_LOGO_BASE64__); const bytes = new Uint8Array(binary.length); for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index); return bytes }
+
 export async function generateSimulationPdf(document: SimulationDocument) {
   const pdf = await PDFDocument.create(); const font = await pdf.embedFont(StandardFonts.Helvetica); const bold = await pdf.embedFont(StandardFonts.HelveticaBold)
-  let logo: Awaited<ReturnType<typeof pdf.embedPng>> | null = null
-  try { let source: Uint8Array | ArrayBuffer; if (document.logoBytes !== undefined) source = document.logoBytes; else source = await fetch('/assets/brand/doc-motor-logo-retangular.png').then((response) => response.ok ? response.arrayBuffer() : Promise.reject(new Error('logo unavailable'))); logo = await pdf.embedPng(source) } catch (error) { console.warn('[pdf] official logo could not be embedded', error); logo = null }
+  const source = document.logoBytes !== undefined ? document.logoBytes : bundledLogoBytes()
+  const logo = await pdf.embedPng(source)
   const pages: PDFPage[] = []; let page = pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]); pages.push(page); let y = PAGE_HEIGHT - MARGIN
   const addPage = () => { page = pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]); pages.push(page); y = PAGE_HEIGHT - 48; page.drawLine({ start: { x: MARGIN, y: PAGE_HEIGHT - 35 }, end: { x: PAGE_WIDTH - MARGIN, y: PAGE_HEIGHT - 35 }, thickness: 1.5, color: BLUE }); page.drawText('DOC MOTOR - ORCAMENTO', { x: MARGIN, y: PAGE_HEIGHT - 28, size: 8, font: bold, color: BLUE }); return page }
   const ensure = (height: number) => { if (y - height < 66) { addPage(); return true } return false }

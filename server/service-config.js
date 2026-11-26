@@ -173,6 +173,7 @@ export function evaluateService({ fields, options = [], billingItems = [], rules
   const category = String(input['vehicle_target.category'] || '').toUpperCase()
   const identificationMode = String(input['engine.identification_mode'] || '').toUpperCase()
   if (category === 'MOTORCYCLE' && input['motorcycle.compatibility_declaration'] === undefined) input['motorcycle.compatibility_declaration'] = false
+  if (category === 'MOTORCYCLE') delete input['engine.identification_mode']
   if (category === 'MOTORCYCLE' || identificationMode === 'UNKNOWN') for (const key of Object.keys(input)) if (key.startsWith('vehicle_donor.')) delete input[key]
   if (identificationMode === 'MANUAL') { delete input['vehicle_donor.plate']; delete input['vehicle_donor.plate_pattern'] }
   const normalized = normalizeSimulationAnswers(fields, options, input)

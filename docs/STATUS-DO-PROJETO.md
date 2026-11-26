@@ -1,5 +1,15 @@
 # Status do projeto
 
+## Fase 3.11 — correção local aguardando autorização — 26/11/2026
+
+- Branch: `feature/fase-3-11-homologacao-simulador`; versão prevista `0.4.7`; ainda não publicada na `main`.
+- Causa raiz confirmada: `engine.identification_mode` estava com `is_required = 1` e sem condição de visibilidade persistida, enquanto o frontend o ocultava para `MOTORCYCLE`.
+- Migration 008 preparada em `migrations/008_motorcycle_visibility_consistency.sql`, com precheck/update/verify Hostinger em `database/updates/008_motorcycle_visibility_consistency_{precheck,verify}.sql`; não executar remotamente sem autorização.
+- A correção permanece no-code: a visibilidade e a obrigatoriedade são expressas por condições persistidas; o backend continua descartando valores ocultos antes de validar, calcular, cobrar, gerar PDF ou montar WhatsApp.
+- O logo oficial agora é incorporado no bundle Vite e embutido no PDF sem depender de fetch durante a geração.
+- Validações locais: 17 arquivos/135 testes, lint, typecheck, build, sintaxe Node, validadores estáticos das migrations 007/008 e `git diff --check` aprovados. Não houve MariaDB remoto, navegador real ou captura visual.
+- Próxima missão: revisar os artefatos, importar manualmente a Migration 008 somente após autorização e homologar na Hostinger. Não iniciar a Fase 4.
+
 ## Fase 3.10 — publicada em homologação — 26/11/2026
 
 - Integrada na `main` no commit `aa20697`, versão `0.4.6`; branch de implementação: `feature/fase-3-10-fluxo-resultado-pdf`.

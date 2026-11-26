@@ -25,6 +25,7 @@
 3.9.2. Hotfix 0.4.4 de diagnóstico do erro interno após as consultas do editor; normalização JSON e regressão ampliada implementadas. Homologação online pendente.
 3.9.3. Hotfix 0.4.5 corrige a validação de campos declarativos legados da Migration 007; 127 testes aprovados. Homologação online pendente.
 3.10. Fluxo condicional, análise manual e PDF — versão `0.4.6` integrada na `main` pelo merge `aa20697`; rollback `rollback-before-0-4-6-20261126`; sem nova migration. Homologação funcional do proprietário pendente.
+3.11. Correção funcional do simulador — versão prevista `0.4.7`, branch `feature/fase-3-11-homologacao-simulador`; Migration 008 preparada, sem execução remota. Homologação da Fase 3.10 evidenciou a inconsistência de obrigatoriedade da identificação do motor em motocicletas. Aguardar revisão e autorização antes da `main`.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.
