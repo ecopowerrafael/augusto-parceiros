@@ -111,7 +111,7 @@ Fase 3.7.1 — correção da configuração real do simulador no-code — versã
 - `npm run typecheck`: passou após a implementação da Fase 2.
 - `npm test -- --run`: passou com os testes existentes e validações de CPF/CNPJ/contratos de autenticação.
 - Fase 3.7: `npm test -- --run --pool=threads --minWorkers=1 --maxWorkers=1` aprovou 87 testes; lint, typecheck, build, sintaxe Node e diff-check também aprovados.
-- Publicação da Fase 3.7: `main` em `8c1d8c8`, tag de rollback `rollback-before-fase-3-7-20261125`; validação HTTP pós-publicação não concluída por falha de resolução DNS neste ambiente.
+- Publicação da Fase 3.7.1: `main` em `62fe597`, tag de rollback `rollback-before-fase-3-7-1-20261125`; homologação HTTP automatizada não foi concluída por falha de resolução DNS neste ambiente.
 - `npm run build`: passou e gerou o build de produção.
 - `npm run lint`: passou após a atualização final do backend; validação MySQL online ainda não executada.
 - Navegador automatizado: não utilizado conforme orientação; telas da Fase 2 aguardam conferência visual manual.
