@@ -11,9 +11,9 @@ export type SimulationDocument = {
 
 const PAGE_WIDTH = 595.28; const PAGE_HEIGHT = 841.89; const MARGIN = 42; const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2
 const BLUE = rgb(0.05, 0.27, 0.52); const DARK_BLUE = rgb(0.03, 0.12, 0.24); const BLACK = rgb(0.08, 0.09, 0.11); const GRAY = rgb(0.38, 0.41, 0.45); const LIGHT_GRAY = rgb(0.94, 0.95, 0.97); const WHITE = rgb(1, 1, 1)
-const viabilityLabel: Record<string, string> = { VIABLE: 'Viavel', VIABLE_WITH_REQUIREMENTS: 'Viavel com exigencias', MANUAL_REVIEW: 'Analise manual necessaria', OUT_OF_CRITERIA: 'Fora dos criterios', UNCLASSIFIED: 'Resultado nao classificado' }
-const labels: Record<string, string> = { AUTOMOBILE: 'Automovel', MOTORCYCLE: 'Motocicleta', TRUCK: 'Caminhao', BUS: 'Onibus', SP: 'Sao Paulo', OTHER_STATE: 'Outros estados', YES: 'Sim', NO: 'Nao', ALCOHOL: 'Alcool', GASOLINE: 'Gasolina', DIESEL: 'Diesel', FLEX: 'Flex' }
-const money = (value: unknown) => `R$ ${(Number(value || 0) / 100).toFixed(2).replace('.', ',')}`
+const viabilityLabel: Record<string, string> = { VIABLE: 'Viável', VIABLE_WITH_REQUIREMENTS: 'Viável com exigências', MANUAL_REVIEW: 'Análise manual necessária', OUT_OF_CRITERIA: 'Fora dos critérios', UNCLASSIFIED: 'Resultado não classificado' }
+const labels: Record<string, string> = { AUTOMOBILE: 'Automóvel', MOTORCYCLE: 'Motocicleta', TRUCK: 'Caminhão', BUS: 'Ônibus', SP: 'São Paulo', OTHER_STATE: 'Outros estados', YES: 'Sim', NO: 'Não', ALCOHOL: 'Álcool', GASOLINE: 'Gasolina', DIESEL: 'Diesel', FLEX: 'Flex' }
+const money = (value: unknown) => `R$ ${new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value || 0) / 100)}`
 const clean = (value: unknown) => labels[String(value)] || String(value ?? '').replaceAll('_', ' ').replaceAll('.', ' - ')
 const textOf = (value: unknown) => String(value ?? '').trim()
 
@@ -22,7 +22,7 @@ function wrap(value: string, font: PDFFont, size: number, maxWidth: number) { co
 export async function generateSimulationPdf(document: SimulationDocument) {
   const pdf = await PDFDocument.create(); const font = await pdf.embedFont(StandardFonts.Helvetica); const bold = await pdf.embedFont(StandardFonts.HelveticaBold)
   let logo: Awaited<ReturnType<typeof pdf.embedPng>> | null = null
-  try { let source: Uint8Array | ArrayBuffer; if (document.logoBytes !== undefined) source = document.logoBytes; else source = await fetch('/assets/brand/doc-motor-logo-retangular.png').then((response) => response.ok ? response.arrayBuffer() : Promise.reject(new Error('logo unavailable'))); logo = await pdf.embedPng(source) } catch { logo = null }
+  try { let source: Uint8Array | ArrayBuffer; if (document.logoBytes !== undefined) source = document.logoBytes; else source = await fetch('/assets/brand/doc-motor-logo-retangular.png').then((response) => response.ok ? response.arrayBuffer() : Promise.reject(new Error('logo unavailable'))); logo = await pdf.embedPng(source) } catch (error) { console.warn('[pdf] official logo could not be embedded', error); logo = null }
   const pages: PDFPage[] = []; let page = pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]); pages.push(page); let y = PAGE_HEIGHT - MARGIN
   const addPage = () => { page = pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]); pages.push(page); y = PAGE_HEIGHT - 48; page.drawLine({ start: { x: MARGIN, y: PAGE_HEIGHT - 35 }, end: { x: PAGE_WIDTH - MARGIN, y: PAGE_HEIGHT - 35 }, thickness: 1.5, color: BLUE }); page.drawText('DOC MOTOR - ORCAMENTO', { x: MARGIN, y: PAGE_HEIGHT - 28, size: 8, font: bold, color: BLUE }); return page }
   const ensure = (height: number) => { if (y - height < 66) { addPage(); return true } return false }

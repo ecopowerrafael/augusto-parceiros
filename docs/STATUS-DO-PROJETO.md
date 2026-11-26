@@ -1,5 +1,14 @@
 # Status do projeto
 
+## Fase 3.10 — implementação local — 26/11/2026
+
+- Implementado na branch `feature/fase-3-10-fluxo-resultado-pdf`, versão local `0.4.6`; não publicado na `main`.
+- Frontend e backend respeitam visibilidade declarativa, limpam valores ocultos e tratam motocicletas, identificação manual e dados desconhecidos sem inferências.
+- Modal acessível de análise manual, WhatsApp configurável sem chaves internas e PDF com incorporação do logo oficial foram implementados.
+- Não foi identificada necessidade de Migration 008: a alteração é de avaliação, apresentação e geração de documento; Migration 007 instalada não foi modificada.
+- Validações locais: lint, typecheck, 16 arquivos/133 testes, build de produção, sintaxe Node e `git diff --check` executados; MariaDB remoto, Hostinger e conferência visual humana online ainda pendentes.
+- Próxima missão: revisar o relatório, publicar somente após aprovação do proprietário e então homologar os 30 cenários da Fase 3.10. Não iniciar a Fase 4.
+
 ## Hotfix 0.4.5 — correção da validação declarativa — 26/11/2026
 
 - Causa raiz confirmada pela Hostinger: `field.calculation.operands` estava indefinido para o campo `motorcycle.compatibility_declaration`, que é `CHECKBOX` e possui apenas `{ default: false }` no metadado legado da Migration 007.

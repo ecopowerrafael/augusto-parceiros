@@ -109,7 +109,7 @@ export function evaluateCondition(condition, values) {
   const leftNumber = numeric(left); const rightNumber = numeric(right)
   if (['GREATER_THAN', 'LESS_THAN', 'GREATER_OR_EQUAL', 'LESS_OR_EQUAL', 'BETWEEN', 'PERCENTAGE_COMPARISON'].includes(op) && (leftNumber === null || rightNumber === null)) return false
   if (op === 'EQUALS') return left === right || (leftNumber !== null && rightNumber !== null && leftNumber === rightNumber)
-  if (op === 'NOT_EQUALS') return !evaluateCondition({ field: condition.field, operator: 'EQUALS', value: right }, values)
+  if (op === 'NOT_EQUALS') return !isEmpty(left) && !isEmpty(right) && !evaluateCondition({ field: condition.field, operator: 'EQUALS', value: right }, values)
   if (op === 'GREATER_THAN') return leftNumber > rightNumber
   if (op === 'LESS_THAN') return leftNumber < rightNumber
   if (op === 'GREATER_OR_EQUAL') return leftNumber >= rightNumber
@@ -170,28 +170,33 @@ export function validateConfiguration(fields, conditions = []) {
 
 export function evaluateService({ fields, options = [], billingItems = [], rules = [], documents = [], messages = [], answers = {}, context = {} }) {
   const input = { ...context, ...answers }
-  if (String(input['engine.identification_mode'] || '').toUpperCase() === 'MANUAL') {
-    delete input['vehicle_donor.plate']
-    delete input['vehicle_donor.plate_pattern']
-  }
+  const category = String(input['vehicle_target.category'] || '').toUpperCase()
+  const identificationMode = String(input['engine.identification_mode'] || '').toUpperCase()
+  if (category === 'MOTORCYCLE' && input['motorcycle.compatibility_declaration'] === undefined) input['motorcycle.compatibility_declaration'] = false
+  if (category === 'MOTORCYCLE' || identificationMode === 'UNKNOWN') for (const key of Object.keys(input)) if (key.startsWith('vehicle_donor.')) delete input[key]
+  if (identificationMode === 'MANUAL') { delete input['vehicle_donor.plate']; delete input['vehicle_donor.plate_pattern'] }
   const normalized = normalizeSimulationAnswers(fields, options, input)
+  const visibleFields = new Set()
   for (const field of fields) {
     const requiredCondition = field.required_condition ? (typeof field.required_condition === 'string' ? JSON.parse(field.required_condition) : field.required_condition) : null
     const visibleCondition = field.visibility_condition ? (typeof field.visibility_condition === 'string' ? JSON.parse(field.visibility_condition) : field.visibility_condition) : null
-    const applies = (!requiredCondition || evaluateCondition(requiredCondition, normalized.values)) && (!visibleCondition || evaluateCondition(visibleCondition, normalized.values))
+    const visible = !visibleCondition || evaluateCondition(visibleCondition, normalized.values)
+    if (visible) visibleFields.add(field.field_key); else delete normalized.values[field.field_key]
+    const applies = visible && (!requiredCondition || evaluateCondition(requiredCondition, normalized.values))
     const value = normalized.values[field.field_key]
     if (applies && field.is_required && (value === undefined || value === null || value === '')) normalized.errors.push({ field: field.field_key, code: 'REQUIRED_FIELD', message: 'Preencha este campo para continuar.' })
   }
   if (normalized.errors.length) { const error = new Error('INVALID_SIMULATION_INPUT'); error.code = 'INVALID_SIMULATION_INPUT'; error.details = normalized.errors; throw error }
-  const values = calculateFields(fields, normalized.values); const targetPlate = normalizePlate(values['vehicle_target.plate']); if (targetPlate.pattern !== 'UNKNOWN') values['vehicle_target.plate_pattern'] = targetPlate.pattern; const donorPlate = normalizePlate(values['vehicle_donor.plate']); if (donorPlate.pattern !== 'UNKNOWN') values['vehicle_donor.plate_pattern'] = donorPlate.pattern; const trace = []; const appliedItems = new Map(); const documentsResult = []; const actions = []; let blocked = false; let manualReview = false; let viability = null
+  const values = calculateFields(fields, normalized.values); for (const field of fields) if (!visibleFields.has(field.field_key)) delete values[field.field_key]; const targetPlate = normalizePlate(values['vehicle_target.plate']); if (targetPlate.pattern !== 'UNKNOWN') values['vehicle_target.plate_pattern'] = targetPlate.pattern; const donorPlate = normalizePlate(values['vehicle_donor.plate']); if (donorPlate.pattern !== 'UNKNOWN') values['vehicle_donor.plate_pattern'] = donorPlate.pattern; const trace = []; const appliedItems = new Map(); const documentsResult = []; const actions = []; let blocked = false; let manualReview = false; let viability = null
   for (const item of billingItems) { const condition = item.condition_expression ? (typeof item.condition_expression === 'string' ? JSON.parse(item.condition_expression) : item.condition_expression) : null; const applies = item.billing_mode === 'REQUIRED' || Boolean(condition && evaluateCondition(condition, values)); if (applies) appliedItems.set(item.code, { ...item, reason: item.billing_mode === 'REQUIRED' ? 'Obrigatório' : 'Condição atendida' }) }
   for (const rule of [...rules].sort((a, b) => a.priority - b.priority)) { const category = values['vehicle_target.category']; const categoryMatches = !category || !rule.vehicle_category_code || rule.vehicle_category_code === category; const condition = typeof rule.conditions === 'string' ? JSON.parse(rule.conditions) : rule.conditions; if (!categoryMatches || !evaluateCondition(condition, values)) { trace.push({ rule: rule.name, matched: false }); continue } const result = { rule: rule.name, matched: true, expectedResult: rule.expected_result, description: rule.description || null }; trace.push(result); if (rule.expected_result === 'OUT_OF_CRITERIA') blocked = true; if (rule.expected_result === 'MANUAL_REVIEW') manualReview = true; viability = rule.expected_result
     const ruleActions = (rule.actions || []).filter((action) => action && action.action_type); for (const action of ruleActions) { actions.push(action); if (action.action_type === 'BLOCK_AUTOMATED_QUOTE') blocked = true; if (action.action_type === 'MANUAL_REVIEW' || action.action_type === 'REQUIRE_ADMIN_APPROVAL') manualReview = true; if (action.action_type === 'CLASSIFY_VIABILITY') viability = action.payload?.result || viability; if (action.action_type === 'ADD_BILLING_ITEM' && action.target_key && !appliedItems.has(action.target_key)) { const target = billingItems.find((item) => item.code === action.target_key); if (target) appliedItems.set(target.code, { ...target, reason: 'Regra atendida' }) } if (action.action_type === 'REMOVE_BILLING_ITEM' && action.target_key) appliedItems.delete(action.target_key) }
   }
   for (const document of documents) { const condition = document.condition_expression ? (typeof document.condition_expression === 'string' ? JSON.parse(document.condition_expression) : document.condition_expression) : null; if (document.requirement_type === 'REQUIRED' || (condition && evaluateCondition(condition, values))) documentsResult.push(document) }
-  const messagesResult = messages.filter((message) => { const condition = message.condition_expression ? (typeof message.condition_expression === 'string' ? JSON.parse(message.condition_expression) : message.condition_expression) : null; return !condition || evaluateCondition(condition, values) })
   const items = [...appliedItems.values()].map((item) => ({ ...item, amount_cents: item.amount_override_cents ?? item.default_amount_cents, total_cents: item.amount_override_cents !== null && item.amount_override_cents !== undefined ? Number(item.amount_override_cents) * Number(item.quantity || 1) : (item.default_amount_cents === null ? null : Number(item.default_amount_cents) * Number(item.quantity || 1)) }))
   const commercialAvailable = !blocked && !manualReview && (viability === 'VIABLE' || viability === 'VIABLE_WITH_REQUIREMENTS')
   const commercialItems = commercialAvailable ? items : []
-  return { values, items: commercialItems, total_cents: commercialAvailable ? commercialItems.reduce((sum, item) => sum + (item.include_in_total && item.total_cents !== null ? item.total_cents : 0), 0) : null, missing_amount_items: commercialAvailable ? items.filter((item) => item.total_cents === null).map((item) => item.code) : [], documents: documentsResult, messages: messagesResult, actions, trace, reasons: trace.filter((item) => item.matched && item.description).map((item) => item.description), blocked, manual_review: manualReview, commercial_available: commercialAvailable, viability: blocked ? 'OUT_OF_CRITERIA' : manualReview ? 'MANUAL_REVIEW' : viability || 'UNCLASSIFIED' }
+  const finalViability = blocked ? 'OUT_OF_CRITERIA' : manualReview ? 'MANUAL_REVIEW' : viability || 'UNCLASSIFIED'
+  const messagesResult = messages.filter((message) => { const condition = message.condition_expression ? (typeof message.condition_expression === 'string' ? JSON.parse(message.condition_expression) : message.condition_expression) : null; if (condition && !evaluateCondition(condition, values)) return false; const key = String(message.message_key || ''); if (key.startsWith('MANUAL_REVIEW_')) return !commercialAvailable; return commercialAvailable || !key.startsWith('OUT_OF_CRITERIA_') })
+  return { values, items: commercialItems, total_cents: commercialAvailable ? commercialItems.reduce((sum, item) => sum + (item.include_in_total && item.total_cents !== null ? item.total_cents : 0), 0) : null, missing_amount_items: commercialAvailable ? items.filter((item) => item.total_cents === null).map((item) => item.code) : [], documents: documentsResult, messages: messagesResult, actions, trace, reasons: trace.filter((item) => item.matched && item.description).map((item) => item.description), blocked, manual_review: manualReview, commercial_available: commercialAvailable, viability: finalViability }
 }
