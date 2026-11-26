@@ -117,3 +117,9 @@
 - Migration 006 importada e validada pelo proprietário no banco da Hostinger; nenhum SQL remoto foi executado pelo projeto.
 - A versão permanece `0.3.6`, pois o estado atual da branch já havia avançado de `0.3.5`; não foi realizado downgrade de versão.
 
+# 0.3.7 - Fase 3.7.1
+
+- Corrigido o HTTP 422 causado por referências a `vehicle_target.plate_pattern` e `vehicle_donor.plate_pattern`, agora tratados como campos derivados internos.
+- Corrigida a conversão visual de cilindradas no blur e a apresentação de detalhes seguros de configuração no simulador.
+- Adicionado teste de integração do contrato equivalente à configuração persistida pelas migrations 001–006; nenhuma Migration 007 foi criada.
+

@@ -30,6 +30,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - A Migration 005 (`application_settings`) foi importada e verificada pelo proprietário; não reexecutar o SQL remoto. A homologação funcional do módulo continua sendo feita somente pelo ambiente online.
 - A Migration 006 (`simulator_input_normalization`) foi importada e validada pelo proprietário no banco remoto; não reexecutar o SQL remoto.
 - O simulador no-code normaliza placas, combustíveis e cilindradas no backend; a interface melhora a entrada, mas nunca substitui o avaliador.
+- A Fase 3.7.1 mantém `vehicle_target.plate_pattern` e `vehicle_donor.plate_pattern` como campos derivados internos reconhecidos pelo validador; não persistir esses valores como entradas editáveis nem criar migration para eles.
 - SQLs manuais da Hostinger devem iniciar com `USE \`u891593158_doc\`;` e `SELECT DATABASE() AS selected_database;`, qualificar tabelas da aplicação com `\`u891593158_doc\`.`, filtrar `information_schema` por `table_schema = 'u891593158_doc'` e ser gerados por `scripts/generate-hostinger-sql.mjs`. O gerador valida o identificador, não inclui credenciais e não executa SQL remoto.
 - Não alterar migrations já aplicadas. Como 001 e 002 estão instaladas, alterações estruturais futuras começam na migration 003; não repetir seeds antigos, não usar DROP/TRUNCATE, não desabilitar foreign keys e não prometer rollback transacional completo para DDL.
 

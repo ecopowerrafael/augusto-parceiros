@@ -1,5 +1,11 @@
 # Homologação — Fase 3.7
 
+## Fase 3.7.1 — correção da configuração real
+
+O HTTP 422 confirmado na Hostinger foi reproduzido pela validação de `vehicle_target.plate_pattern`: a cobrança persistida referenciava um campo derivado calculado no backend, mas o validador só conhecia `service_form_fields`. A correção reconhece explicitamente os dois padrões derivados, exige seus campos de placa de origem e mantém a validação de referências ativa. Não foi criada Migration 007 porque não há coluna ou registro faltante no banco.
+
+O teste de integração `server/service-simulation.integration.test.js` usa os 13 campos, opções, cobrança, regra e cálculo equivalentes ao seed das migrations 002/003 e chama o mesmo contrato de simulação usado pela rota. O cenário `AAA2222`/`BBB4444`, 66 CV e `2.2`, retorna 2200 cm³, variação 0%, `externalCalls=0` e total de R$ 975,80.
+
 ## Escopo
 
 Correção do simulador NO-CODE sem integração real com a Simples API, sem consumo de créditos e sem operações no banco remoto.

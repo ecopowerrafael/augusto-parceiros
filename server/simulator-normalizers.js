@@ -30,10 +30,12 @@ export function normalizePlate(value) {
 }
 
 export function normalizeCylinder(value, unit = '') {
-  if (value === undefined || value === null || String(value).trim() === '') return { value, valid: true }
-  const numericValue = Number(String(value).replace(',', '.').trim())
+  const inputValue = value && typeof value === 'object' && !Array.isArray(value) ? value.value : value
+  const inputUnit = value && typeof value === 'object' && !Array.isArray(value) ? value.unit || unit : unit
+  if (inputValue === undefined || inputValue === null || String(inputValue).trim() === '') return { value: inputValue, valid: true }
+  const numericValue = Number(String(inputValue).replace(',', '.').trim())
   if (!Number.isFinite(numericValue) || numericValue <= 0) return { value, valid: false, code: 'INVALID_CYLINDER', message: 'Informe uma cilindrada positiva em litros ou cm³.' }
-  const normalizedUnit = fold(unit)
+  const normalizedUnit = fold(inputUnit)
   const cubicCentimeters = normalizedUnit.includes('LIT') ? numericValue * 1000 : normalizedUnit.includes('CM') || normalizedUnit.includes('CC') ? numericValue : numericValue < 100 ? numericValue * 1000 : numericValue
   if (!Number.isFinite(cubicCentimeters) || cubicCentimeters <= 0) return { value, valid: false, code: 'INVALID_CYLINDER', message: 'Informe uma cilindrada positiva em litros ou cm³.' }
   return { value: Number(cubicCentimeters.toFixed(3)), valid: true, unit: 'cm³' }
@@ -65,7 +67,7 @@ export function normalizeSimulationAnswers(fields, options = [], input = {}) {
       continue
     }
     if (isCylinderField(field)) {
-      const result = normalizeCylinder(values[key], field.unit); if (result.valid) values[key] = result.value; else errors.push({ field: key, code: result.code, message: result.message })
+      const result = normalizeCylinder(values[key]); if (result.valid) values[key] = result.value; else errors.push({ field: key, code: result.code, message: result.message })
     }
   }
   return { values, errors }

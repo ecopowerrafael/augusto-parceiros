@@ -18,6 +18,7 @@
 3.5. Reestruturação administrativa e comissionamento — versão 0.3.3 integrada na `main`; Migration 004 instalada e validada.
 3.6. Design system, painéis profissionais e homologação do simulador — versão 0.3.5. Shell autenticado, navegação por perfil, correção de cidade/UF, comissão condicional, simulador sem persistência e Migration 005 instalada/validada.
 3.7. Correção do simulador no-code — versão 0.3.6. Normalização de combustível, placas e cilindradas, fixture do cenário comercial, erros específicos e Migration 006 incremental aguardando importação manual. Não iniciar a Fase 4.
+3.7.1. Correção da configuração real do simulador — versão 0.3.7. Campos derivados de placa reconhecidos pelo validador, conversão visual de cilindrada no blur, detalhes de erro no simulador e teste de integração equivalente às migrations 001–006. Sem nova migration.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.

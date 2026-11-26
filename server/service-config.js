@@ -5,6 +5,8 @@ export const FIELD_TYPES = ['TEXT', 'LONG_TEXT', 'INTEGER', 'DECIMAL', 'MONEY', 
 export const DATA_ORIGINS = ['MANUAL', 'EXTERNAL', 'CALCULATED', 'ADMIN_CONFIRMED', 'UNAVAILABLE']
 export const OPERATORS = ['EQUALS', 'NOT_EQUALS', 'GREATER_THAN', 'LESS_THAN', 'GREATER_OR_EQUAL', 'LESS_OR_EQUAL', 'BETWEEN', 'CONTAINS', 'NOT_CONTAINS', 'FILLED', 'EMPTY', 'TRUE', 'FALSE', 'IN_LIST', 'NOT_IN_LIST', 'PERCENTAGE_COMPARISON']
 export const ACTION_TYPES = ['ADD_BILLING_ITEM', 'REMOVE_BILLING_ITEM', 'SET_QUANTITY', 'SET_AMOUNT', 'REQUIRE_FIELD', 'SHOW_FIELD', 'HIDE_FIELD', 'REQUIRE_DOCUMENT', 'SHOW_GUIDANCE', 'SHOW_ALERT', 'REQUIRE_EXTERNAL_QUERY', 'MANUAL_REVIEW', 'BLOCK_AUTOMATED_QUOTE', 'CLASSIFY_VIABILITY', 'REQUIRE_ADMIN_APPROVAL']
+export const DERIVED_FIELD_KEYS = ['vehicle_target.plate_pattern', 'vehicle_donor.plate_pattern']
+const DERIVED_FIELD_SOURCES = { 'vehicle_target.plate_pattern': 'vehicle_target.plate', 'vehicle_donor.plate_pattern': 'vehicle_donor.plate' }
 
 const refSchema = z.object({ field: z.string().trim().min(1).max(100) }).strict()
 const leafSchema = z.object({ field: z.string().trim().min(1).max(100), operator: z.enum(OPERATORS), value: z.unknown().optional(), value2: z.unknown().optional(), valueField: z.string().trim().min(1).max(100).optional(), values: z.array(z.unknown()).max(100).optional() }).strict()
@@ -140,9 +142,10 @@ export function calculateFields(fields, input) {
 }
 
 export function validateConfiguration(fields, conditions = []) {
-  const keys = new Set(fields.map((field) => field.field_key)); const errors = []
-  for (const condition of conditions) { if (depth(condition) > 8) errors.push('A condição excede a profundidade máxima de 8 níveis.') ; const references = JSON.stringify(condition).match(/"field"\s*:\s*"([^"]+)"/g) || []; for (const reference of references) { const key = reference.replace(/.*"field"\s*:\s*"|"$/g, ''); if (!keys.has(key)) errors.push(`A configuração referencia o campo inexistente: ${key}.`) } }
-  const graph = new Map(fields.filter((field) => field.calculation).map((field) => [field.field_key, field.calculation.operands.map((operand) => operand.field)])); const visiting = new Set(); const visited = new Set()
+  const keys = new Set([...fields.map((field) => field.field_key), ...DERIVED_FIELD_KEYS]); const errors = []
+  const referencesOf = (value, references = []) => { if (!value || typeof value !== 'object') return references; if (Array.isArray(value)) { value.forEach((item) => referencesOf(item, references)); return references } for (const [key, child] of Object.entries(value)) { if ((key === 'field' || key === 'valueField') && typeof child === 'string') references.push(child); else referencesOf(child, references) } return references }
+  for (const condition of conditions) { if (depth(condition) > 8) errors.push('A condição excede a profundidade máxima de 8 níveis.'); for (const key of referencesOf(condition)) { if (!keys.has(key)) errors.push(`A configuração referencia o campo inexistente: ${key}.`); if (DERIVED_FIELD_SOURCES[key] && !keys.has(DERIVED_FIELD_SOURCES[key])) errors.push(`O campo derivado ${key} exige o campo de origem ${DERIVED_FIELD_SOURCES[key]}.`) } }
+  const graph = new Map(fields.filter((field) => field.calculation).map((field) => [field.field_key, field.calculation.operands.map((operand) => operand.field)])); for (const field of fields.filter((item) => item.calculation)) for (const operand of field.calculation.operands) if (!keys.has(operand.field)) errors.push(`A configuração referencia o campo inexistente: ${operand.field}.`); const visiting = new Set(); const visited = new Set()
   const visit = (key) => { if (visiting.has(key)) return true; if (visited.has(key)) return false; visiting.add(key); const cycle = (graph.get(key) || []).some((dependency) => graph.has(dependency) && visit(dependency)); visiting.delete(key); visited.add(key); return cycle }
   for (const key of graph.keys()) if (visit(key)) errors.push(`Dependência circular detectada no campo ${key}.`)
   return [...new Set(errors)]

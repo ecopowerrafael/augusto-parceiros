@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.7 — correção do simulador no-code — versão `0.3.6`; Migrations 005 e 006 instaladas e validadas pelo proprietário no banco remoto.
+Fase 3.7.1 — correção da configuração real do simulador no-code — versão `0.3.7`; Migrations 005 e 006 instaladas e validadas pelo proprietário no banco remoto.
 
 ## Fase 3.5 — estado da publicação
 
@@ -20,6 +20,8 @@ Fase 3.7 — correção do simulador no-code — versão `0.3.6`; Migrations 005
 - Erros específicos para placa, combustível e cilindrada inválidos, sem chamada externa ou consumo de créditos.
 - Fixture corrigido e teste do cenário informado pelo proprietário: Automóvel, 75 CV, 2000 cm³, combustível equivalente, placa antiga no destino e total conhecido de R$ 975,80.
 - Causa raiz documentada em `docs/HOMOLOGACAO-FASE-3.7.md`: respostas sem normalização central e rota que ocultava erros de avaliação atrás de mensagem genérica.
+- Corrigida a causa real do HTTP 422: campos derivados de padrão de placa agora são reconhecidos pelo validador sem virar entradas persistidas/editáveis; teste de integração reproduz a configuração equivalente às migrations 001–006.
+- Cilindradas são convertidas visualmente para cm³ no blur; erros `INVALID_SERVICE_CONFIGURATION` exibem código e detalhes seguros também no resultado próximo ao simulador.
 
 - Shell SaaS responsivo para painéis autenticados, com navegação por perfil, topbar, largura integral, títulos objetivos e alteração de senha em Minha conta.
 - Correção do endpoint `/api/partner/dashboard` para retornar cidade, UF e CEP da empresa persistida.
@@ -61,7 +63,7 @@ Fase 3.7 — correção do simulador no-code — versão `0.3.6`; Migrations 005
 
 ## Pendente
 
-- Homologar visualmente e executar o simulador online com dados fictícios; essa etapa permanece sob responsabilidade do proprietário.
+- Homologar visualmente e executar a versão `0.3.7` do simulador online com dados fictícios; essa etapa permanece sob responsabilidade do proprietário.
 
 - Executar a conferência visual manual dos painéis em desktop e mobile na Hostinger.
 - Homologar os cenários do simulador no-code com dados fictícios e registrar respostas reais.
@@ -148,4 +150,4 @@ Fase 3.7 — correção do simulador no-code — versão `0.3.6`; Migrations 005
 
 ## Próxima missão
 
-Executar a homologação autenticada online do simulador com dados fictícios pelo proprietário e registrar o resultado. Não iniciar a Fase 4.
+Executar a homologação autenticada online da versão `0.3.7` do simulador com os dados reais de teste fornecidos pelo proprietário e registrar o resultado. Não iniciar a Fase 4.
