@@ -6,6 +6,7 @@
 - O grafo de dependências agora considera somente campos `CALCULATED`; configurações incompletas retornam erros específicos de validação.
 - Adicionados testes de regressão para o caso real, campos calculados incompletos e coleções ausentes.
 - Mantidos os logs privados do hotfix 0.4.4, sem alteração de banco ou regras comerciais.
+- Hotfix publicado na `main` com implementação `1add237` e merge `fa6cd1a`; rollback registrado em `rollback-before-0-4-5-20261126`.
 - Homologação online permanece pendente de confirmação do proprietário.
 
 ## [0.4.4] — Diagnóstico do erro interno do editor — 2026-11-26

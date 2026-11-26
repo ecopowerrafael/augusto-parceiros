@@ -8,7 +8,7 @@
 - Teste de regressão do fluxo `loadEditor`/`validateConfiguration`, além de testes de configuração válida, rascunho incompleto e coleção ausente.
 - Validações locais: 14 arquivos e 127 testes, lint, typecheck, build, sintaxe Node e `git diff --check` aprovados.
 - Nenhum SQL remoto executado, nenhuma migration alterada/importada e nenhuma chamada à Simples API.
-- Branch de trabalho: `fix/fase-3-9-configuration-validation`; publicação aguardando commit e integração na `main` após a revisão final.
+- Implementação publicada no commit `1add237`; integração na `main` concluída no merge `fa6cd1a`; rollback: `rollback-before-0-4-5-20261126`.
 
 ## Hotfix 0.4.4 — diagnóstico do erro interno no editor — 26/11/2026
 
