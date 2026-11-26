@@ -123,3 +123,9 @@
 - Corrigida a conversão visual de cilindradas no blur e a apresentação de detalhes seguros de configuração no simulador.
 - Adicionado teste de integração do contrato equivalente à configuração persistida pelas migrations 001–006; nenhuma Migration 007 foi criada.
 
+# 0.3.8 - Correção de combustíveis do simulador
+
+- Aceito o valor interno `ALCOHOL`, que estava ausente no mapa backend e causava `INVALID_FUEL` para a opção Álcool.
+- Padronizados aliases de Álcool/Etanol, Gasolina, Diesel e Flex no frontend e backend, com normalização idempotente.
+- Adicionados testes de integração para os quatro valores internos, aliases, alteração efetiva e valor inválido.
+

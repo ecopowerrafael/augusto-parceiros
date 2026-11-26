@@ -1,5 +1,11 @@
 # Homologação — Fase 3.7
 
+## Fase 3.7.2 — combustíveis
+
+O erro real `INVALID_FUEL` foi reproduzido: o frontend enviava corretamente `ALCOHOL`, valor cadastrado pela Migration 006, mas o mapa backend não continha esse alias. A correção adiciona `ALCOHOL` e todas as representações equivalentes nos normalizadores TypeScript e Node, sem alterar a migration ou os valores persistidos.
+
+O teste de integração cobre `ALCOHOL`, `GASOLINE`, `DIESEL` e `FLEX` nos dois veículos, aliases equivalentes, alteração efetiva, valor inválido, idempotência e ausência de regressão em `plate_pattern`.
+
 ## Fase 3.7.1 — correção da configuração real
 
 O HTTP 422 confirmado na Hostinger foi reproduzido pela validação de `vehicle_target.plate_pattern`: a cobrança persistida referenciava um campo derivado calculado no backend, mas o validador só conhecia `service_form_fields`. A correção reconhece explicitamente os dois padrões derivados, exige seus campos de placa de origem e mantém a validação de referências ativa. Não foi criada Migration 007 porque não há coluna ou registro faltante no banco.

@@ -12,8 +12,9 @@ export const FUEL_OPTIONS = [
 ]
 
 const FUEL_ALIASES = new Map([
-  ['ALCOOL', 'ALCOHOL'], ['ETANOL', 'ALCOHOL'], ['ETHANOL', 'ALCOHOL'],
+  ['ALCOHOL', 'ALCOHOL'], ['ALCOOL', 'ALCOHOL'], ['ETANOL', 'ALCOHOL'], ['ETHANOL', 'ALCOHOL'],
   ['GASOLINA', 'GASOLINE'], ['GASOLINE', 'GASOLINE'], ['DIESEL', 'DIESEL'], ['FLEX', 'FLEX'],
+  ['ALCOOL/GASOLINA', 'FLEX'], ['GASOLINA/ETANOL', 'FLEX'], ['GASOLINA/ALCOOL', 'FLEX'],
 ])
 
 export function normalizeFuel(value) {

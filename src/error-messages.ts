@@ -41,3 +41,27 @@ export function friendlyValidationMessages(fields: unknown) {
   if (!Array.isArray(fields)) return ''
   return fields.map((field) => typeof field === 'object' && field !== null && 'message' in field ? String(field.message) : '').filter(Boolean).join(' ')
 }
+
+const simulationFieldLabels: Record<string, string> = {
+  'vehicle_target.fuel': 'Combustível original',
+  'vehicle_donor.fuel': 'Combustível do motor',
+  'vehicle_target.plate': 'Placa de destino',
+  'vehicle_donor.plate': 'Placa de origem',
+  'vehicle_target.engine_cc': 'Cilindrada original',
+  'vehicle_donor.engine_cc': 'Cilindrada do motor',
+}
+
+export function friendlyApiDetails(code: unknown, details: unknown) {
+  if (!Array.isArray(details) || details.length === 0) return ''
+  if (String(code) === 'INVALID_SERVICE_CONFIGURATION') return `Configuração inválida: ${details.filter((detail) => typeof detail === 'string').join(' ')}`
+  if (String(code) === 'INVALID_SIMULATION_INPUT') {
+    const messages = details.map((detail) => {
+      if (!detail || typeof detail !== 'object') return ''
+      const field = 'field' in detail ? String(detail.field) : ''
+      const message = 'message' in detail ? String(detail.message) : ''
+      return message ? `${simulationFieldLabels[field] || field}: ${message}` : ''
+    }).filter(Boolean)
+    return messages.length ? `Dados inválidos no simulador: ${messages.join(' ')}` : ''
+  }
+  return ''
+}

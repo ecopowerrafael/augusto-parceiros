@@ -3,7 +3,7 @@ import { normalizeCylinder, normalizeFuel, normalizePlate } from './simulator-no
 
 describe('normalizadores do simulador no-code', () => {
   it.each([
-    ['Álcool', 'ALCOHOL'], ['Etanol', 'ALCOHOL'], ['Gasolina', 'GASOLINE'], ['Diesel', 'DIESEL'], ['Flex', 'FLEX'],
+    ['ALCOHOL', 'ALCOHOL'], ['Álcool', 'ALCOHOL'], ['Alcool', 'ALCOHOL'], ['Etanol', 'ALCOHOL'], ['ETHANOL', 'ALCOHOL'], ['Gasolina', 'GASOLINE'], ['GASOLINE', 'GASOLINE'], ['Diesel', 'DIESEL'], ['FLEX', 'FLEX'], ['Flex', 'FLEX'], ['Álcool/Gasolina', 'FLEX'], ['Gasolina/Etanol', 'FLEX'], ['Gasolina/Álcool', 'FLEX'],
   ])('normaliza combustível %s', (input, expected) => expect(normalizeFuel(input)).toMatchObject({ value: expected, valid: true }))
 
   it.each([
@@ -19,4 +19,6 @@ describe('normalizadores do simulador no-code', () => {
     expect(normalizePlate('ABC123').valid).toBe(false)
     expect(normalizeCylinder('-1').valid).toBe(false)
   })
+
+  it.each(['ALCOHOL', 'GASOLINE', 'DIESEL', 'FLEX'])('é idempotente para o valor interno %s', (value) => expect(normalizeFuel(value)).toMatchObject({ value, valid: true }))
 })

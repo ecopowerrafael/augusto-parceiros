@@ -19,6 +19,7 @@
 3.6. Design system, painéis profissionais e homologação do simulador — versão 0.3.5. Shell autenticado, navegação por perfil, correção de cidade/UF, comissão condicional, simulador sem persistência e Migration 005 instalada/validada.
 3.7. Correção do simulador no-code — versão 0.3.6. Normalização de combustível, placas e cilindradas, fixture do cenário comercial, erros específicos e Migration 006 incremental aguardando importação manual. Não iniciar a Fase 4.
 3.7.1. Correção da configuração real do simulador — versão 0.3.7. Campos derivados de placa reconhecidos pelo validador, conversão visual de cilindrada no blur, detalhes de erro no simulador e teste de integração equivalente às migrations 001–006. Sem nova migration.
+3.7.2. Correção da normalização de combustíveis — versão 0.3.8. Compatibilidade completa entre valores internos persistidos, aliases do frontend e respostas futuras da API. Sem alteração de banco.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.

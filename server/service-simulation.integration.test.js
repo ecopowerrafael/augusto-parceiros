@@ -29,7 +29,10 @@ const billingItems = [
   { code: 'MERCOSUR_PLATE_AUTHORIZATION', billing_mode: 'CONDITIONAL', default_amount_cents: 22000, quantity: 1, include_in_total: 1, condition_expression: { all: [{ field: 'vehicle_target.plate_pattern', operator: 'EQUALS', value: 'OLD' }] } },
 ]
 
-const rules = [{ name: 'motor equivalente', priority: 10, expected_result: 'VIABLE', conditions: { all: [{ field: 'vehicle_target.power_cv', operator: 'EQUALS', valueField: 'vehicle_donor.power_cv' }, { field: 'vehicle_target.engine_cc', operator: 'EQUALS', valueField: 'vehicle_donor.engine_cc' }, { field: 'vehicle_target.fuel', operator: 'EQUALS', valueField: 'vehicle_donor.fuel' }] }, actions: [] }]
+const rules = [
+  { name: 'motor equivalente', priority: 10, expected_result: 'VIABLE', conditions: { all: [{ field: 'vehicle_target.power_cv', operator: 'EQUALS', valueField: 'vehicle_donor.power_cv' }, { field: 'vehicle_target.engine_cc', operator: 'EQUALS', valueField: 'vehicle_donor.engine_cc' }, { field: 'vehicle_target.fuel', operator: 'EQUALS', valueField: 'vehicle_donor.fuel' }] }, actions: [] },
+  { name: 'combustível alterado', priority: 20, expected_result: 'MANUAL_REVIEW', conditions: { all: [{ field: 'vehicle_target.fuel', operator: 'NOT_EQUALS', valueField: 'vehicle_donor.fuel' }] }, actions: [] },
+]
 const editorConditions = [billingItems[3].condition_expression, rules[0].conditions, { field: 'vehicle_target.plate_pattern' }, { field: 'vehicle_donor.plate_pattern' }]
 
 const editor = { version: { version_number: 1 }, fields, options, billingItems, rules, documents: [], validationErrors: validateConfiguration(fields, editorConditions) }
@@ -54,6 +57,27 @@ describe('integração do contrato real do simulador Fase 3.7.1', () => {
   it('mantém a validação ativa e rejeita somente uma referência realmente inexistente', () => {
     const invalidEditor = { ...editor, validationErrors: validateConfiguration(fields, [{ field: 'vehicle_target.not_registered' }]) }
     expect(() => simulateLoadedService(invalidEditor, { answers: {}, fixtureContext: {} })).toThrow('INVALID_SERVICE_CONFIGURATION')
+  })
+
+  it.each(['ALCOHOL', 'GASOLINE', 'DIESEL', 'FLEX'])('aceita o valor interno %s nos dois veículos', (fuel) => {
+    const response = simulateLoadedService(editor, { answers: { 'vehicle_target.plate': 'AAA1234', 'vehicle_target.category': 'AUTOMOBILE', 'vehicle_target.state': 'SP', 'vehicle_target.power_cv': 75, 'vehicle_target.engine_cc': 1000, 'vehicle_target.fuel': fuel, 'engine.has_invoice': 'YES', 'engine.identification_mode': 'PLATE', 'vehicle_donor.plate': 'EEE1234', 'vehicle_donor.power_cv': 75, 'vehicle_donor.engine_cc': 1000, 'vehicle_donor.fuel': fuel }, fixtureContext: {} })
+    expect(response.result.viability).toBe('VIABLE')
+    expect(response.result.total_cents).toBe(97580)
+    expect(response.externalCalls).toBe(0)
+  })
+
+  it.each([
+    ['Álcool', 'ETHANOL'], ['Gasolina', 'GASOLINE'], ['Álcool/Gasolina', 'FLEX'], ['Gasolina/Etanol', 'FLEX'], ['Gasolina/Álcool', 'FLEX'],
+  ])('trata representações equivalentes %s/%s como o mesmo combustível', (targetFuel, donorFuel) => {
+    const response = simulateLoadedService(editor, { answers: { 'vehicle_target.plate': 'AAA1234', 'vehicle_target.power_cv': 75, 'vehicle_target.engine_cc': 1000, 'vehicle_target.fuel': targetFuel, 'engine.has_invoice': 'YES', 'vehicle_donor.plate': 'EEE1234', 'vehicle_donor.power_cv': 75, 'vehicle_donor.engine_cc': 1000, 'vehicle_donor.fuel': donorFuel }, fixtureContext: {} })
+    expect(response.result.values['vehicle_target.fuel']).toBe(response.result.values['vehicle_donor.fuel'])
+    expect(response.result.manual_review).toBe(false)
+  })
+
+  it('classifica alteração efetiva de combustível para análise manual e rejeita valor inválido', () => {
+    const changed = simulateLoadedService(editor, { answers: { 'vehicle_target.plate': 'AAA1234', 'vehicle_target.power_cv': 75, 'vehicle_target.engine_cc': 1000, 'vehicle_target.fuel': 'DIESEL', 'vehicle_donor.plate': 'EEE1234', 'vehicle_donor.power_cv': 75, 'vehicle_donor.engine_cc': 1000, 'vehicle_donor.fuel': 'GASOLINE' }, fixtureContext: {} })
+    expect(changed.result.viability).toBe('MANUAL_REVIEW')
+    expect(() => simulateLoadedService(editor, { answers: { 'vehicle_target.fuel': 'Eletricidade' }, fixtureContext: {} })).toThrow('INVALID_SIMULATION_INPUT')
   })
 })
 

@@ -10,7 +10,7 @@ export const FUEL_OPTIONS = [
 
 export function normalizeFuel(value: string): string {
   const key = value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toUpperCase()
-  return ({ ALCOOL: 'ALCOHOL', ETANOL: 'ALCOHOL', ETHANOL: 'ALCOHOL', GASOLINA: 'GASOLINE', GASOLINE: 'GASOLINE', DIESEL: 'DIESEL', FLEX: 'FLEX' } as Record<string, string>)[key] || value
+  return ({ ALCOHOL: 'ALCOHOL', ALCOOL: 'ALCOHOL', ETANOL: 'ALCOHOL', ETHANOL: 'ALCOHOL', GASOLINA: 'GASOLINE', GASOLINE: 'GASOLINE', DIESEL: 'DIESEL', FLEX: 'FLEX', 'ALCOOL/GASOLINA': 'FLEX', 'GASOLINA/ETANOL': 'FLEX', 'GASOLINA/ALCOOL': 'FLEX' } as Record<string, string>)[key] || value
 }
 
 export function normalizePlateInput(value: string): string {
