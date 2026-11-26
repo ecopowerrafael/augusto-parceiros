@@ -30,8 +30,9 @@ const billingItems = [
 ]
 
 const rules = [
-  { name: 'motor equivalente', priority: 10, expected_result: 'VIABLE', conditions: { all: [{ field: 'vehicle_target.power_cv', operator: 'EQUALS', valueField: 'vehicle_donor.power_cv' }, { field: 'vehicle_target.engine_cc', operator: 'EQUALS', valueField: 'vehicle_donor.engine_cc' }, { field: 'vehicle_target.fuel', operator: 'EQUALS', valueField: 'vehicle_donor.fuel' }] }, actions: [] },
-  { name: 'combustível alterado', priority: 20, expected_result: 'MANUAL_REVIEW', conditions: { all: [{ field: 'vehicle_target.fuel', operator: 'NOT_EQUALS', valueField: 'vehicle_donor.fuel' }] }, actions: [] },
+  { name: 'motor equivalente', vehicle_category_code: 'AUTOMOBILE', priority: 10, expected_result: 'VIABLE', conditions: { all: [{ field: 'vehicle_target.power_cv', operator: 'EQUALS', valueField: 'vehicle_donor.power_cv' }, { field: 'vehicle_target.engine_cc', operator: 'EQUALS', valueField: 'vehicle_donor.engine_cc' }, { field: 'vehicle_target.fuel', operator: 'EQUALS', valueField: 'vehicle_donor.fuel' }] }, actions: [] },
+  { name: 'motocicleta com cilindrada diferente', vehicle_category_code: 'MOTORCYCLE', priority: 15, expected_result: 'OUT_OF_CRITERIA', conditions: { field: 'vehicle_target.engine_cc', operator: 'NOT_EQUALS', valueField: 'vehicle_donor.engine_cc' }, actions: [] },
+  { name: 'combustível alterado', vehicle_category_code: 'AUTOMOBILE', priority: 20, expected_result: 'MANUAL_REVIEW', conditions: { all: [{ field: 'vehicle_target.fuel', operator: 'NOT_EQUALS', valueField: 'vehicle_donor.fuel' }] }, actions: [] },
 ]
 const editorConditions = [billingItems[3].condition_expression, rules[0].conditions, { field: 'vehicle_target.plate_pattern' }, { field: 'vehicle_donor.plate_pattern' }]
 
@@ -78,6 +79,25 @@ describe('integração do contrato real do simulador Fase 3.7.1', () => {
     const changed = simulateLoadedService(editor, { answers: { 'vehicle_target.plate': 'AAA1234', 'vehicle_target.power_cv': 75, 'vehicle_target.engine_cc': 1000, 'vehicle_target.fuel': 'DIESEL', 'vehicle_donor.plate': 'EEE1234', 'vehicle_donor.power_cv': 75, 'vehicle_donor.engine_cc': 1000, 'vehicle_donor.fuel': 'GASOLINE' }, fixtureContext: {} })
     expect(changed.result.viability).toBe('MANUAL_REVIEW')
     expect(() => simulateLoadedService(editor, { answers: { 'vehicle_target.fuel': 'Eletricidade' }, fixtureContext: {} })).toThrow('INVALID_SIMULATION_INPUT')
+  })
+
+  it('não aplica regra de motocicleta a automóvel', () => {
+    const response = simulateLoadedService(editor, { answers: {
+      'vehicle_target.category': 'AUTOMOBILE', 'vehicle_target.engine_cc': 2000, 'vehicle_donor.engine_cc': 4000,
+      'vehicle_target.power_cv': 75, 'vehicle_donor.power_cv': 75, 'vehicle_target.fuel': 'ALCOHOL', 'vehicle_donor.fuel': 'ALCOHOL',
+    }, fixtureContext: {} })
+    expect(response.result.trace.find((item) => item.rule === 'motocicleta com cilindrada diferente')?.matched).toBe(false)
+    expect(response.result.viability).toBe('UNCLASSIFIED')
+  })
+
+  it('descarta placa do motor quando a identificação é manual', () => {
+    const response = simulateLoadedService(editor, { answers: {
+      'engine.identification_mode': 'MANUAL', 'vehicle_donor.plate': 'EEE1234', 'vehicle_target.plate': 'AAA1234',
+      'vehicle_target.category': 'AUTOMOBILE', 'vehicle_target.engine_cc': 1000, 'vehicle_donor.engine_cc': 1000,
+      'vehicle_target.power_cv': 75, 'vehicle_donor.power_cv': 75, 'vehicle_target.fuel': 'ALCOHOL', 'vehicle_donor.fuel': 'ALCOHOL',
+    }, fixtureContext: {} })
+    expect(response.result.values['vehicle_donor.plate']).toBeUndefined()
+    expect(response.result.values['vehicle_donor.plate_pattern']).toBeUndefined()
   })
 })
 

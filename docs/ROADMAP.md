@@ -30,3 +30,6 @@
 
 Fases posteriores dependem de validação das regras operacionais e não devem ser inferidas como aprovação pelo Detran.
 - Fase 3.5: reestruturação administrativa e preparação de comissionamento integradas na `main`; Migration 004 confirmada pelo proprietário. Pendentes propagação online e homologação autenticada.
+## Fase 3.8 — resultado visual, PDF e compartilhamento
+
+Em implementação na versão `0.3.9`. O simulador administrativo usa resultado visual reutilizável e PDF local, sem iniciar o módulo de orçamentos comerciais. A homologação visual online e a validação de compartilhamento continuam pendentes.

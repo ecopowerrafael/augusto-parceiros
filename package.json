@@ -1,7 +1,7 @@
 {
   "name": "doc-motor",
   "private": true,
-  "version": "0.3.8",
+  "version": "0.3.9",
   "type": "module",
   "engines": {
     "node": ">=20 <25"
@@ -26,6 +26,7 @@
     "lucide-react": "^0.468.0",
     "mysql2": "^3.24.6",
     "nodemailer": "^10.6.1",
+    "pdf-lib": "^1.17.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.7.2",

@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.7.2 — correção da validação de combustíveis no simulador — versão `0.3.8`; Migrations 005 e 006 instaladas e validadas pelo proprietário no banco remoto.
+Fase 3.8 — resultado visual, PDF e compartilhamento — versão `0.3.9`; Migrations 005 e 006 instaladas e validadas pelo proprietário no banco remoto.
 
 ## Fase 3.5 — estado da publicação
 
@@ -14,6 +14,12 @@ Fase 3.7.2 — correção da validação de combustíveis no simulador — vers�
 - Após a publicação da `main` em `44ca97339c1f4dd24caded242cb4631de92865e7`, a validação com `Invoke-WebRequest` foi tentada para todas as rotas previstas, mas o ambiente local continuou sem resolver `docmotor.online`; propagação permanece não confirmada.
 
 ## Implementado
+
+- Resultado do simulador apresentado por componente reutilizável, com situação semântica, dados analisados, cobranças, subtotal conhecido, documentos e diagnóstico técnico recolhido.
+- PDF A4 real em texto selecionável com `pdf-lib`, download, visualização, impressão e compartilhamento por Web Share/fallback responsável para WhatsApp.
+- Regras declarativas agora respeitam `vehicle_category_code` carregado da categoria persistida; ações vazias de `LEFT JOIN` são ignoradas.
+- Modo manual remove placa e padrão do motor do estado e o backend descarta valores incompatíveis.
+- Teste de geração real de PDF com assinatura `%PDF-`.
 
 - Normalização reutilizável de placas antigas/Mercosul, combustíveis (Álcool/Etanol equivalentes) e cilindradas em litros/cm³ no simulador.
 - Frontend do construtor com seletor de combustível, máscara de placa e orientação de cilindrada; backend permanece como autoridade.
@@ -65,6 +71,10 @@ Fase 3.7.2 — correção da validação de combustíveis no simulador — vers�
 
 ## Pendente
 
+- Homologar visualmente a apresentação, impressão e PDF na Hostinger com dados fictícios.
+- Validar compartilhamento de arquivo em Android/iOS e fallback no desktop.
+- Integrar cabeçalho com código público do emissor, contato por perfil e numeração quando o módulo de orçamentos persistidos existir.
+
 - Homologar visualmente e executar a versão `0.3.8` do simulador online com dados fictícios; essa etapa permanece sob responsabilidade do proprietário.
 
 - Executar a conferência visual manual dos painéis em desktop e mobile na Hostinger.
@@ -90,6 +100,11 @@ Fase 3.7.2 — correção da validação de combustíveis no simulador — vers�
 - O navegador local não foi usado para homologação visual; essa conferência permanece manual.
 
 ## Testes realizados
+
+- Fase 3.8 local: `npm test -- --run --pool=threads --minWorkers=1 --maxWorkers=1`: 13 arquivos e 120 testes aprovados, incluindo geração de PDF real.
+- Fase 3.8 local: `npm run lint`, `npm run typecheck`, `node --check server/services.js`, `node --check server/service-config.js` e `git diff --check`: aprovados.
+- Fase 3.8 local: `npm run build`: aprovado; bundle com aviso de tamanho acima de 500 kB, sem falha de compilação.
+- Homologação visual e compartilhamento na Hostinger: pendentes de validação humana; não foram simulados.
 
 - `npm run typecheck`: aprovado após os ajustes da Fase 3.6.
 - `npm run lint`: aprovado após os ajustes da Fase 3.6.
@@ -152,4 +167,4 @@ Fase 3.7.2 — correção da validação de combustíveis no simulador — vers�
 
 ## Próxima missão
 
-Executar a homologação autenticada online da versão `0.3.8` do simulador com os dados reais de teste fornecidos pelo proprietário e registrar o resultado. Não iniciar a Fase 4.
+Homologar visualmente o resultado, PDF, impressão e compartilhamento da versão `0.3.9` na Hostinger com dados fictícios. Não iniciar a Fase 4.

@@ -129,3 +129,11 @@
 - Padronizados aliases de Álcool/Etanol, Gasolina, Diesel e Flex no frontend e backend, com normalização idempotente.
 - Adicionados testes de integração para os quatro valores internos, aliases, alteração efetiva e valor inválido.
 
+# 0.3.9
+
+- Adicionada apresentação visual reutilizável do resultado do simulador.
+- Adicionados PDF A4 real, visualização, download, impressão e compartilhamento com fallback responsável para WhatsApp.
+- Corrigido o filtro de regras por categoria do veículo e descartadas ações vazias de `LEFT JOIN`.
+- Modo manual agora remove a placa e o padrão derivados do motor de origem.
+- Documentação permanente em `docs/GERACAO-DE-DOCUMENTOS.md`.
+

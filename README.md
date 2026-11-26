@@ -37,7 +37,7 @@ O formulário da Fase 1 não grava dados. Não utilize dados reais de clientes d
 
 ## Fase 3 — construtor no-code e homologação
 
-A branch contém o painel administrativo para configurar serviços, versões, seções, campos, fontes simuladas, cobranças, regras, documentos e o simulador. O backend valida todos os contratos e é a autoridade para o cálculo. O fluxo comercial de parceiros usa `/cadastro-parceiro`; `/area-do-parceiro` direciona cada perfil conforme a sessão e o status real. Não há integração real com a Simples API, emissão de orçamento, PDF ou armazenamento de documentos nesta fase.
+A branch contém o painel administrativo para configurar serviços, versões, seções, campos, fontes simuladas, cobranças, regras, documentos e o simulador. O backend valida todos os contratos e é a autoridade para o cálculo. O simulador possui apresentação visual e PDF de demonstração, sempre marcado como sem validade comercial. O fluxo comercial de parceiros usa `/cadastro-parceiro`; `/area-do-parceiro` direciona cada perfil conforme a sessão e o status real. Não há integração real com a Simples API, orçamento persistido ou armazenamento de documentos nesta fase.
 
 Para um banco Fase 2 existente, as migrations 002 e 003 já confirmadas não devem ser reexecutadas. A Fase 3.3 não exige alteração de schema ou nova migration.
 
