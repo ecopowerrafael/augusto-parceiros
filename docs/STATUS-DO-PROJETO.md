@@ -8,7 +8,8 @@
 - Foram gerados e visualmente inspecionados `docs/exemplos/pdf/exemplo-orcamento-automovel.pdf`, `exemplo-orcamento-motocicleta.pdf` e `exemplo-orcamento-parceiro.pdf`, todos A4 de uma página; prévias PNG estão em `docs/exemplos/pdf/preview/`.
 - Migration 007 foi instalada e verificada pelo proprietário na Hostinger; não haverá nova importação nem SQL remoto.
 - Layout dos PDFs demonstrativos foi aprovado visualmente pelo proprietário.
-- Publicação na `main` está autorizada e será registrada neste ciclo; homologação funcional online permanece pendente.
+- Publicação na `main` concluída no commit `fa90ef0539bce813a613151d90ab6fd0684fe02b`; rollback registrado na tag `rollback-before-fase-3-9-20261126`.
+- Homologação funcional online permanece pendente; o domínio não resolveu nesta sessão, portanto nenhum teste HTTP é considerado aprovado.
 
 ## Atualização da missão 3.9 — 26/11/2026
 
@@ -34,7 +35,7 @@
 
 ## Fase atual
 
-Fase 3.8 — resultado visual, PDF e compartilhamento — versão `0.3.9`; Migrations 005 e 006 instaladas e validadas pelo proprietário no banco remoto.
+Fase 3.9 — regras declarativas, simulador comercial e PDF profissional — versão `0.4.2`; Migration 007 instalada e verificada pelo proprietário; homologação funcional online pendente.
 
 ## Fase 3.5 — estado da publicação
 

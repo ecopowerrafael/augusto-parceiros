@@ -107,9 +107,9 @@ Na inicialização do `server/index.js`, a aplicação executa o diagnóstico pr
 O diagnóstico executa somente `SELECT 1 AS connected`, `SELECT DATABASE() AS database_name` e `SHOW TABLES`. Não cria tabelas, não executa migrations e não cria administrador. A senha, a URL completa e o conteúdo de `DATABASE_URL` nunca são registrados.
 
 Status possíveis: `DATABASE_CONFIG_MISSING`, `DATABASE_CONFIG_INVALID`, `ECONNREFUSED`, `ETIMEDOUT`, `ENOTFOUND`, `ER_ACCESS_DENIED_ERROR`, `ER_BAD_DB_ERROR`, `DATABASE_CONNECTED`, `DATABASE_CONNECTED_EMPTY_SCHEMA` e `DATABASE_CONNECTED_SCHEMA_EXISTS`. Para schema vazio ou existente, o log inclui apenas o banco selecionado, o resultado de conectividade e a quantidade de tabelas.
-# Migration 007 pendente de homologação
+# Migration 007 instalada e Fase 3.9 publicada
 
-Não publicar a `main` desta missão antes da confirmação do proprietário. O pacote gerado para o phpMyAdmin está em `database/updates/007_engine_rules_and_documents_precheck.sql`, `database/updates/007_engine_rules_and_documents.sql` e `database/updates/007_engine_rules_and_documents_verify.sql`. Executar nessa ordem no banco `u891593158_doc`, sem repetir migrations já registradas e sem usar terminal remoto. Registrar os resultados do precheck/verify antes de autorizar a publicação.
+O proprietário confirmou a instalação e verificação da Migration 007 no banco `u891593158_doc`. Não reimportar a migration, não executar SQL remoto e não iniciar a Fase 4. A Fase 3.9 foi publicada na `main` pelo commit `fa90ef0539bce813a613151d90ab6fd0684fe02b`; rollback: `rollback-before-fase-3-9-20261126`. A homologação funcional online ainda depende de evidência HTTP e testes manuais do proprietário.
 
 Para o estado parcial confirmado, não excluir as colunas `manual_whatsapp`, `manual_team_name` ou `manual_message_template`; a Migration 007 usa `ADD COLUMN IF NOT EXISTS` e `ON DUPLICATE KEY UPDATE` para permitir a recuperação segura.
 

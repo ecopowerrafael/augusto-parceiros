@@ -33,4 +33,4 @@ Fases posteriores dependem de validação das regras operacionais e não devem s
 - Fase 3.5: reestruturação administrativa e preparação de comissionamento integradas na `main`; Migration 004 confirmada pelo proprietário. Pendentes propagação online e homologação autenticada.
 ## Fase 3.8 — resultado visual, PDF e compartilhamento
 
-Em implementação na versão `0.4.0`. A Migration 007 corrige as regras autorizadas, o formulário condicional, os documentos e o resultado comercial sem iniciar a Fase 4. A importação manual no phpMyAdmin e a homologação online continuam pendentes.
+Concluída e incorporada à Fase 3.9 na versão `0.4.2`. A Migration 007 foi instalada manualmente no phpMyAdmin; a homologação funcional online permanece pendente.
