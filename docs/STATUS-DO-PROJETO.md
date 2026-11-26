@@ -1,5 +1,12 @@
 # Status do projeto
 
+## Auditoria de publicação da Fase 3.9 — 26/11/2026
+
+- Ajustes locais preparados para contato configurável de análise manual, seleção visual restrita a São Paulo/Outros estados e PDF comercial A4 com logotipo oficial.
+- `npm run lint`, `npm run typecheck`, `npm test` (120 testes) e `npm run build` executados com sucesso.
+- A validação SQL continua estática: não há MariaDB descartável disponível e nenhum SQL foi executado remotamente.
+- Publicação na `main` e homologação visual pelo proprietário ainda estão pendentes.
+
 ## Atualização da missão 3.9 — 26/11/2026
 
 - Migration 007 foi corrigida localmente e os artefatos `database/updates/007_engine_rules_and_documents_{precheck,sql,verify}.sql` foram regenerados para o banco `u891593158_doc`.

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.2] — Auditoria da Fase 3.9 — 2026-11-26
+
+- Adicionada edição administrativa dos contatos da análise manual, sem número fixo no frontend.
+- Resultado manual não exibe orçamento, valores ou PDF; quando configurado, encaminha os dados reais preenchidos ao WhatsApp administrativo.
+- PDF A4 reorganizado com logotipo oficial, identificação, responsável, data, dados técnicos, serviços, total, documentos e contato.
+- Seleção visual do estado limitada a São Paulo e Outros estados; o backend continua como autoridade.
+- Validações locais executadas: lint, typecheck, 120 testes e build.
+
 ## [0.4.2] — Recuperação da Migration 007 após erro #1582 — 2026-11-26
 
 - Substituída a condição aninhada da cobrança `MODIFICATION_REQUEST` por JSON serializado validado, eliminando a chamada `JSON_OBJECT` que falhava no MariaDB da Hostinger.
