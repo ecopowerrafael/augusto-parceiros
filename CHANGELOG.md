@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.5] — Correção da validação declarativa do editor — 2026-11-26
+
+- Corrigida a exceção em `validateConfiguration` causada por metadado `calculation` sem `operands` em campo `CHECKBOX` da Migration 007.
+- O grafo de dependências agora considera somente campos `CALCULATED`; configurações incompletas retornam erros específicos de validação.
+- Adicionados testes de regressão para o caso real, campos calculados incompletos e coleções ausentes.
+- Mantidos os logs privados do hotfix 0.4.4, sem alteração de banco ou regras comerciais.
+- Homologação online permanece pendente de confirmação do proprietário.
+
 ## [0.4.4] — Diagnóstico do erro interno do editor — 2026-11-26
 
 - Instrumentado o pós-processamento do editor com logs privados por etapa, request ID, mensagem original, nome, código, stack e tipo do valor, sem conteúdo de registros ou segredos.

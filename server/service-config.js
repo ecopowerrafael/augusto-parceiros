@@ -142,10 +142,27 @@ export function calculateFields(fields, input) {
 }
 
 export function validateConfiguration(fields, conditions = []) {
-  const keys = new Set([...fields.map((field) => field.field_key), ...DERIVED_FIELD_KEYS]); const errors = []
+  const errors = []
+  if (!Array.isArray(fields)) return ['A configuração de campos do serviço é inválida.']
+  if (!Array.isArray(conditions)) errors.push('A configuração de condições do serviço é inválida.')
+  const normalizedConditions = Array.isArray(conditions) ? conditions : []
+  const keys = new Set([...fields.map((field) => field.field_key), ...DERIVED_FIELD_KEYS])
   const referencesOf = (value, references = []) => { if (!value || typeof value !== 'object') return references; if (Array.isArray(value)) { value.forEach((item) => referencesOf(item, references)); return references } for (const [key, child] of Object.entries(value)) { if ((key === 'field' || key === 'valueField') && typeof child === 'string') references.push(child); else referencesOf(child, references) } return references }
-  for (const condition of conditions) { if (depth(condition) > 8) errors.push('A condição excede a profundidade máxima de 8 níveis.'); for (const key of referencesOf(condition)) { if (!keys.has(key)) errors.push(`A configuração referencia o campo inexistente: ${key}.`); if (DERIVED_FIELD_SOURCES[key] && !keys.has(DERIVED_FIELD_SOURCES[key])) errors.push(`O campo derivado ${key} exige o campo de origem ${DERIVED_FIELD_SOURCES[key]}.`) } }
-  const graph = new Map(fields.filter((field) => field.calculation).map((field) => [field.field_key, field.calculation.operands.map((operand) => operand.field)])); for (const field of fields.filter((item) => item.calculation)) for (const operand of field.calculation.operands) if (!keys.has(operand.field)) errors.push(`A configuração referencia o campo inexistente: ${operand.field}.`); const visiting = new Set(); const visited = new Set()
+  for (const condition of normalizedConditions) { if (depth(condition) > 8) errors.push('A condição excede a profundidade máxima de 8 níveis.'); for (const key of referencesOf(condition)) { if (!keys.has(key)) errors.push(`A configuração referencia o campo inexistente: ${key}.`); if (DERIVED_FIELD_SOURCES[key] && !keys.has(DERIVED_FIELD_SOURCES[key])) errors.push(`O campo derivado ${key} exige o campo de origem ${DERIVED_FIELD_SOURCES[key]}.`) } }
+  const calculatedFields = fields.filter((field) => field.field_type === 'CALCULATED' && field.calculation)
+  const graph = new Map()
+  for (const field of calculatedFields) {
+    const operands = field.calculation && Array.isArray(field.calculation.operands) ? field.calculation.operands : null
+    if (!operands) { errors.push(`O campo calculado ${field.field_key} possui uma configuração de operandos inválida.`); continue }
+    const references = []
+    for (const operand of operands) {
+      if (!operand || typeof operand.field !== 'string' || !operand.field) { errors.push(`O campo calculado ${field.field_key} possui um operando inválido.`); continue }
+      references.push(operand.field)
+      if (!keys.has(operand.field)) errors.push(`A configuração referencia o campo inexistente: ${operand.field}.`)
+    }
+    graph.set(field.field_key, references)
+  }
+  const visiting = new Set(); const visited = new Set()
   const visit = (key) => { if (visiting.has(key)) return true; if (visited.has(key)) return false; visiting.add(key); const cycle = (graph.get(key) || []).some((dependency) => graph.has(dependency) && visit(dependency)); visiting.delete(key); visited.add(key); return cycle }
   for (const key of graph.keys()) if (visit(key)) errors.push(`Dependência circular detectada no campo ${key}.`)
   return [...new Set(errors)]

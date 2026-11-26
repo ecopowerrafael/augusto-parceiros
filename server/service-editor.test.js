@@ -10,7 +10,7 @@ function createEditorPool() {
       calls.push(sql)
       if (sql.includes('FROM service_versions v')) return [[{ id: 'version-1', service_id: 'service-1', service_name: 'Cadastro de motor' }], []]
       if (sql.includes('FROM service_form_sections')) return [[{ id: 'section-1', service_version_id: 'version-1', label: 'Veículo' }], []]
-      if (sql.includes('FROM service_form_fields')) return [[{ id: 'field-1', service_version_id: 'version-1', field_key: 'vehicle_target.category', field_type: 'SINGLE_SELECT', is_required: 0 }], []]
+      if (sql.includes('FROM service_form_fields')) return [[{ id: 'field-1', service_version_id: 'version-1', field_key: 'vehicle_target.category', field_type: 'SINGLE_SELECT', is_required: 0, calculation: { default: false } }], []]
       if (sql.includes('FROM service_field_options')) return [[{ id: 'option-1', field_id: 'field-1', option_value: 'AUTOMOBILE', option_label: 'Automóvel' }], []]
       if (sql.includes('FROM service_billing_items')) return [[{ id: 'billing-1', service_version_id: 'version-1', code: 'ENGINE_REGISTRATION', billing_mode: 'REQUIRED', default_amount_cents: 1000 }], []]
       if (sql.includes('FROM technical_rules r')) return [[{ id: 'rule-1', service_version_id: 'version-1', name: 'Regra equivalente', conditions: '{"field":"vehicle_target.category","operator":"EQUALS","value":"AUTOMOBILE"}', expected_result: 'VIABLE', priority: 10, vehicle_category_code: 'AUTOMOBILE' }], []]
@@ -36,6 +36,7 @@ describe('carregamento do editor de serviços', () => {
     expect(editor.rules[0].actions[0].action_type).toBe('SHOW_GUIDANCE')
     expect(editor.documents).toHaveLength(1)
     expect(editor.messages).toHaveLength(1)
+    expect(editor.validationErrors).toEqual([])
     expect(pool.calls.some((sql) => sql.includes('JSON_ARRAYAGG'))).toBe(false)
   })
 

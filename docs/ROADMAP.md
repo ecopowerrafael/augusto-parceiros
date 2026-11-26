@@ -23,6 +23,7 @@
 3.9. Regras declarativas, simulador comercial e PDF profissional — versão `0.4.2` publicada na `main`; Migration 007 instalada e verificada na Hostinger; homologação funcional online pendente.
 3.9.1. Hotfix do editor HTTP 503 — versão `0.4.3` publicada na `main` pelo commit `27c8b190938aa7f7b687a2c53282e28178aef3e2`; homologação online pendente.
 3.9.2. Hotfix 0.4.4 de diagnóstico do erro interno após as consultas do editor; normalização JSON e regressão ampliada implementadas. Homologação online pendente.
+3.9.3. Hotfix 0.4.5 corrige a validação de campos declarativos legados da Migration 007; 127 testes aprovados. Homologação online pendente.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.

@@ -57,6 +57,13 @@ Não executar migrations no startup, não usar SSH como requisito e não importa
 - O evento `editor_processing_failed` contém a etapa, `errorName`, mensagem original, código e stack; não deve ser exposto ao cliente.
 - A homologação só será considerada concluída após carregar o construtor, simular e gerar o PDF comercial na Hostinger.
 
+### Hotfix 0.4.5 — validação declarativa
+
+- Não importar migrations nem executar SQL remoto; a correção é exclusivamente de código.
+- Confirmar no `/api/health` a versão `0.4.5` após a propagação.
+- Abrir o editor do serviço de cadastro de motor; o campo `motorcycle.compatibility_declaration` deve carregar sem `TypeError`.
+- Depois, executar os cenários do simulador e gerar o PDF comercial com dados fictícios. A homologação permanece pendente até o proprietário confirmar esses três fluxos.
+
 ## Fase 3.4 — cadastro e mensagens
 
 A versão `0.3.3` foi integrada na `main`. A Migration 004 foi importada manualmente no banco `u891593158_doc` e verificada pelo proprietário em MariaDB `11.8.9-MariaDB-log`. Não executar migrations no startup nem repetir a importação.
