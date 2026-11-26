@@ -7,7 +7,7 @@
 - Adicionado teste de regressão para o erro real da Hostinger e cenários de declaração ausente, troca de categoria e descarte de valores ocultos.
 - O logotipo oficial passou a ser incorporado no bundle do frontend e embutido no PDF sem requisição durante a geração.
 - Modal de análise manual refinado com identidade visual, mensagem orientativa e ação de WhatsApp configurável.
-- 17 arquivos de teste e 135 testes aprovados localmente; Migration 008 importada e verificada manualmente pelo proprietário. Publicação na `main` autorizada; homologação online permanece pendente.
+- 17 arquivos de teste e 135 testes aprovados localmente; Migration 008 importada e verificada manualmente pelo proprietário. Publicação integrada na `main` pelo merge `365980a`; rollback `rollback-before-0-4-7-20261126`; homologação online permanece pendente.
 
 ## [0.4.6] — Fluxo condicional, análise manual e PDF — 2026-11-26
 

@@ -2,14 +2,15 @@
 
 ## Fase 3.11 — Migration 008 verificada e publicação autorizada — 26/11/2026
 
-- Branch: `feature/fase-3-11-homologacao-simulador`; versão `0.4.7`; commit aprovado `5d7160569d3e38f556e992a83fb6d13275e294a8`; integração ainda pendente neste momento.
+- Branch: `feature/fase-3-11-homologacao-simulador`; versão `0.4.7`; commit aprovado `5d7160569d3e38f556e992a83fb6d13275e294a8`; integração publicada no merge `365980a`.
 - Causa raiz confirmada: `engine.identification_mode` estava com `is_required = 1` e sem condição de visibilidade persistida, enquanto o frontend o ocultava para `MOTORCYCLE`.
 - Migration 008 foi importada manualmente e verificada pelo proprietário no banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`: precheck registrou `migration_007_registered = 1` e `migration_008_already_registered = 0`; três `UPDATE`s executados sem erro; uma linha inserida em `schema_migrations`; verify registrou `migration_008_count = 1` e `motorcycle_mode_not_required = 1`. Não executar novamente.
 - A correção permanece no-code: a visibilidade e a obrigatoriedade são expressas por condições persistidas; o backend continua descartando valores ocultos antes de validar, calcular, cobrar, gerar PDF ou montar WhatsApp.
 - O logo oficial agora é incorporado no bundle Vite e embutido no PDF sem depender de fetch durante a geração.
 - Validações locais: 17 arquivos/135 testes, lint, typecheck, build, sintaxe Node, validadores estáticos das migrations 007/008 e `git diff --check` aprovados. A homologação visual em navegador real continua pendente.
 - O PWA possui manifest versionado em `0.4.7`, mas não há service worker registrado no projeto; portanto não existe cache de service worker a invalidar nesta publicação.
-- Próxima missão: integrar na `main`, publicar e homologar na Hostinger. Não iniciar a Fase 4.
+- Rollback registrado na tag `rollback-before-0-4-7-20261126`, apontando para `1b420c4`.
+- Próxima missão: confirmar o deploy na Hostinger e homologar visual/funcionalmente. Não iniciar a Fase 4.
 
 ## Fase 3.10 — publicada em homologação — 26/11/2026
 

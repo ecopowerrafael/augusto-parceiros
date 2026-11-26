@@ -52,6 +52,7 @@ Não preencher senhas neste repositório ou nesta documentação. A instalação
 - A causa da falha de motocicleta foi confirmada na configuração persistida de `engine.identification_mode`; os arquivos `008_motorcycle_visibility_consistency_precheck.sql`, `008_motorcycle_visibility_consistency.sql` e `008_motorcycle_visibility_consistency_verify.sql` foram gerados pelo comando oficial e importados/verificados manualmente pelo proprietário.
 - Não executar novamente a Migration 008, não executar migrations anteriores, não usar `node scripts/migrate.mjs` e não executar SQL pelo backend. Evidências: `migration_007_registered=1`, `migration_008_count=1`, três updates concluídos, uma linha inserida e `motorcycle_mode_not_required=1`.
 - A Migration 008 não altera preços, regras comerciais, usuários ou configurações de atendimento; apenas torna a aplicabilidade declarativa da identificação do motor consistente.
+- A branch foi integrada na `main` pelo merge `365980a`; rollback local/remoto registrado na tag `rollback-before-0-4-7-20261126` apontando para `1b420c4`. Confirmar a propagação pelo `/api/health`; o push não é evidência suficiente de deploy.
 
 ## Fase 3 — implantação em duas etapas
 
