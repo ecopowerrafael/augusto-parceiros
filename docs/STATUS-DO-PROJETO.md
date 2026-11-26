@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.6 — design system, painéis profissionais e homologação do simulador — versão `0.3.4` em validação local; Migration 005 preparada e ainda não importada no banco remoto.
+Fase 3.6 — design system, painéis profissionais e homologação do simulador — versão `0.3.5`; Migration 005 instalada e validada pelo proprietário no banco remoto.
 
 ## Fase 3.5 — estado da publicação
 
@@ -24,6 +24,9 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 - O simulador aceita parceiro ativo opcional e resolve a configuração efetiva no servidor, sem confiar no modelo escolhido no frontend.
 - Módulo protegido `/api/admin/settings` para dados comerciais persistidos, com fallback explícito `SETTINGS_MIGRATION_REQUIRED` antes da importação da Migration 005.
 - Pacote manual da Migration 005: `database/updates/005_application_settings_precheck.sql`, `005_application_settings.sql` e `005_application_settings_verify.sql`; `database/install.sql` atualizado para bancos novos.
+- Migration 005 confirmada pelo proprietário: banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`, duas tabelas-base presentes, tabela `application_settings` criada, migration registrada, registro inicial `Doc Motor`/`America/Sao_Paulo` e zero erros SQL.
+- Roteiro local do simulador NO-CODE criado em `docs/HOMOLOGACAO-FASE-3.6.md`; 13 cenários executados com o mesmo avaliador declarativo e aprovados.
+- Endpoint do simulador protegido por `simulationRequestSchema`, sem propriedades arbitrárias, com falha de avaliação classificada e confirmação de `externalCalls=0`.
 
 - Landing page comercial responsiva com hero, serviços, parceria, público, processo, FAQ e contato.
 - Logo oficial fornecida preservada; imagens automotivas locais geradas para o projeto.
@@ -55,7 +58,8 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 - Executar a conferência visual manual dos painéis em desktop e mobile na Hostinger.
 - Homologar os cenários do simulador no-code com dados fictícios e registrar respostas reais.
 - Homologar a comissão individual nos três estados: herdar, customizar e desativar.
-- Importar e verificar a Migration 005 pelo phpMyAdmin antes de homologar o salvamento das configurações gerais.
+- Validar manualmente no ambiente online o carregamento, edição, recarregamento e auditoria das configurações gerais.
+- Executar no painel autenticado a criação do segundo serviço demonstrativo de suspensão rebaixada e registrar o resultado.
 
 - Criar/usar uma conta fictícia de parceiro e validar cadastro, status pendente, aprovação, recusa, suspensão e reativação com o administrador.
 - Validar cadastro de parceiro com CPF e CNPJ pela máscara dinâmica e confirmar a versão `0.3.2` online.
@@ -67,7 +71,7 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 
 ## Problemas conhecidos/limitações
 
-- A conferência autenticada do construtor no-code e a criação do segundo serviço demonstrativo continuam pendentes da missão anterior.
+- A conferência autenticada do construtor no-code e a criação do segundo serviço demonstrativo continuam pendentes do proprietário; os testes locais do avaliador foram executados separadamente.
 - Recuperação de senha exige SMTP configurado; sem SMTP, não é possível concluir o envio real.
 - Links institucionais de política/termos são âncoras temporárias até conteúdo jurídico aprovado.
 - O formulário comercial geral continua encaminhando atendimento para o WhatsApp; o cadastro de parceiro usa `/cadastro-parceiro` e persiste no MySQL.
@@ -77,7 +81,7 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 
 - `npm run typecheck`: aprovado após os ajustes da Fase 3.6.
 - `npm run lint`: aprovado após os ajustes da Fase 3.6.
-- `npm test -- --run --pool=threads --minWorkers=1 --maxWorkers=1`: 58 testes aprovados.
+- `npm test -- --run --pool=threads --minWorkers=1 --maxWorkers=1`: 72 testes aprovados.
 - `git diff --check`: aprovado.
 - `npm run generate:hostinger-sql`: aprovado; os SQLs 002–004 validados não são reescritos pelo gerador para evitar qualificação cumulativa.
 - Navegador automatizado e conferência visual: não executados; permanecem pendentes de validação humana.

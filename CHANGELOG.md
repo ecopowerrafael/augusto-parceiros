@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.5] — Fase 3.6 — Auditoria do simulador NO-CODE — 2026-11-25
+
+- Confirmada a Migration 005 instalada pelo proprietário no banco remoto.
+- Adicionado contrato Zod para o payload do simulador, tratamento específico de falhas e garantia de zero chamadas externas.
+- Adicionados 13 cenários de homologação executável para o avaliador declarativo, com placas, potência, cilindrada, combustível, nota fiscal, motocicleta e preenchimento manual.
+
 ## [0.3.4] — Fase 3.6 — Design system e homologação do simulador — 2026-11-25
 
 - Criado shell SaaS responsivo para áreas autenticadas, com navegação específica de administrador e parceiro, topbar, títulos objetivos e conta separada.
@@ -9,6 +15,8 @@
 - Adicionado simulador de comissão sem persistência financeira, usando o avaliador backend e exibindo total, base elegível, honorários e comissão.
 - O simulador permite selecionar um parceiro ativo e calcula a regra efetiva global, personalizada ou desativada.
 - Preparada Migration 005 para configurações gerais comerciais persistidas, com precheck, atualização e verify manuais.
+- Migration 005 confirmada pelo proprietário no phpMyAdmin, com `application_settings` criada, registro inicial e migration registrada.
+- Adicionado roteiro executável com 13 cenários do simulador NO-CODE, incluindo placas, potência, cilindrada, combustível, nota fiscal, motocicleta e entrada manual sem API externa.
 
 ## [0.3.3] — Fase 3.5 — Administração e comissionamento — 2026-11-25
 

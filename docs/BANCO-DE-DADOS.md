@@ -30,3 +30,9 @@ O gerador local é `scripts/generate-hostinger-sql.mjs`. Ele produz pré-verific
 # Fase 3.5 — comissões
 
 `004_partner_commissions.sql` cria `commission_settings` e `partner_commission_overrides`. O registro inicial é `NONE`, sem valores comerciais. A importação é manual e deve ser verificada antes de ativar as telas dependentes.
+
+# Fase 3.6 — configurações gerais
+
+`005_application_settings.sql` cria a tabela singleton `application_settings`, com dados comerciais editáveis pelo administrador, timezone e auditoria do último responsável. A Migration 005 foi importada e verificada pelo proprietário no banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`: `required_base_tables_present=2`, registro anterior `0`, tabela anterior `0`, registro posterior `1`, tabela posterior `1`, `company_name=Doc Motor` e `timezone=America/Sao_Paulo`. Não executar novamente essa migration.
+
+O módulo `/api/admin/settings` lê e atualiza somente os campos comerciais permitidos, exige administrador e CSRF, valida nome, UF e e-mail e registra `APPLICATION_SETTINGS_UPDATED` na auditoria. Configurações de infraestrutura e segredos continuam somente leitura.
