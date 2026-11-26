@@ -1,19 +1,21 @@
 # Status do projeto
 
-## Auditoria de publicação da Fase 3.9 — 26/11/2026
+## Publicação da Fase 3.9 — 26/11/2026
 
 - Ajustes locais preparados para contato configurável de análise manual, seleção visual restrita a São Paulo/Outros estados e PDF comercial A4 com logotipo oficial.
 - `npm run lint`, `npm run typecheck`, `npm test` (120 testes) e `npm run build` executados com sucesso.
 - A validação SQL continua estática: não há MariaDB descartável disponível e nenhum SQL foi executado remotamente.
 - Foram gerados e visualmente inspecionados `docs/exemplos/pdf/exemplo-orcamento-automovel.pdf`, `exemplo-orcamento-motocicleta.pdf` e `exemplo-orcamento-parceiro.pdf`, todos A4 de uma página; prévias PNG estão em `docs/exemplos/pdf/preview/`.
-- Publicação na `main` e homologação visual pelo proprietário ainda estão pendentes.
+- Migration 007 foi instalada e verificada pelo proprietário na Hostinger; não haverá nova importação nem SQL remoto.
+- Layout dos PDFs demonstrativos foi aprovado visualmente pelo proprietário.
+- Publicação na `main` está autorizada e será registrada neste ciclo; homologação funcional online permanece pendente.
 
 ## Atualização da missão 3.9 — 26/11/2026
 
 - Migration 007 foi corrigida localmente e os artefatos `database/updates/007_engine_rules_and_documents_{precheck,sql,verify}.sql` foram regenerados para o banco `u891593158_doc`.
 - O gerador foi validado para inserir `USE \`u891593158_doc\`;`, qualificar tabelas da aplicação e não transformar `information_schema` em tabela do banco da aplicação.
 - As regras ficam em `DRAFT`; ITL/CSV não entra em itens, totais, pendências ou comissão; a cobrança de modificação é única e categoria-aware.
-- Nenhuma operação foi executada no MySQL remoto. A publicação na `main` está suspensa até o proprietário executar precheck, migration e verify no phpMyAdmin e confirmar os resultados.
+- Nenhuma operação foi executada no MySQL remoto. A instalação foi realizada e confirmada pelo proprietário via phpMyAdmin.
 - Limitação: a suíte local usa o avaliador e fixtures equivalentes; não há instância MariaDB local disponível nesta validação.
 
 ## Correção da Migration 007 — estado parcial Hostinger

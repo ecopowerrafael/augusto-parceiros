@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2] — Publicação da Fase 3.9 — 2026-11-26
+
+- Migration 007 instalada e verificada pelo proprietário no banco remoto.
+- Layout comercial dos PDFs aprovado visualmente e integrado à branch `main` neste ciclo.
+- Mantidos staging, bloqueio de indexação e ausência de chamadas à Simples API.
+- Homologação funcional online permanece pendente de execução pelo proprietário.
+
 ## [0.4.2] — Auditoria da Fase 3.9 — 2026-11-26
 
 - Adicionada edição administrativa dos contatos da análise manual, sem número fixo no frontend.
