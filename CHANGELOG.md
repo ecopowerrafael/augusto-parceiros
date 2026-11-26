@@ -114,5 +114,6 @@
 
 - Corrigida a normalização declarativa do simulador para combustível, placas e cilindradas.
 - Adicionados testes do cenário do proprietário, equivalência Álcool/Etanol e placas antigas/Mercosul.
-- Preparada a Migration 006 e o pacote manual de precheck/atualização/verificação; nenhuma operação remota foi executada.
+- Migration 006 importada e validada pelo proprietário no banco da Hostinger; nenhum SQL remoto foi executado pelo projeto.
+- A versão permanece `0.3.6`, pois o estado atual da branch já havia avançado de `0.3.5`; não foi realizado downgrade de versão.
 

@@ -38,6 +38,6 @@ O gerador local é `scripts/generate-hostinger-sql.mjs`. Ele produz pré-verific
 O módulo `/api/admin/settings` lê e atualiza somente os campos comerciais permitidos, exige administrador e CSRF, valida nome, UF e e-mail e registra `APPLICATION_SETTINGS_UPDATED` na auditoria. Configurações de infraestrutura e segredos continuam somente leitura.
 ## Migration 006 — normalização do simulador
 
-A Migration 006 (`migrations/006_simulator_input_normalization.sql`) é incremental e não destrutiva. Ela transforma os campos persistidos de combustível em `SINGLE_SELECT`, registra quatro opções padronizadas e marca as cilindradas com unidade `cm³`. A instalação no banco remoto ainda aguarda importação manual pelo phpMyAdmin.
+A Migration 006 (`migrations/006_simulator_input_normalization.sql`) é incremental e não destrutiva. Ela transforma os campos persistidos de combustível em `SINGLE_SELECT`, registra quatro opções padronizadas e marca as cilindradas com unidade `cm³`. Foi importada e validada pelo proprietário no banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`: registro anterior `0`, registro posterior `1`, dois campos de combustível convertidos, dois campos de cilindrada atualizados, oito opções inseridas e campos de placa preservados como `VEHICLE_PLATE`.
 
 Use, nesta ordem, `database/updates/006_simulator_input_normalization_precheck.sql`, `006_simulator_input_normalization.sql` e `006_simulator_input_normalization_verify.sql`. Não execute migrations anteriores novamente.

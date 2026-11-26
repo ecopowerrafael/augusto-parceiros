@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.7 — correção do simulador no-code — versão `0.3.6`; Migration 005 instalada e validada. Migration 006 preparada, ainda não importada no banco remoto.
+Fase 3.7 — correção do simulador no-code — versão `0.3.6`; Migrations 005 e 006 instaladas e validadas pelo proprietário no banco remoto.
 
 ## Fase 3.5 — estado da publicação
 
@@ -60,8 +60,7 @@ Fase 3.7 — correção do simulador no-code — versão `0.3.6`; Migration 005 
 
 ## Pendente
 
-- Importar manualmente a Migration 006 pelo phpMyAdmin e executar o verify; não executar pelo projeto.
-- Homologar visualmente e executar o simulador online com dados fictícios após a importação.
+- Homologar visualmente e executar o simulador online com dados fictícios; essa etapa permanece sob responsabilidade do proprietário.
 
 - Executar a conferência visual manual dos painéis em desktop e mobile na Hostinger.
 - Homologar os cenários do simulador no-code com dados fictícios e registrar respostas reais.
@@ -147,4 +146,4 @@ Fase 3.7 — correção do simulador no-code — versão `0.3.6`; Migration 005 
 
 ## Próxima missão
 
-Aguardar a importação e verificação manual da Migration 006 pelo proprietário; depois publicar a branch `feature/fase-3-7-correcao-simulador` na `main` somente com essa confirmação e executar a homologação online do simulador com dados fictícios. Não iniciar a Fase 4.
+Executar a homologação autenticada online do simulador com dados fictícios pelo proprietário e registrar o resultado. Não iniciar a Fase 4.

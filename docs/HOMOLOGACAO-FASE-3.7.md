@@ -33,10 +33,12 @@ O resultado é uma simulação operacional, não garantia de aprovação pelo De
 
 ## Migration 006
 
-Ainda pendente de importação manual pelo proprietário. Executar no phpMyAdmin, nesta ordem:
+Importada e validada manualmente pelo proprietário no banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`. O verify confirmou registro da migration, os dois campos de combustível como `SINGLE_SELECT`, os dois campos de cilindrada com unidade `cm³`, oito opções de combustível e placas preservadas como `VEHICLE_PLATE`.
+
+Os arquivos foram executados no phpMyAdmin, nesta ordem:
 
 1. `database/updates/006_simulator_input_normalization_precheck.sql`
 2. `database/updates/006_simulator_input_normalization.sql`
 3. `database/updates/006_simulator_input_normalization_verify.sql`
 
-Nenhum SQL remoto foi executado por esta missão. Após a confirmação do verify, publicar a branch na `main` e repetir a validação online com dados fictícios.
+O projeto não executou SQL remoto. Após o merge, a homologação autenticada online com dados fictícios permanece pendente de validação humana.
