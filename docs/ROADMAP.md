@@ -16,7 +16,8 @@
 3.4. Usabilidade, cadastro e mensagens — correção 0.3.2 publicada.
    Documento CPF/CNPJ automático, remoção de nome de acesso, máscaras reutilizáveis e tradução centralizada de erros; sem alteração de schema.
 3.5. Reestruturação administrativa e comissionamento — versão 0.3.3 integrada na `main`; Migration 004 instalada e validada.
-3.6. Design system, painéis profissionais e homologação do simulador — versão 0.3.5. Shell autenticado, navegação por perfil, correção de cidade/UF, comissão condicional, simulador sem persistência e Migration 005 instalada/validada. Pendentes: homologação visual online e criação autenticada do segundo serviço demonstrativo.
+3.6. Design system, painéis profissionais e homologação do simulador — versão 0.3.5. Shell autenticado, navegação por perfil, correção de cidade/UF, comissão condicional, simulador sem persistência e Migration 005 instalada/validada.
+3.7. Correção do simulador no-code — versão 0.3.6. Normalização de combustível, placas e cilindradas, fixture do cenário comercial, erros específicos e Migration 006 incremental aguardando importação manual. Não iniciar a Fase 4.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.

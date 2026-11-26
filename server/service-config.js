@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { normalizePlate as normalizePlateInput, normalizeSimulationAnswers } from './simulator-normalizers.js'
 
 export const FIELD_TYPES = ['TEXT', 'LONG_TEXT', 'INTEGER', 'DECIMAL', 'MONEY', 'PERCENT', 'DATE', 'PHONE', 'EMAIL', 'CPF_CNPJ', 'VEHICLE_PLATE', 'SINGLE_SELECT', 'MULTI_SELECT', 'RADIO', 'CHECKBOX', 'YES_NO', 'CALCULATED', 'API_FIELD', 'INFO', 'DOCUMENT_REQUIREMENT']
 export const DATA_ORIGINS = ['MANUAL', 'EXTERNAL', 'CALCULATED', 'ADMIN_CONFIRMED', 'UNAVAILABLE']
@@ -87,10 +88,8 @@ function isEmpty(value) { return value === undefined || value === null || value 
 function numeric(value) { return typeof value === 'number' && Number.isFinite(value) ? value : (typeof value === 'string' && value.trim() !== '' && Number.isFinite(Number(value)) ? Number(value) : null) }
 
 export function normalizePlate(value) {
-  const plate = String(value || '').toUpperCase().replace(/[ -]/g, '')
-  if (/^[A-Z]{3}[0-9]{4}$/.test(plate)) return { value: plate, pattern: 'OLD' }
-  if (/^[A-Z]{3}[0-9][A-Z][0-9]{2}$/.test(plate)) return { value: plate, pattern: 'MERCOSUR' }
-  return { value: plate, pattern: 'UNKNOWN' }
+  const result = normalizePlateInput(value)
+  return { value: result.value, pattern: result.pattern }
 }
 
 export function evaluateCondition(condition, values) {
@@ -149,8 +148,9 @@ export function validateConfiguration(fields, conditions = []) {
   return [...new Set(errors)]
 }
 
-export function evaluateService({ fields, billingItems = [], rules = [], documents = [], answers = {}, context = {} }) {
-  const values = calculateFields(fields, { ...context, ...answers }); const targetPlate = normalizePlate(values['vehicle_target.plate']); if (targetPlate.pattern !== 'UNKNOWN') values['vehicle_target.plate_pattern'] = targetPlate.pattern; const donorPlate = normalizePlate(values['vehicle_donor.plate']); if (donorPlate.pattern !== 'UNKNOWN') values['vehicle_donor.plate_pattern'] = donorPlate.pattern; const trace = []; const appliedItems = new Map(); const documentsResult = []; const actions = []; let blocked = false; let manualReview = false; let viability = null
+export function evaluateService({ fields, options = [], billingItems = [], rules = [], documents = [], answers = {}, context = {} }) {
+  const normalized = normalizeSimulationAnswers(fields, options, { ...context, ...answers }); if (normalized.errors.length) { const error = new Error('INVALID_SIMULATION_INPUT'); error.code = 'INVALID_SIMULATION_INPUT'; error.details = normalized.errors; throw error }
+  const values = calculateFields(fields, normalized.values); const targetPlate = normalizePlate(values['vehicle_target.plate']); if (targetPlate.pattern !== 'UNKNOWN') values['vehicle_target.plate_pattern'] = targetPlate.pattern; const donorPlate = normalizePlate(values['vehicle_donor.plate']); if (donorPlate.pattern !== 'UNKNOWN') values['vehicle_donor.plate_pattern'] = donorPlate.pattern; const trace = []; const appliedItems = new Map(); const documentsResult = []; const actions = []; let blocked = false; let manualReview = false; let viability = null
   for (const item of billingItems) { const condition = item.condition_expression ? (typeof item.condition_expression === 'string' ? JSON.parse(item.condition_expression) : item.condition_expression) : null; const applies = item.billing_mode === 'REQUIRED' || Boolean(condition && evaluateCondition(condition, values)); if (applies) appliedItems.set(item.code, { ...item, reason: item.billing_mode === 'REQUIRED' ? 'Obrigatório' : 'Condição atendida' }) }
   for (const rule of [...rules].sort((a, b) => a.priority - b.priority)) { const condition = typeof rule.conditions === 'string' ? JSON.parse(rule.conditions) : rule.conditions; if (!evaluateCondition(condition, values)) { trace.push({ rule: rule.name, matched: false }); continue } const result = { rule: rule.name, matched: true, expectedResult: rule.expected_result }; trace.push(result); if (rule.expected_result === 'OUT_OF_CRITERIA') blocked = true; if (rule.expected_result === 'MANUAL_REVIEW') manualReview = true; if (rule.expected_result === 'VIABLE_WITH_REQUIREMENTS') manualReview = true; viability = rule.expected_result
     const ruleActions = rule.actions || []; for (const action of ruleActions) { actions.push(action); if (action.action_type === 'BLOCK_AUTOMATED_QUOTE') blocked = true; if (action.action_type === 'MANUAL_REVIEW' || action.action_type === 'REQUIRE_ADMIN_APPROVAL') manualReview = true; if (action.action_type === 'CLASSIFY_VIABILITY') viability = action.payload?.result || viability; if (action.action_type === 'ADD_BILLING_ITEM' && action.target_key && !appliedItems.has(action.target_key)) { const target = billingItems.find((item) => item.code === action.target_key); if (target) appliedItems.set(target.code, { ...target, reason: 'Regra atendida' }) } if (action.action_type === 'REMOVE_BILLING_ITEM' && action.target_key) appliedItems.delete(action.target_key) }

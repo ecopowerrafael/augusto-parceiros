@@ -110,3 +110,9 @@
 - Preparada a migration 004 de comissionamento genérico, inicialmente com modelo `NONE` e sem valores comerciais ativos.
 - A migration 004 ainda depende de importação manual no phpMyAdmin antes da integração em `main`.
 
+# 0.3.6 - Fase 3.7
+
+- Corrigida a normalização declarativa do simulador para combustível, placas e cilindradas.
+- Adicionados testes do cenário do proprietário, equivalência Álcool/Etanol e placas antigas/Mercosul.
+- Preparada a Migration 006 e o pacote manual de precheck/atualização/verificação; nenhuma operação remota foi executada.
+

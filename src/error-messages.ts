@@ -21,6 +21,10 @@ const messages: Record<string, string> = {
   PARTNER_NOT_FOUND: 'O cadastro do parceiro não foi encontrado.',
   INVALID_STATUS: 'A alteração de status solicitada não é válida.',
   COLLABORATOR_MANAGEMENT_FORBIDDEN: 'Somente o responsável da empresa pode gerenciar colaboradores.',
+  INVALID_SIMULATION_INPUT: 'Confira as placas, combustíveis e cilindradas informados.',
+  INVALID_PLATE: 'Informe uma placa válida no padrão antigo ou Mercosul.',
+  INVALID_FUEL: 'Selecione um combustível válido.',
+  INVALID_CYLINDER: 'Informe uma cilindrada positiva em litros ou cm³.',
 }
 
 export function friendlyApiMessage(code: unknown, status?: number) {

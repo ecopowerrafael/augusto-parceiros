@@ -33,6 +33,7 @@ O formulário da Fase 1 não grava dados. Não utilize dados reais de clientes d
 - `scripts/migrate.mjs` e `scripts/provision-admin.mjs`: operações explícitas de infraestrutura.
 - `docs/`: decisões, regras, roadmap, segurança e status persistente.
 - `docs/HOMOLOGACAO-FASE-3.2.md`: roteiro dos 12 cenários do motor e homologação do segundo serviço no-code.
+- `docs/HOMOLOGACAO-FASE-3.7.md`: roteiro da correção de normalização e importação manual da Migration 006.
 
 ## Fase 3 — construtor no-code e homologação
 

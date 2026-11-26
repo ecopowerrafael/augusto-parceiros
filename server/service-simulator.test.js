@@ -16,9 +16,11 @@ const fields = [
 ]
 
 const billingItems = [
+  { code: 'TRANSFER_FEE', name: 'Transferência', billing_mode: 'REQUIRED', default_amount_cents: 29580, quantity: 1, include_in_total: 1 },
+  { code: 'SERVICE_FEE', name: 'Honorário', billing_mode: 'REQUIRED', default_amount_cents: 16000, quantity: 1, include_in_total: 1 },
   { code: 'ENGINE_REGISTRATION', name: 'Cadastro de motor', billing_mode: 'REQUIRED', default_amount_cents: 30000, quantity: 1, include_in_total: 1 },
   { code: 'ENGINE_NO_INVOICE', name: 'Análise sem nota fiscal', billing_mode: 'CONDITIONAL', default_amount_cents: 30000, quantity: 1, include_in_total: 1, condition_expression: { all: [{ field: 'engine.has_invoice', operator: 'EQUALS', value: 'NO' }] } },
-  { code: 'OLD_PLATE_AUTHORIZATION', name: 'Tratamento de placa antiga', billing_mode: 'CONDITIONAL', default_amount_cents: 22000, quantity: 1, include_in_total: 1, condition_expression: { any: [{ field: 'vehicle_target.plate_pattern', operator: 'EQUALS', value: 'OLD' }, { field: 'vehicle_donor.plate_pattern', operator: 'EQUALS', value: 'OLD' }] } },
+  { code: 'OLD_PLATE_AUTHORIZATION', name: 'Tratamento de placa antiga', billing_mode: 'CONDITIONAL', default_amount_cents: 22000, quantity: 1, include_in_total: 1, condition_expression: { all: [{ field: 'vehicle_target.plate_pattern', operator: 'EQUALS', value: 'OLD' }] } },
   { code: 'MODIFICATION_REQUEST', name: 'Solicitação de modificação', billing_mode: 'CONDITIONAL', default_amount_cents: 30000, quantity: 1, include_in_total: 1, condition_expression: { all: [{ field: 'engine.power_variation_percent', operator: 'GREATER_THAN', value: 0 }, { field: 'engine.power_variation_percent', operator: 'LESS_OR_EQUAL', value: 10 }] } },
   { code: 'ITL_CSV_INSPECTION', name: 'Inspeção ITL/CSV', billing_mode: 'CONDITIONAL', default_amount_cents: null, quantity: 1, include_in_total: 1 },
 ]
@@ -41,7 +43,7 @@ describe('homologação do simulador de serviço no-code', () => {
     ['motor equivalente com nota fiscal', { ...base }, 'UNCLASSIFIED', false],
     ['motor equivalente sem nota fiscal', { ...base, 'engine.has_invoice': 'NO' }, 'UNCLASSIFIED', false],
     ['veículo de destino com placa antiga', { ...base, 'vehicle_target.plate': 'ABC1234' }, 'UNCLASSIFIED', false],
-    ['motor antigo e destino Mercosul', { ...base, 'vehicle_donor.plate': 'ABC1234' }, 'UNCLASSIFIED', false],
+    ['motor antigo e destino Mercosul', { ...base, 'vehicle_target.plate': 'ABC1D23', 'vehicle_donor.plate': 'ABC1234' }, 'UNCLASSIFIED', false],
     ['aumento de potência de 5%', { ...base, 'vehicle_target.power_cv': 105 }, 'MANUAL_REVIEW', false],
     ['aumento de exatamente 10%', { ...base, 'vehicle_target.power_cv': 110 }, 'MANUAL_REVIEW', false],
     ['aumento superior a 10%', { ...base, 'vehicle_target.power_cv': 111 }, 'OUT_OF_CRITERIA', true],
@@ -61,6 +63,21 @@ describe('homologação do simulador de serviço no-code', () => {
     const manual = evaluate({ ...base, 'vehicle_donor.plate': undefined, 'vehicle_target.power_cv': 105 })
     expect(byPlate.values['vehicle_donor.plate_pattern']).toBe('OLD')
     expect(manual.values['engine.power_variation_percent']).toBe(5)
-    expect(byPlate.items.some((item) => item.code === 'OLD_PLATE_AUTHORIZATION')).toBe(true)
+    expect(byPlate.items.some((item) => item.code === 'OLD_PLATE_AUTHORIZATION')).toBe(false)
+  })
+
+  it('reproduz o cenário informado pelo proprietário com placas, combustível e cilindrada normalizados', () => {
+    const result = evaluate({ ...base, 'vehicle_target.plate': ' abc-1234 ', 'vehicle_donor.plate': 'abc2345', 'vehicle_target.power_cv': '75', 'vehicle_donor.power_cv': '75', 'vehicle_target.cylinder_cc': '2,0', 'vehicle_donor.cylinder_cc': '2000', 'vehicle_target.fuel': 'Álcool', 'vehicle_donor.fuel': 'etanol' })
+    expect(result.viability).toBe('UNCLASSIFIED')
+    expect(result.values['vehicle_target.plate']).toBe('ABC1234')
+    expect(result.values['vehicle_target.cylinder_cc']).toBe(2000)
+    expect(result.values['vehicle_donor.cylinder_cc']).toBe(2000)
+    expect(result.values['vehicle_target.fuel']).toBe('ALCOHOL')
+    expect(result.values['vehicle_donor.fuel']).toBe('ALCOHOL')
+    expect(result.total_cents).toBe(97580)
+  })
+
+  it('rejeita placa e cilindrada inválidas com erro específico', () => {
+    expect(() => evaluate({ ...base, 'vehicle_target.plate': 'INVALIDA', 'vehicle_target.cylinder_cc': '-1' })).toThrow('INVALID_SIMULATION_INPUT')
   })
 })

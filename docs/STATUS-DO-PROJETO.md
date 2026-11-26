@@ -2,7 +2,7 @@
 
 ## Fase atual
 
-Fase 3.6 — design system, painéis profissionais e homologação do simulador — versão `0.3.5`; Migration 005 instalada e validada pelo proprietário no banco remoto.
+Fase 3.7 — correção do simulador no-code — versão `0.3.6`; Migration 005 instalada e validada. Migration 006 preparada, ainda não importada no banco remoto.
 
 ## Fase 3.5 — estado da publicação
 
@@ -14,6 +14,11 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 - Após a publicação da `main` em `44ca97339c1f4dd24caded242cb4631de92865e7`, a validação com `Invoke-WebRequest` foi tentada para todas as rotas previstas, mas o ambiente local continuou sem resolver `docmotor.online`; propagação permanece não confirmada.
 
 ## Implementado
+
+- Normalização reutilizável de placas antigas/Mercosul, combustíveis (Álcool/Etanol equivalentes) e cilindradas em litros/cm³ no simulador.
+- Frontend do construtor com seletor de combustível, máscara de placa e orientação de cilindrada; backend permanece como autoridade.
+- Erros específicos para placa, combustível e cilindrada inválidos, sem chamada externa ou consumo de créditos.
+- Fixture corrigido e teste do cenário informado pelo proprietário: Automóvel, 75 CV, 2000 cm³, combustível equivalente, placa antiga no destino e total conhecido de R$ 975,80.
 
 - Shell SaaS responsivo para painéis autenticados, com navegação por perfil, topbar, largura integral, títulos objetivos e alteração de senha em Minha conta.
 - Correção do endpoint `/api/partner/dashboard` para retornar cidade, UF e CEP da empresa persistida.
@@ -54,6 +59,9 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 - Migration MySQL, rate limit persistido, auditoria e script seguro de provisionamento do administrador.
 
 ## Pendente
+
+- Importar manualmente a Migration 006 pelo phpMyAdmin e executar o verify; não executar pelo projeto.
+- Homologar visualmente e executar o simulador online com dados fictícios após a importação.
 
 - Executar a conferência visual manual dos painéis em desktop e mobile na Hostinger.
 - Homologar os cenários do simulador no-code com dados fictícios e registrar respostas reais.
@@ -100,6 +108,7 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 - Revalidação online: versão `0.1.1`, health/runtime-config, robots, manifest, headers e todos os assets oficiais retornaram respostas esperadas.
 - `npm run typecheck`: passou após a implementação da Fase 2.
 - `npm test -- --run`: passou com os testes existentes e validações de CPF/CNPJ/contratos de autenticação.
+- Fase 3.7: `npm test -- --run --pool=threads --minWorkers=1 --maxWorkers=1` aprovou 87 testes; lint, typecheck, build, sintaxe Node e diff-check também aprovados.
 - `npm run build`: passou e gerou o build de produção.
 - `npm run lint`: passou após a atualização final do backend; validação MySQL online ainda não executada.
 - Navegador automatizado: não utilizado conforme orientação; telas da Fase 2 aguardam conferência visual manual.
@@ -138,4 +147,4 @@ Fase 3.6 — design system, painéis profissionais e homologação do simulador 
 
 ## Próxima missão
 
-Confirmar a propagação da versão `0.3.3` no Hostinger e executar `docs/HOMOLOGACAO-APROVACAO-PARCEIRO.md` com dados fictícios. Não iniciar a Fase 4/Simples API real, orçamento definitivo, documentação digital ou financeiro.
+Aguardar a importação e verificação manual da Migration 006 pelo proprietário; depois publicar a branch `feature/fase-3-7-correcao-simulador` na `main` somente com essa confirmação e executar a homologação online do simulador com dados fictícios. Não iniciar a Fase 4.
