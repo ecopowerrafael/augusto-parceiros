@@ -24,7 +24,7 @@
 3.9.1. Hotfix do editor HTTP 503 — versão `0.4.3` publicada na `main` pelo commit `27c8b190938aa7f7b687a2c53282e28178aef3e2`; homologação online pendente.
 3.9.2. Hotfix 0.4.4 de diagnóstico do erro interno após as consultas do editor; normalização JSON e regressão ampliada implementadas. Homologação online pendente.
 3.9.3. Hotfix 0.4.5 corrige a validação de campos declarativos legados da Migration 007; 127 testes aprovados. Homologação online pendente.
-3.10. Fluxo condicional, análise manual e PDF — implementação local da versão `0.4.6` na branch `feature/fase-3-10-fluxo-resultado-pdf`; sem nova migration identificada até o momento. Aguardando revisão e homologação funcional do proprietário antes da `main`.
+3.10. Fluxo condicional, análise manual e PDF — versão `0.4.6` integrada na `main` pelo merge `aa20697`; rollback `rollback-before-0-4-6-20261126`; sem nova migration. Homologação funcional do proprietário pendente.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.

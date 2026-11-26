@@ -7,7 +7,8 @@
 - Regras arquivadas foram excluídas do editor; mensagens incompatíveis com o resultado final não são exibidas.
 - Adicionado modal acessível de análise manual e mensagem de WhatsApp com rótulos amigáveis, sem chaves internas.
 - PDF usa o logotipo oficial incorporado, formatação monetária brasileira e textos com acentuação compatível.
-- 16 arquivos de teste e 133 testes aprovados localmente; homologação online e publicação na `main` permanecem pendentes.
+- 16 arquivos de teste e 133 testes aprovados localmente; publicação integrada na `main` pelo merge `aa20697`.
+- Rollback registrado na tag `rollback-before-0-4-6-20261126`; homologação funcional online permanece pendente.
 
 ## [0.4.5] — Correção da validação declarativa do editor — 2026-11-26
 

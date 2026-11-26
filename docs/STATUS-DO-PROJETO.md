@@ -1,13 +1,14 @@
 # Status do projeto
 
-## Fase 3.10 — implementação local — 26/11/2026
+## Fase 3.10 — publicada em homologação — 26/11/2026
 
-- Implementado na branch `feature/fase-3-10-fluxo-resultado-pdf`, versão local `0.4.6`; não publicado na `main`.
+- Integrada na `main` no commit `aa20697`, versão `0.4.6`; branch de implementação: `feature/fase-3-10-fluxo-resultado-pdf`.
 - Frontend e backend respeitam visibilidade declarativa, limpam valores ocultos e tratam motocicletas, identificação manual e dados desconhecidos sem inferências.
 - Modal acessível de análise manual, WhatsApp configurável sem chaves internas e PDF com incorporação do logo oficial foram implementados.
 - Não foi identificada necessidade de Migration 008: a alteração é de avaliação, apresentação e geração de documento; Migration 007 instalada não foi modificada.
 - Validações locais: lint, typecheck, 16 arquivos/133 testes, build de produção, sintaxe Node e `git diff --check` executados; MariaDB remoto, Hostinger e conferência visual humana online ainda pendentes.
-- Próxima missão: revisar o relatório, publicar somente após aprovação do proprietário e então homologar os 30 cenários da Fase 3.10. Não iniciar a Fase 4.
+- Rollback registrado na tag `rollback-before-0-4-6-20261126`, apontando para `3448cba`.
+- Deploy Hostinger e homologação funcional online ainda aguardam execução real; não declarar concluída antes dos testes do proprietário. Próxima missão: homologar os 30 cenários da Fase 3.10. Não iniciar a Fase 4.
 
 ## Hotfix 0.4.5 — correção da validação declarativa — 26/11/2026
 
