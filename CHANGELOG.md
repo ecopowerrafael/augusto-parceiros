@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.6] — Fluxo condicional, análise manual e PDF — 2026-11-26
+
+- Campos condicionais agora são ocultados no simulador e valores ocultos são descartados também no backend.
+- Motocicletas usam declaração de compatibilidade; dados desconhecidos encaminham o caso para análise manual sem valores.
+- Regras arquivadas foram excluídas do editor; mensagens incompatíveis com o resultado final não são exibidas.
+- Adicionado modal acessível de análise manual e mensagem de WhatsApp com rótulos amigáveis, sem chaves internas.
+- PDF usa o logotipo oficial incorporado, formatação monetária brasileira e textos com acentuação compatível.
+- 16 arquivos de teste e 133 testes aprovados localmente; homologação online e publicação na `main` permanecem pendentes.
+
 ## [0.4.5] — Correção da validação declarativa do editor — 2026-11-26
 
 - Corrigida a exceção em `validateConfiguration` causada por metadado `calculation` sem `operands` em campo `CHECKBOX` da Migration 007.

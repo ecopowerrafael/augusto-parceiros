@@ -8,6 +8,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - O backend é a autoridade para autenticação, autorização, tenant, limites e regras de negócio.
 - Não versionar `.env`, credenciais, tokens ou documentos pessoais.
 - Ao mudar schema, atualizar `docs/BANCO-DE-DADOS.md` e planejar migration/rollback.
+- Toda migration futura deve ter validação estática da correspondência entre colunas e valores em cada `INSERT`, além de validação SQL real quando houver MariaDB disponível; testes de aplicação não substituem execução SQL.
 - Nenhuma migration é considerada pronta sem `precheck`, SQL, `verify` e execução do gerador `npm run generate:hostinger-sql -- u891593158_doc database/updates`; preservar `information_schema` fora da qualificação do banco da aplicação.
 - Antes de aprovar qualquer migration, executar `node scripts/validate-migration-inserts.mjs migrations/<arquivo>.sql` e registrar a validação de correspondência entre colunas e valores de todos os `INSERT`s.
 - O mesmo validador deve ser ampliado ou executado junto das verificações de balanceamento e argumentos pares de `JSON_OBJECT`; JSON serializado usado em condições deve ser parseado e confrontado com o avaliador declarativo antes da entrega.

@@ -38,6 +38,7 @@ describe('carregamento do editor de serviços', () => {
     expect(editor.messages).toHaveLength(1)
     expect(editor.validationErrors).toEqual([])
     expect(pool.calls.some((sql) => sql.includes('JSON_ARRAYAGG'))).toBe(false)
+    expect(pool.calls.some((sql) => sql.includes("status <> 'ARCHIVED'"))).toBe(true)
   })
 
   it('normaliza resultados MariaDB como strings, objetos e NULL sem fazer JSON.parse em objetos', async () => {
