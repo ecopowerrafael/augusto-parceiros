@@ -5,6 +5,7 @@
 - Ajustes locais preparados para contato configurável de análise manual, seleção visual restrita a São Paulo/Outros estados e PDF comercial A4 com logotipo oficial.
 - `npm run lint`, `npm run typecheck`, `npm test` (120 testes) e `npm run build` executados com sucesso.
 - A validação SQL continua estática: não há MariaDB descartável disponível e nenhum SQL foi executado remotamente.
+- Foram gerados e visualmente inspecionados `docs/exemplos/pdf/exemplo-orcamento-automovel.pdf`, `exemplo-orcamento-motocicleta.pdf` e `exemplo-orcamento-parceiro.pdf`, todos A4 de uma página; prévias PNG estão em `docs/exemplos/pdf/preview/`.
 - Publicação na `main` e homologação visual pelo proprietário ainda estão pendentes.
 
 ## Atualização da missão 3.9 — 26/11/2026

@@ -7,6 +7,7 @@
 - PDF A4 reorganizado com logotipo oficial, identificação, responsável, data, dados técnicos, serviços, total, documentos e contato.
 - Seleção visual do estado limitada a São Paulo e Outros estados; o backend continua como autoridade.
 - Validações locais executadas: lint, typecheck, 120 testes e build.
+- Gerados três PDFs demonstrativos com o mesmo gerador da aplicação e prévias PNG conferidas visualmente; publicação continua aguardando aprovação visual.
 
 ## [0.4.2] — Recuperação da Migration 007 após erro #1582 — 2026-11-26
 

@@ -1,6 +1,6 @@
 # Geração de resultados e documentos
 
-## Escopo da Fase 3.8
+## Escopo da Fase 3.9
 
 O simulador administrativo recebe um resultado visual reutilizável, sem exibir JSON bruto como apresentação principal. O resultado é derivado exclusivamente da resposta validada pelo avaliador declarativo do backend.
 
@@ -9,7 +9,8 @@ Todos os documentos desta fase são demonstrações e exibem `SIMULAÇÃO — SE
 ## Arquitetura
 
 - `ServiceResultView` apresenta situação, dados analisados, cobranças, subtotal conhecido, documentos e diagnóstico técnico recolhido.
-- `generateSimulationPdf` usa `pdf-lib`, sem Chromium, APIs pagas ou serviço externo. Gera A4 em texto selecionável e usa centavos recebidos do backend.
+- `generateSimulationPdf` usa `pdf-lib`, sem Chromium, APIs pagas ou serviço externo. Gera A4 em texto selecionável, incorpora o logotipo oficial, usa azul/preto/cinza, cabeçalho em duas colunas, barras de seção, comparação técnica, tabela comercial, total destacado, documentos, observações e rodapé paginado.
+- O modelo aceita identificador, responsável e parceiro reais quando o fluxo comercial persistido os fornecer; simulações exibem explicitamente `SIMULACAO` e não inventam códigos.
 - Impressão usa a mesma representação visual e uma folha de estilo de impressão A4.
 - Download e visualização geram o PDF a partir do mesmo modelo de resultado.
 - Web Share API compartilha o arquivo quando `navigator.canShare({ files })` estiver disponível. Caso contrário, o PDF é baixado e o WhatsApp é aberto com orientação para anexá-lo.
@@ -24,9 +25,9 @@ Contatos comerciais por perfil, códigos públicos persistentes e orçamentos co
 
 - O compartilhamento de arquivo depende do navegador e do sistema operacional.
 - No desktop sem Web Share, o usuário deve anexar manualmente o PDF baixado.
-- O PDF atual cobre a demonstração do simulador; cabeçalho comercial completo, contato por emissor e numeração definitiva serão ligados aos registros persistidos na Fase 6.
+- Os três exemplos visuais em `docs/exemplos/pdf/` usam dados fictícios identificados e foram renderizados em PNG para inspeção. O vínculo com orçamento persistido e numeração definitiva permanece dependente da Fase 6.
 - Validação visual final em Hostinger permanece manual quando o navegador automatizado não estiver disponível.
 
 ## Critérios de teste
 
-Os testes verificam regras declarativas por categoria, modo manual sem placa doadora, filtragem de ações vazias, cenários de potência/combustível e geração de um PDF real com assinatura `%PDF-`.
+Os testes verificam regras declarativas por categoria, modo manual sem placa doadora, filtragem de ações vazias, cenários de potência/combustível e geração de um PDF real com assinatura `%PDF-`. A inspeção visual local confirmou os três exemplos sem sobreposição, cortes ou páginas vazias.

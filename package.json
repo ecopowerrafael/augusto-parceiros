@@ -17,6 +17,7 @@
     "migrate": "node scripts/migrate.mjs",
     "generate:hostinger-sql": "node scripts/generate-hostinger-sql.mjs",
     "provision-admin": "node scripts/provision-admin.mjs",
+    "generate:pdf-examples": "vite-node scripts/generate-pdf-examples.ts",
     "test": "vitest run"
   },
   "dependencies": {
