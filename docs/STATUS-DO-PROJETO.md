@@ -8,6 +8,7 @@
 - Não foram executados SQL remoto, Migration 008 novamente, Migration 009, chamadas à Simples API ou alterações na `main`.
 - Testes locais específicos: 4 regressões da Fase 3.12 aprovadas. Lint, typecheck, build, sintaxe Node e `git diff --check` aprovados; a suíte completa deve ser executada novamente após a correção final.
 - Homologação online e conferência visual humana pendentes. Próxima etapa: revisar/publicar somente com autorização explícita e, depois, importar a Migration 009 manualmente se aprovada. Não iniciar a Fase 4.
+- Revisão visual local dos três PDFs de exemplo: renderização aprovada sem sobreposição, com cabeçalho/rodapé presentes e uma página por arquivo. A validação visual online ainda depende do proprietário.
 
 ## Fase 3.11 — Migration 008 verificada e publicação autorizada — 26/11/2026
 

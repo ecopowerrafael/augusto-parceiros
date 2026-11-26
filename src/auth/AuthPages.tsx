@@ -1,4 +1,4 @@
-import { FormEvent, ReactNode, useEffect, useState } from 'react'
+import { FormEvent, ReactNode, useLayoutEffect as useEffect, useState } from 'react'
 import { BrandLogo } from '../components/BrandLogo'
 import { friendlyApiDetails, friendlyApiMessage, friendlyValidationMessages } from '../error-messages'
 import { documentTypeFor, formatCep, formatCpfCnpj, formatPhone } from '../formats'

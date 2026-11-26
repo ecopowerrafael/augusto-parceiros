@@ -7,6 +7,7 @@
 - Criada a Migration 009 e seus artefatos Hostinger; não executada remotamente e ainda pendente de autorização/importação.
 - Adicionados quatro testes de regressão do fluxo; branch de trabalho `feature/fase-3-12-ajustes-finais-simulador`.
 - Versão local/PWA `0.4.8`; homologação visual e publicação na `main` ainda não autorizadas.
+- Revisão posterior: normalização de visibilidade passou para layout effect; PDF revisado com acentuação, espaçamento compacto e exemplos regenerados em uma página.
 
 ## [0.4.7] — Correção funcional do simulador — 26/11/2026
 
