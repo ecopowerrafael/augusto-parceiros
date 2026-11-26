@@ -6,17 +6,51 @@ import { requireCsrf, requireRole, writeAudit, validationError } from './auth.js
 import { actionSchema, billingItemSchema, documentSchema, evaluateService, externalQuerySchema, fieldSchema, messageSchema, optionSchema, queryMappingSchema, ruleSchema, sectionSchema, serviceBillingSchema, serviceSchema, simulationRequestSchema, validateConfiguration } from './service-config.js'
 
 const router = express.Router()
-const json = (value) => value === null || value === undefined ? null : typeof value === 'string' ? JSON.parse(value) : value
+const JSON_COLUMNS = new Set(['conditions', 'technical_limits', 'calculation', 'condition_expression', 'visibility_condition', 'required_condition', 'editability_condition', 'default_value', 'payload', 'supported_fields'])
+const valueType = (value) => value === null ? 'null' : value === undefined ? 'undefined' : Array.isArray(value) ? 'array' : typeof value
+function editorErrorDetails(error) {
+  return {
+    errorName: error instanceof Error ? error.name : typeof error,
+    message: error instanceof Error ? error.message : String(error),
+    code: error?.code || 'UNKNOWN',
+    stack: error instanceof Error ? error.stack : undefined,
+  }
+}
+function logEditorFailure(requestId, stage, error, metadata = {}) {
+  console.error(JSON.stringify({ event: 'editor_processing_failed', requestId, stage, ...editorErrorDetails(error), ...metadata }))
+}
+function logEditorStage(stage, requestId, metadata = {}) {
+  console.log(JSON.stringify({ event: stage, requestId, ...metadata }))
+}
+function parseJsonValue(value, context) {
+  if (value === null || value === undefined || typeof value !== 'string') return value === undefined ? null : value
+  try {
+    return JSON.parse(value)
+  } catch (error) {
+    const enriched = new Error(error instanceof Error ? error.message : String(error), { cause: error })
+    enriched.code = 'EDITOR_CONFIG_JSON_INVALID'
+    logEditorFailure(context.requestId, context.stage, error, { rowIndex: context.rowIndex, column: context.column, valueType: valueType(value), normalizedCode: enriched.code })
+    throw enriched
+  }
+}
+function parseConfigRows(rows, stage, requestId) {
+  return rows.map((row, rowIndex) => Object.fromEntries(Object.entries(row).map(([key, value]) => [key, JSON_COLUMNS.has(key) ? parseJsonValue(value, { requestId, stage, rowIndex, column: key }) : value])))
+}
+function runEditorStage(stage, requestId, callback) {
+  try {
+    return callback()
+  } catch (error) {
+    logEditorFailure(requestId, stage, error)
+    throw error
+  }
+}
+const json = (value) => parseJsonValue(value, { requestId: null, stage: 'data_sources', rowIndex: null, column: 'supported_fields' })
 const bodyError = (response, parsed) => response.status(400).json(validationError(parsed.error))
 const id = () => randomUUID()
 const actor = (request) => request.auth.user.id
 const asyncRoute = (handler) => (request, response, next) => Promise.resolve(handler(request, response, next)).catch(next)
 async function timedQuery(pool, operation, sql, params, requestId = null) { const startedAt = Date.now(); try { const result = await pool.query(sql, params); console.log(JSON.stringify({ event: 'service_editor_query', requestId, operation, durationMs: Date.now() - startedAt })); return result } catch (error) { console.error(JSON.stringify({ event: 'service_editor_query_failed', requestId, operation, durationMs: Date.now() - startedAt, code: error.code || 'UNKNOWN', errno: error.errno || null, sqlState: error.sqlState || null })); throw error } }
 async function updateRow(table, rowId, values, mapping) { const entries = Object.entries(mapping).filter(([key]) => values[key] !== undefined); if (!entries.length) return 0; const set = entries.map(([, column]) => `${column} = ?`).join(', '); const params = entries.map(([key]) => values[key]); params.push(rowId); const [result] = await getDatabasePool().execute(`UPDATE ${table} SET ${set}, updated_at = UTC_TIMESTAMP() WHERE id = ?`, params); return result.affectedRows }
-
-function parseConfigRows(rows) {
-  return rows.map((row) => Object.fromEntries(Object.entries(row).map(([key, value]) => ['conditions', 'technical_limits', 'calculation', 'condition_expression', 'visibility_condition', 'required_condition', 'editability_condition', 'default_value', 'payload', 'supported_fields'].includes(key) ? [key, json(value)] : [key, value])))
-}
 
 export async function loadEditor(versionId, requestId = null, pool = getDatabasePool()) {
   const [[version]] = await timedQuery(pool, 'editor.version', `SELECT v.*, s.code, s.name AS service_name, s.slug, s.category, s.short_description, s.detailed_description, s.service_type, s.availability_mode, s.is_active, s.available_to_client, s.available_to_partner FROM service_versions v JOIN services s ON s.id = v.service_id WHERE v.id = ? LIMIT 1`, [versionId], requestId)
@@ -32,10 +66,23 @@ export async function loadEditor(versionId, requestId = null, pool = getDatabase
     timedQuery(pool, 'editor.external_queries', `SELECT q.*, ds.code AS source_code, ds.name AS source_name FROM service_external_queries q JOIN service_data_sources ds ON ds.id = q.source_id WHERE q.service_version_id = ? ORDER BY q.query_key`, [versionId], requestId),
     timedQuery(pool, 'editor.rule_actions', 'SELECT a.* FROM technical_rule_actions a JOIN technical_rules r ON r.id = a.technical_rule_id WHERE r.service_version_id = ? ORDER BY a.technical_rule_id, a.display_order, a.id', [versionId], requestId),
   ])
-  const parsedFields = parseConfigRows(fields); const parsedRuleActions = parseConfigRows(ruleActions); const parsedRules = parseConfigRows(rules).map((rule) => ({ ...rule, actions: parsedRuleActions.filter((action) => action.technical_rule_id === rule.id) })); const parsedBilling = parseConfigRows(billingItems); const parsedDocuments = parseConfigRows(documents); const parsedMessages = parseConfigRows(messages); const parsedQueries = parseConfigRows(queries); const conditions = [...parsedFields.flatMap((field) => [field.visibility_condition, field.required_condition, field.editability_condition]), ...parsedRules.map((rule) => rule.conditions), ...parsedBilling.map((item) => item.condition_expression), ...parsedDocuments.map((item) => item.condition_expression), ...parsedMessages.map((item) => item.condition_expression), ...parsedQueries.filter((query) => query.plate_field_key).map((query) => ({ field: query.plate_field_key }))].filter(Boolean)
-  const parsedOptionsBase = parseConfigRows(options).filter((option) => option.option_value === 'SP' || option.option_value === 'OTHER_STATE' || !fields.some((field) => field.id === option.field_id && field.field_key === 'vehicle_target.state'))
-  const stateField = fields.find((field) => field.field_key === 'vehicle_target.state'); const parsedOptions = stateField && !parsedOptionsBase.some((option) => option.field_id === stateField.id && option.option_value === 'OTHER_STATE') ? [...parsedOptionsBase, { id: 'ui-other-state', field_id: stateField.id, option_value: 'OTHER_STATE', option_label: 'Outros estados', display_order: 999 }] : parsedOptionsBase
-  return { version, sections: parseConfigRows(sections), fields: parsedFields, options: parsedOptions, billingItems: parsedBilling, rules: parsedRules, documents: parsedDocuments, messages: parsedMessages, queries: parsedQueries, validationErrors: validateConfiguration(parsedFields, conditions) }
+  logEditorStage('editor.queries_completed', requestId, { versionId, counts: { sections: sections.length, fields: fields.length, options: options.length, billingItems: billingItems.length, rules: rules.length, documents: documents.length, messages: messages.length, externalQueries: queries.length, ruleActions: ruleActions.length } })
+  const parsedSections = runEditorStage('editor.sections_mapped', requestId, () => parseConfigRows(sections, 'editor.sections_mapped', requestId)); logEditorStage('editor.sections_mapped', requestId, { count: parsedSections.length })
+  const parsedFields = runEditorStage('editor.fields_mapped', requestId, () => parseConfigRows(fields, 'editor.fields_mapped', requestId)); logEditorStage('editor.fields_mapped', requestId, { count: parsedFields.length })
+  const parsedOptionsAll = runEditorStage('editor.options_mapped', requestId, () => parseConfigRows(options, 'editor.options_mapped', requestId)); logEditorStage('editor.options_mapped', requestId, { count: parsedOptionsAll.length })
+  const parsedRuleActions = runEditorStage('editor.rule_actions_mapped', requestId, () => parseConfigRows(ruleActions, 'editor.rule_actions_mapped', requestId)); logEditorStage('editor.rule_actions_mapped', requestId, { count: parsedRuleActions.length })
+  const parsedRules = runEditorStage('editor.rules_mapped', requestId, () => parseConfigRows(rules, 'editor.rules_mapped', requestId).map((rule) => ({ ...rule, actions: parsedRuleActions.filter((action) => action.technical_rule_id === rule.id) }))); logEditorStage('editor.rules_mapped', requestId, { count: parsedRules.length })
+  const parsedBilling = runEditorStage('editor.billing_items_mapped', requestId, () => parseConfigRows(billingItems, 'editor.billing_items_mapped', requestId)); logEditorStage('editor.billing_items_mapped', requestId, { count: parsedBilling.length })
+  const parsedDocuments = runEditorStage('editor.documents_mapped', requestId, () => parseConfigRows(documents, 'editor.documents_mapped', requestId)); logEditorStage('editor.documents_mapped', requestId, { count: parsedDocuments.length })
+  const parsedMessages = runEditorStage('editor.messages_mapped', requestId, () => parseConfigRows(messages, 'editor.messages_mapped', requestId)); logEditorStage('editor.messages_mapped', requestId, { count: parsedMessages.length })
+  const parsedQueries = runEditorStage('editor.external_queries_mapped', requestId, () => parseConfigRows(queries, 'editor.external_queries_mapped', requestId)); logEditorStage('editor.external_queries_mapped', requestId, { count: parsedQueries.length })
+  const parsedOptionsBase = parsedOptionsAll.filter((option) => option.option_value === 'SP' || option.option_value === 'OTHER_STATE' || !parsedFields.some((field) => field.id === option.field_id && field.field_key === 'vehicle_target.state'))
+  const stateField = parsedFields.find((field) => field.field_key === 'vehicle_target.state'); const parsedOptions = stateField && !parsedOptionsBase.some((option) => option.field_id === stateField.id && option.option_value === 'OTHER_STATE') ? [...parsedOptionsBase, { id: 'ui-other-state', field_id: stateField.id, option_value: 'OTHER_STATE', option_label: 'Outros estados', display_order: 999 }] : parsedOptionsBase
+  const conditions = [...parsedFields.flatMap((field) => [field.visibility_condition, field.required_condition, field.editability_condition]), ...parsedRules.map((rule) => rule.conditions), ...parsedBilling.map((item) => item.condition_expression), ...parsedDocuments.map((item) => item.condition_expression), ...parsedMessages.map((item) => item.condition_expression), ...parsedQueries.filter((query) => query.plate_field_key).map((query) => ({ field: query.plate_field_key }))].filter(Boolean)
+  const validationErrors = runEditorStage('editor.validation_completed', requestId, () => validateConfiguration(parsedFields, conditions)); logEditorStage('editor.validation_completed', requestId, { errorCount: validationErrors.length })
+  const editor = { version, sections: parsedSections, fields: parsedFields, options: parsedOptions, billingItems: parsedBilling, rules: parsedRules, documents: parsedDocuments, messages: parsedMessages, queries: parsedQueries, validationErrors }
+  logEditorStage('editor.response_built', requestId, { versionId })
+  return editor
 }
 
 export function simulateLoadedService(editor, payload) {
@@ -92,7 +139,7 @@ export function createServiceRouter({ databaseRequired, activeAccount }) {
   })
 
   router.get('/services/:serviceId/editor', asyncRoute(async (request, response) => {
-    const [versions] = await timedQuery(getDatabasePool(), 'editor.versions', 'SELECT id, service_id, version_number, status, change_summary, created_at, updated_at FROM service_versions WHERE service_id = ? ORDER BY version_number DESC', [request.params.serviceId], request.requestId); const versionId = String(request.query.versionId || versions[0]?.id || ''); if (!versionId) return response.status(404).json({ error: 'SERVICE_NOT_FOUND' }); const editor = await loadEditor(versionId, request.requestId); if (!editor || editor.version.service_id !== request.params.serviceId) return response.status(404).json({ error: 'SERVICE_VERSION_NOT_FOUND' }); response.json({ ...editor, versions })
+    const [versions] = await timedQuery(getDatabasePool(), 'editor.versions', 'SELECT id, service_id, version_number, status, change_summary, created_at, updated_at FROM service_versions WHERE service_id = ? ORDER BY version_number DESC', [request.params.serviceId], request.requestId); const versionId = String(request.query.versionId || versions[0]?.id || ''); if (!versionId) return response.status(404).json({ error: 'SERVICE_NOT_FOUND' }); const editor = await loadEditor(versionId, request.requestId); if (!editor || editor.version.service_id !== request.params.serviceId) return response.status(404).json({ error: 'SERVICE_VERSION_NOT_FOUND' }); const payload = { ...editor, versions }; runEditorStage('editor.response_serialized', request.requestId, () => JSON.stringify(payload)); logEditorStage('editor.response_serialized', request.requestId, { versionId }); response.json(payload)
   }))
 
   router.post('/services/:serviceId/versions', requireCsrf, async (request, response) => {

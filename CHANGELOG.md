@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.4] — Diagnóstico do erro interno do editor — 2026-11-26
+
+- Instrumentado o pós-processamento do editor com logs privados por etapa, request ID, mensagem original, nome, código, stack e tipo do valor, sem conteúdo de registros ou segredos.
+- Normalização de colunas JSON compatível com strings, objetos, `NULL` e arrays vazios do MariaDB; JSON inválido continua sendo rejeitado e agora identifica a coluna e a etapa.
+- Adicionados testes de regressão para resultados realistas do MariaDB, regras e ações da Migration 007, cobranças, documentos, mensagens e serialização.
+- Versão do PWA sincronizada para `0.4.4`.
+- Esta versão é de diagnóstico/correção local; a homologação funcional na Hostinger ainda depende de execução pelo proprietário.
+
 ## [0.4.3] — Hotfix do editor de serviços — 2026-11-26
 
 - Corrigido o tratamento assíncrono do endpoint `/api/admin/services/:serviceId/editor`, evitando rejeições não tratadas no Express.

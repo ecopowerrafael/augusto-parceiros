@@ -49,6 +49,14 @@ Não executar migrations no startup, não usar SSH como requisito e não importa
 
 ## Checklist de testes online
 
+### Hotfix 0.4.4 — diagnóstico do editor
+
+- Não importar migrations nem executar SQL remoto.
+- Após o deploy, abrir o construtor de serviços com uma sessão administrativa fictícia e registrar o `X-Request-ID`.
+- Se ainda falhar, consultar os logs privados e localizar o primeiro evento ausente entre `editor.queries_completed`, `editor.*_mapped`, `editor.validation_completed`, `editor.response_built` e `editor.response_serialized`.
+- O evento `editor_processing_failed` contém a etapa, `errorName`, mensagem original, código e stack; não deve ser exposto ao cliente.
+- A homologação só será considerada concluída após carregar o construtor, simular e gerar o PDF comercial na Hostinger.
+
 ## Fase 3.4 — cadastro e mensagens
 
 A versão `0.3.3` foi integrada na `main`. A Migration 004 foi importada manualmente no banco `u891593158_doc` e verificada pelo proprietário em MariaDB `11.8.9-MariaDB-log`. Não executar migrations no startup nem repetir a importação.
