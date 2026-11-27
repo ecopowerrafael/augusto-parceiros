@@ -12,6 +12,8 @@ O erro `#1146 vehicle_modifications não existe` foi localizado no precheck anti
 
 Precheck aprovado pelo proprietário em 27/11/2026: `migration_010_already_registered = 0`, cinco tabelas novas ausentes, `quantity_expression` ausente, serviço de suspensão sem versão e nenhuma execução parcial identificada. Está autorizada a importação manual do arquivo `database/updates/010_suspension_modification_catalog.sql` corrigido, seguida do verify; o agente não executa SQL remoto.
 
+A primeira importação falhou posteriormente com `#1052` na subconsulta da carga de opções; o alias foi corrigido para `sv.id`. Como o erro ocorreu depois de DDL e seeds iniciais, executar novamente o precheck antes de uma retomada. A retomada só deve usar o SQL regenerado após o commit da correção.
+
 ## Configuração desta aplicação
 
 1. Conectar o repositório GitHub na opção Node.js Web App.

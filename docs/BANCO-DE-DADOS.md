@@ -10,6 +10,8 @@ O precheck e o verify foram preparados para banco sem Migration 010 e para execu
 
 Precheck real confirmado pelo proprietário em 27/11/2026: banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`, seis dependências-base presentes, Migration 010 não registrada, cinco tabelas novas ausentes, coluna `quantity_expression` ausente, serviço de suspensão sem versão e três itens-base de cobrança presentes. Não foi detectada execução parcial; a próxima etapa é importar o update corrigido e depois executar o verify.
 
+Após a tentativa de importação, o proprietário reportou `#1052` na carga de opções. A causa foi a subconsulta não qualificada `SELECT id FROM service_versions sv JOIN services ss`; a Migration 010 canônica agora usa `SELECT sv.id`. Não repetir a importação sem executar novamente o precheck corrigido, pois DDL e seeds anteriores podem ter permanecido após a falha.
+
 ## Fase 2 — schema inicial
 
 MySQL da Hostinger é conectado por `DATABASE_URL`. `migrations/001_initial.sql` cria usuários, parceiros, membros, clientes, sessões, tokens de reset, rate limits e auditoria, com chaves estrangeiras, índices e unicidade de e-mail/documento.

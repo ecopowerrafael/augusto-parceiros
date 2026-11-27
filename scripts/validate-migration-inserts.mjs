@@ -104,6 +104,13 @@ function validateCreationOrder(source) {
   return errors
 }
 
+function validateAmbiguousSelectColumns(source) {
+  const masked = maskSqlStringsAndComments(source)
+  const errors = []
+  if (/\bSELECT\s+id\s+FROM[\s\S]*?\bJOIN\b/i.test(masked)) errors.push('SELECT id não qualificado em consulta com JOIN; use alias explícito, como alias.id')
+  return errors
+}
+
 const insertPattern = /INSERT\s+INTO\s+[^;]+?\(([^()]+)\)\s*VALUES\s*/gis
 let checked = 0; let match
 while ((match = insertPattern.exec(sql))) {
@@ -124,6 +131,9 @@ console.log(`${file}: JSON_OBJECT verificados; quantidade de argumentos aprovada
 const orderErrors = validateCreationOrder(sql)
 if (orderErrors.length) throw new Error(`${file}: ${orderErrors.join('; ')}`)
 console.log(`${file}: ordem de criação e uso das tabelas aprovada.`)
+const ambiguousColumnErrors = validateAmbiguousSelectColumns(sql)
+if (ambiguousColumnErrors.length) throw new Error(`${file}: ${ambiguousColumnErrors.join('; ')}`)
+console.log(`${file}: colunas potencialmente ambíguas em SELECT/JOIN não encontradas.`)
 
 if (/INSERT\s+INTO\s+schema_migrations/i.test(sql)) {
   const executableStatements = sql.split(';').map((statement) => statement.replace(/--[^\r\n]*/g, '').trim()).filter(Boolean)

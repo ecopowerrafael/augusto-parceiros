@@ -7,6 +7,7 @@
 - Corrigidas as consultas dinâmicas dos artefatos Hostinger para qualificar explicitamente `u891593158_doc`, evitando dependência do contexto `information_schema` do phpMyAdmin.
 - Ajustado o `PREPARE` para não devolver result sets diretamente ao phpMyAdmin: resultados são capturados com `SELECT ... INTO` e apresentados por consultas normais.
 - Precheck corrigido executado pelo proprietário sem erro; banco confirmado sem registro, tabelas ou colunas da Migration 010 e sem execução parcial identificada.
+- Corrigida ambiguidade `#1052` na subconsulta da carga de opções (`SELECT sv.id`); o validador passou a detectar `SELECT id` não qualificado em consultas com `JOIN`.
 
 - Corrigida a inicialização do primeiro DRAFT no construtor para serviços existentes ainda sem versão.
 - Adicionado catálogo central reutilizável de modificações, com CRUD administrativo protegido, status ativo/inativo e bloqueio de cadastro de motor como adicional.
