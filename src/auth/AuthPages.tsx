@@ -181,8 +181,8 @@ function ClientDashboard({ user }: { user: User }) { return <DashboardFrame user
 
 function AccountPage({ user }: { user: User }) { return <DashboardFrame user={user} title="MINHA CONTA"><div className="dashboard-notice"><strong>{user.name}</strong><br />{user.email}<br />Perfil: {user.role === 'ADMINISTRATOR' ? 'Administrador' : user.role === 'PARTNER' ? 'Parceiro' : 'Cliente'}</div><ChangePasswordForm role={user.role} /></DashboardFrame> }
 
-function OperationalServicePage({ user, title, serviceCode, description, available = true }: { user: User; title: string; serviceCode?: string; description: string; available?: boolean }) {
-  return <DashboardFrame user={user} title={title.toUpperCase()}>{available && serviceCode ? <DeclarativeSimulationPage serviceCode={serviceCode} title={title} /> : <div className="dashboard-notice"><strong>Funcionalidade em desenvolvimento</strong><br />{description}<br /><small>Esta página já faz parte da estrutura operacional, mas não executa chamadas externas nem cria documentos oficiais.</small></div>}</DashboardFrame>
+function OperationalServicePage({ user, title, serviceCode, apiBase = '/api/admin', description, available = true }: { user: User; title: string; serviceCode?: string; apiBase?: string; description: string; available?: boolean }) {
+  return <DashboardFrame user={user} title={title.toUpperCase()}>{available && serviceCode ? <DeclarativeSimulationPage serviceCode={serviceCode} title={title} apiBase={apiBase} /> : <div className="dashboard-notice"><strong>Funcionalidade em desenvolvimento</strong><br />{description}<br /><small>Esta página já faz parte da estrutura operacional, mas não executa chamadas externas nem cria documentos oficiais.</small></div>}</DashboardFrame>
 }
 
 export function DashboardPage({ role }: { role: 'ADMINISTRATOR' | 'PARTNER' | 'CLIENT' }) {
@@ -211,9 +211,9 @@ export function DashboardPage({ role }: { role: 'ADMINISTRATOR' | 'PARTNER' | 'C
   if (role === 'PARTNER') {
     const path = window.location.pathname
     if (path === '/parceiro/minha-conta') return <AccountPage user={user} />
-    const servicePages: Record<string, { title: string; description: string }> = { '/parceiro/servicos/regularizacao-motor': { title: 'Regularização de motor', description: 'A operação de cadastro de motor será liberada após a configuração comercial do serviço.' }, '/parceiro/servicos/suspensao': { title: 'Regularizar suspensão', description: 'A operação de suspensão será liberada após a homologação comercial.' }, '/parceiro/servicos/outras-modificacoes': { title: 'Outras modificações', description: 'O serviço será liberado após configuração e homologação do catálogo.' }, '/parceiro/servicos/emissor-crlv': { title: 'Emissor de CRLV', description: 'A emissão de CRLV está em desenvolvimento e não gera documentos oficiais.' }, '/parceiro/servicos/consultas': { title: 'Consultas', description: 'As consultas externas ainda não estão disponíveis.' } }
+    const servicePages: Record<string, { title: string; description: string; code?: string }> = { '/parceiro/servicos/regularizacao-motor': { title: 'Regularização de motor', code: 'ENGINE_REGISTRATION', description: 'A operação de cadastro de motor será liberada após a configuração comercial do serviço.' }, '/parceiro/servicos/suspensao': { title: 'Regularizar suspensão', code: 'LOWERED_SUSPENSION', description: 'A operação de suspensão será liberada após a homologação comercial.' }, '/parceiro/servicos/outras-modificacoes': { title: 'Outras modificações', description: 'O serviço será liberado após configuração e homologação do catálogo.' }, '/parceiro/servicos/emissor-crlv': { title: 'Emissor de CRLV', description: 'A emissão de CRLV está em desenvolvimento e não gera documentos oficiais.' }, '/parceiro/servicos/consultas': { title: 'Consultas', description: 'As consultas externas ainda não estão disponíveis.' } }
     const page = servicePages[path]
-    return page ? <OperationalServicePage user={user} title={page.title} description={page.description} available={false} /> : <PartnerDashboard user={user} />
+    return page ? <OperationalServicePage user={user} title={page.title} serviceCode={page.code} apiBase="/api/partner" description={page.description} available={Boolean(page.code)} /> : <PartnerDashboard user={user} />
   }
   return <ClientDashboard user={user} />
 }
