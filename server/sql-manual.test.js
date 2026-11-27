@@ -20,6 +20,12 @@ const manualFiles = [
   'database/updates/005_application_settings.sql',
   'database/updates/005_application_settings_verify.sql',
   'database/updates/010_suspension_modification_catalog.sql',
+  'database/updates/011_suspension_form_usability_precheck.sql',
+  'database/updates/011_suspension_form_usability.sql',
+  'database/updates/011_suspension_form_usability_verify.sql',
+  'database/updates/012_suspension_checklist_semantics_precheck.sql',
+  'database/updates/012_suspension_checklist_semantics.sql',
+  'database/updates/012_suspension_checklist_semantics_verify.sql',
   'database/install.sql',
   'database/verify.sql',
   'database/create-admin.sql',
@@ -65,5 +71,22 @@ describe('SQL manual da Hostinger', () => {
   it('valida os literais JSON reais da Migration 010', () => {
     const output = execFileSync(process.execPath, ['scripts/validate-migration-inserts.mjs', 'migrations/010_suspension_modification_catalog.sql'], { cwd: root, encoding: 'utf8' })
     expect(output).toContain('literais JSON SQL verificados; sintaxe JSON aprovada.')
+  })
+  it('valida a Migration 011 sem execução remota', () => {
+    const output = execFileSync(process.execPath, ['scripts/validate-migration-inserts.mjs', 'migrations/011_suspension_form_usability.sql'], { cwd: root, encoding: 'utf8' })
+    expect(output).toContain('ordem de criação e uso das tabelas aprovada.')
+    expect(output).toContain('literais JSON SQL verificados; sintaxe JSON aprovada.')
+    for (const relativePath of ['database/updates/011_suspension_form_usability_precheck.sql', 'database/updates/011_suspension_form_usability_verify.sql']) {
+      const sql = fs.readFileSync(path.join(root, relativePath), 'utf8')
+      expect(sql).not.toMatch(/\b(?:PREPARE|EXECUTE|DEALLOCATE\s+PREPARE)\b/i)
+    }
+  })
+  it('valida a Migration 012 de semântica dos checklists', () => {
+    const output = execFileSync(process.execPath, ['scripts/validate-migration-inserts.mjs', 'migrations/012_suspension_checklist_semantics.sql'], { cwd: root, encoding: 'utf8' })
+    expect(output).toContain('literais JSON SQL verificados; sintaxe JSON aprovada.')
+    for (const relativePath of ['database/updates/012_suspension_checklist_semantics_precheck.sql', 'database/updates/012_suspension_checklist_semantics_verify.sql']) {
+      const sql = fs.readFileSync(path.join(root, relativePath), 'utf8')
+      expect(sql).not.toMatch(/\b(?:PREPARE|EXECUTE|DEALLOCATE\s+PREPARE)\b/i)
+    }
   })
 })

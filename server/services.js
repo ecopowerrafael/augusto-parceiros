@@ -76,8 +76,14 @@ export async function loadEditor(versionId, requestId = null, pool = getDatabase
   const parsedDocuments = runEditorStage('editor.documents_mapped', requestId, () => parseConfigRows(documents, 'editor.documents_mapped', requestId)); logEditorStage('editor.documents_mapped', requestId, { count: parsedDocuments.length })
   const parsedMessages = runEditorStage('editor.messages_mapped', requestId, () => parseConfigRows(messages, 'editor.messages_mapped', requestId)); logEditorStage('editor.messages_mapped', requestId, { count: parsedMessages.length })
   const parsedQueries = runEditorStage('editor.external_queries_mapped', requestId, () => parseConfigRows(queries, 'editor.external_queries_mapped', requestId)); logEditorStage('editor.external_queries_mapped', requestId, { count: parsedQueries.length })
-  const parsedOptionsBase = parsedOptionsAll.filter((option) => option.option_value === 'SP' || option.option_value === 'OTHER_STATE' || !parsedFields.some((field) => field.id === option.field_id && field.field_key === 'vehicle_target.state'))
-  const stateField = parsedFields.find((field) => field.field_key === 'vehicle_target.state'); const parsedOptions = stateField && !parsedOptionsBase.some((option) => option.field_id === stateField.id && option.option_value === 'OTHER_STATE') ? [...parsedOptionsBase, { id: 'ui-other-state', field_id: stateField.id, option_value: 'OTHER_STATE', option_label: 'Outros estados', display_order: 999 }] : parsedOptionsBase
+  const stateField = parsedFields.find((field) => field.field_key === 'vehicle_target.state')
+  const nonStateOptions = parsedOptionsAll.filter((option) => !stateField || option.field_id !== stateField.id)
+  const persistedStateOptions = parsedOptionsAll.filter((option) => stateField && option.field_id === stateField.id && ['SP', 'OTHER_STATE'].includes(option.option_value))
+  const stateOptions = stateField ? [
+    persistedStateOptions.find((option) => option.option_value === 'SP') || { id: 'ui-sao-paulo', field_id: stateField.id, option_value: 'SP', option_label: 'São Paulo', display_order: 998 },
+    persistedStateOptions.find((option) => option.option_value === 'OTHER_STATE') || { id: 'ui-other-state', field_id: stateField.id, option_value: 'OTHER_STATE', option_label: 'Outros estados', display_order: 999 },
+  ] : []
+  const parsedOptions = [...nonStateOptions, ...stateOptions]
   const conditions = [...parsedFields.flatMap((field) => [field.visibility_condition, field.required_condition, field.editability_condition]), ...parsedRules.map((rule) => rule.conditions), ...parsedBilling.map((item) => item.condition_expression), ...parsedDocuments.map((item) => item.condition_expression), ...parsedMessages.map((item) => item.condition_expression), ...parsedQueries.filter((query) => query.plate_field_key).map((query) => ({ field: query.plate_field_key }))].filter(Boolean)
   const validationErrors = runEditorStage('editor.validation_completed', requestId, () => validateConfiguration(parsedFields, conditions)); logEditorStage('editor.validation_completed', requestId, { errorCount: validationErrors.length })
   const editor = { version, sections: parsedSections, fields: parsedFields, options: parsedOptions, billingItems: parsedBilling, rules: parsedRules, documents: parsedDocuments, messages: parsedMessages, queries: parsedQueries, validationErrors }
@@ -92,14 +98,15 @@ export function simulateLoadedService(editor, payload) {
 }
 
 async function loadActiveModificationCatalog(pool) {
-  const [catalog] = await pool.execute('SELECT * FROM vehicle_modifications WHERE status = \'ACTIVE\' ORDER BY category, display_order, name')
+  const [catalog] = await pool.execute('SELECT vm.*, bi.default_amount_cents AS billing_amount_cents FROM vehicle_modifications vm LEFT JOIN billing_items bi ON bi.id = vm.billing_item_id WHERE vm.status = \'ACTIVE\' ORDER BY vm.category, vm.display_order, vm.name')
   if (!catalog.length) return catalog
   const [categoryScopes] = await pool.execute('SELECT vmc.modification_id, vc.code FROM vehicle_modification_categories vmc JOIN vehicle_categories vc ON vc.id = vmc.vehicle_category_id')
   const [ufScopes] = await pool.execute('SELECT modification_id, uf FROM vehicle_modification_ufs')
+  const [documents] = await pool.execute('SELECT * FROM vehicle_modification_documents ORDER BY modification_id, display_order, name')
   const categoriesByModification = new Map(); const ufsByModification = new Map()
   for (const scope of categoryScopes) { const values = categoriesByModification.get(scope.modification_id) || []; values.push(scope.code); categoriesByModification.set(scope.modification_id, values) }
   for (const scope of ufScopes) { const values = ufsByModification.get(scope.modification_id) || []; values.push(scope.uf); ufsByModification.set(scope.modification_id, values) }
-  return catalog.map((item) => ({ ...item, vehicle_category_codes: categoriesByModification.get(item.id) || [], ufs: ufsByModification.get(item.id) || [] }))
+  return catalog.map((item) => ({ ...item, vehicle_category_codes: categoriesByModification.get(item.id) || [], ufs: ufsByModification.get(item.id) || [], documents: documents.filter((document) => document.modification_id === item.id) }))
 }
 
 async function insertVersion(connection, serviceId, userId, sourceVersionId = null) {
@@ -192,7 +199,14 @@ export function createServiceRouter({ databaseRequired, activeAccount }) {
 
   router.get('/modification-catalog', async (_request, response) => {
     const [items] = await getDatabasePool().execute(`SELECT vm.*, bi.code AS billing_code, bi.name AS billing_name, bi.default_amount_cents AS billing_amount_cents FROM vehicle_modifications vm LEFT JOIN billing_items bi ON bi.id = vm.billing_item_id ORDER BY vm.category, vm.display_order, vm.name`)
-    response.json({ items })
+    const [[categoryScopes], [ufScopes]] = await Promise.all([
+      getDatabasePool().execute('SELECT vmc.modification_id, vc.code FROM vehicle_modification_categories vmc JOIN vehicle_categories vc ON vc.id = vmc.vehicle_category_id'),
+      getDatabasePool().execute('SELECT modification_id, uf FROM vehicle_modification_ufs'),
+    ])
+    const categoriesByModification = new Map(); const ufsByModification = new Map()
+    for (const scope of categoryScopes) { const values = categoriesByModification.get(scope.modification_id) || []; values.push(scope.code); categoriesByModification.set(scope.modification_id, values) }
+    for (const scope of ufScopes) { const values = ufsByModification.get(scope.modification_id) || []; values.push(scope.uf); ufsByModification.set(scope.modification_id, values) }
+    response.json({ items: items.map((item) => ({ ...item, vehicle_category_codes: categoriesByModification.get(item.id) || [], ufs: ufsByModification.get(item.id) || [] })) })
   })
   router.get('/modification-catalog-reference-data', async (_request, response) => {
     const [[categories], [states], [billingItems]] = await Promise.all([

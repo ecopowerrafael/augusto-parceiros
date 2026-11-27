@@ -150,7 +150,15 @@ Requests têm timeout de 120 s; não há WebSockets de entrada nem workers sempr
 
 Se o código publicado estiver em `0.2.1`, mas um login com payload válido retornar `INTERNAL_ERROR`, verificar o histórico de deploy: o commit pode estar no GitHub sem ter sido aplicado pela Web App. Após o redeploy, consultar o diagnóstico de conexão; a instalação da estrutura deve seguir o procedimento manual pelo phpMyAdmin. Falhas de banco devem aparecer como `503 DATABASE_NOT_READY`.
 
+## Migration 011 — Fase 3.14
+
+A Migration 011 é incremental e necessária porque a regra persistida de `OTHER_STATE` para `LOWERED_SUSPENSION` não existia na Migration 010, além de atualizar os rótulos dos checklists. Não executar SQL remoto a partir do Codex. Depois da revisão e autorização, importar no phpMyAdmin, nesta ordem: `database/updates/011_suspension_form_usability_precheck.sql`, `database/updates/011_suspension_form_usability.sql` e `database/updates/011_suspension_form_usability_verify.sql`. O precheck e o verify usam somente SELECTs estáticos; não usam PREPARE/EXECUTE. O precheck deve mostrar `schema_migrations_table_present = 1` e `migration_011_registered = 0`; se a tabela-base não existir, interromper. Após o update, o verify deve retornar `migration_011_count = 1`, a regra `MANUAL_REVIEW` de prioridade 1 e uma única linha em `schema_migrations`.
+
 ## Diagnóstico temporário de conexão MySQL
+
+## Migration 012 — correção semântica pendente
+
+A auditoria da Migration 011 confirmou que os textos dos checklists foram atualizados, mas as regras 002 e 006 persistidas anteriormente ainda tratavam `YES`/`NO` como se a pergunta tivesse sentido negativo. A Migration 012 corrige apenas essas condições: contato confirmado (`YES`) ou desconhecido (`UNKNOWN`) exige análise manual; ausência de contato (`NO`) é o valor favorável quando os demais requisitos são atendidos. Não publicar a aplicação nem reexecutar a Migration 011 antes de importar e verificar a 012. Os três arquivos são `database/updates/012_suspension_checklist_semantics_precheck.sql`, `database/updates/012_suspension_checklist_semantics.sql` e `database/updates/012_suspension_checklist_semantics_verify.sql`.
 
 Na inicialização do `server/index.js`, a aplicação executa o diagnóstico privado usando o mesmo pool de `server/database.js`. Os resultados aparecem nos logs da aplicação Node.js da Hostinger: painel da Web App → logs/runtime logs da aplicação → reiniciar/redeploy → procurar por `[database-diagnostic]`.
 
@@ -166,4 +174,8 @@ O proprietário confirmou a instalação e verificação da Migration 007 no ban
 O hotfix do editor deve ser publicado somente após `lint`, `typecheck`, testes, build e sintaxe Node.js. A publicação não exige nova migration. Após o deploy, validar no painel administrativo o carregamento do editor, a simulação e a geração do PDF; registrar falhas SQL pelos logs privados usando o `X-Request-ID` retornado pela aplicação.
 
 Para o estado parcial confirmado, não excluir as colunas `manual_whatsapp`, `manual_team_name` ou `manual_message_template`; a Migration 007 usa `ADD COLUMN IF NOT EXISTS` e `ON DUPLICATE KEY UPDATE` para permitir a recuperação segura.
+
+# Fase 3.14 — procedimento de homologação
+
+A versão `0.4.10` permanece em branch de desenvolvimento até autorização expressa. A Migration 010 já está instalada no banco remoto; não executar SQL, não reimportar migrations e não criar Migration 011 para correções que sejam apenas de renderização. Após autorização futura, publicar a branch, aguardar o deploy da Hostinger e validar manualmente os dois simuladores, sem consumir a Simples API.
 

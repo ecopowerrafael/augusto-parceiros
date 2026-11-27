@@ -1,5 +1,13 @@
 # Status do projeto
 
+## Fase 3.14 — correções de usabilidade da suspensão — branch de desenvolvimento — versão 0.4.10
+
+- Causa confirmada: os simuladores integrado e declarativo mantinham renderizadores de formulário distintos; o integrado não renderizava `REPEATABLE_MODIFICATIONS`.
+- Implementação em andamento nesta branch: `ServiceFieldRenderer` compartilhado, catálogo persistido para modificações adicionais, opções de UF restritas a `SP`/`OTHER_STATE`, rótulos semânticos para checklists e PBT condicionado à referência declarativa de regra.
+- A Migration 010 já aplicada não foi alterada e não há necessidade confirmada de Migration 011: os ajustes atuais são de renderização, seleção defensiva e consumo das relações já persistidas.
+- Nenhum SQL remoto foi executado, nenhuma chamada à Simples API foi realizada e a `main` não foi alterada.
+- Homologação visual e funcional na Hostinger permanece pendente do proprietário.
+
 ## Fase 3.13 — implementação local em branch, Migration 010 pendente — 26/11/2026
 
 - Auditoria de 27/11/2026: o erro `#1146 vehicle_modifications não existe` foi causado pela linha 8 do source precheck, gerada como linha 16 do SQL Hostinger, que consultava a tabela antes do `CREATE TABLE`. Precheck e verify foram reescritos com `information_schema` e SQL preparado condicional.
@@ -297,4 +305,15 @@ Fase 3.9 — regras declarativas, simulador comercial e PDF profissional — ver
 
 ## Próxima missão
 
-Homologar visualmente o resultado, PDF, impressão e compartilhamento da versão `0.3.9` na Hostinger com dados fictícios. Não iniciar a Fase 4.
+### Atualização — Fase 3.14 / versão 0.4.10
+
+- Implementação local concluída na branch `feature/fase-3-14-usabilidade-suspensao`; a `main` não foi alterada.
+- Os dois simuladores reutilizam `ServiceFieldRenderer` e `ServiceResultView`; erros estruturados preservam valores e destacam o primeiro campo inválido.
+- UF é apresentada como `São Paulo` e `Outros estados`; a Migration 011 foi aplicada e verificada pelo proprietário, incluindo a regra persistida de análise manual para `OTHER_STATE` e os rótulos semânticos dos checklists.
+- Modificações adicionais são carregadas do catálogo persistido, podem ser repetidas/removidas e aparecem individualmente no resultado, PDF e WhatsApp sem preço fixo no frontend.
+- Validações locais executadas nesta missão: lint, typecheck, build, `git diff --check`, sintaxe Node, validador SQL e 154 testes automatizados aprovados.
+- Limitações: não há MariaDB descartável disponível; a Migration 011 foi validada estaticamente e não foi executada remotamente. Navegador/Hostinger aguardam homologação manual.
+- Correção posterior: precheck e verify 011 não utilizam mais `PREPARE`, `EXECUTE` ou `DEALLOCATE PREPARE`; as tabelas-base são verificadas antes das consultas estáticas de conteúdo.
+- Auditoria para publicação: incompatibilidade semântica confirmada nas regras persistidas 002/006 da suspensão. A Migration 012 foi criada e validada estaticamente; publicação na `main` está bloqueada até o proprietário importar/verificar essa correção.
+
+Próxima missão: importar a Migration 012, confirmar o verify, então publicar a branch em ambiente de testes e homologar manualmente os dois simuladores, PDF, impressão e WhatsApp com dados fictícios. Não iniciar a Fase 4.

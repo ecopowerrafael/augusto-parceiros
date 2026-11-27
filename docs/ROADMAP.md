@@ -1,5 +1,7 @@
 # Roadmap
 
+3.14. Correções de usabilidade do serviço de suspensão — versão `0.4.10` em `feature/fase-3-14-usabilidade-suspensao`; renderização compartilhada, UF SP/Outros estados, PBT condicional e modificações repetíveis em validação local. Não publicar na `main` sem autorização.
+
 3.13. Regularização de suspensão e catálogo de modificações — versão local `0.4.9` em `feature/fase-3-13-suspensao-modificacoes`; implementação e validação local concluídas. Migration 010 gerada para importação manual, pendente revisão/importação/verificação do proprietário. Não publicada na `main`.
 
 3.12. Ajustes finais do simulador — versão `0.4.8` autorizada para publicação; Migration 009 importada/verificada manualmente na Hostinger. Homologação funcional online pendente dos testes do proprietário.
@@ -30,6 +32,7 @@
 3.9.3. Hotfix 0.4.5 corrige a validação de campos declarativos legados da Migration 007; 127 testes aprovados. Homologação online pendente.
 3.10. Fluxo condicional, análise manual e PDF — versão `0.4.6` integrada na `main` pelo merge `aa20697`; rollback `rollback-before-0-4-6-20261126`; sem nova migration. Homologação funcional do proprietário pendente.
 3.11. Correção funcional do simulador — versão `0.4.7` integrada na `main` pelo merge `365980a`; rollback `rollback-before-0-4-7-20261126`; Migration 008 importada e verificada manualmente pelo proprietário. Homologação visual online pendente.
+3.14. Usabilidade do simulador de suspensão — versão `0.4.10` em `feature/fase-3-14-usabilidade-suspensao`. Migration 011 aplicada pelo proprietário; auditoria pré-publicação identificou incompatibilidade semântica nas regras de contato e preparou a Migration 012. Publicação na `main` e homologação humana aguardam a aplicação/verificação da 012.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.10] — Usabilidade do simulador de suspensão — 27/11/2026
+
+- Unificados os dois simuladores no renderer declarativo compartilhado, com erros estruturados, rótulos persistidos, foco no primeiro campo inválido e limpeza de valores ocultos.
+- Corrigida a apresentação de modificações adicionais no resultado, PDF e WhatsApp, preservando os totais calculados pelo backend.
+- Criada a Migration 011 para rótulos semânticos dos checklists e regra declarativa que encaminha `OTHER_STATE` para análise manual no serviço de suspensão.
+- Nenhum SQL remoto foi executado, nenhuma chamada real à Simples API foi realizada e a publicação na `main` permanece pendente de autorização.
+- Corrigidos os artefatos de precheck/verify 011 para usar somente SELECTs estáticos, evitando a incompatibilidade de renderização do phpMyAdmin com `EXECUTE`.
+- Auditoria pré-publicação identificou incompatibilidade semântica nas regras persistidas de contato da Migration 010; Migration 012 preparada para corrigir `YES` como contato irregular, `NO` como ausência de contato e `UNKNOWN` como análise manual. Publicação bloqueada até aplicação manual.
+
 ## [0.4.9] — Suspensão e catálogo de modificações — 26/11/2026
 
 - Corrigidos os precheck/verify da Migration 010 para não consultar tabelas novas antes da criação e para diagnosticar execução parcial sem interromper todas as verificações.
@@ -255,4 +264,12 @@
 - Corrigido o filtro de regras por categoria do veículo e descartadas ações vazias de `LEFT JOIN`.
 - Modo manual agora remove a placa e o padrão derivados do motor de origem.
 - Documentação permanente em `docs/GERACAO-DE-DOCUMENTOS.md`.
+
+# 0.4.10 — Fase 3.14 — em desenvolvimento
+
+- Centraliza a renderização dos campos declarativos nos dois simuladores.
+- Corrige a disponibilidade visual de São Paulo e Outros estados.
+- Oculta PBT sem regra técnica aplicável e melhora a semântica dos checklists.
+- Conecta modificações adicionais ao catálogo persistido com grupos repetíveis.
+- Sem Migration 011, sem SQL remoto e sem integração Simples API nesta etapa.
 
