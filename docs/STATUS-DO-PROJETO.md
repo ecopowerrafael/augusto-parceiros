@@ -10,6 +10,7 @@
 - Verificações locais executadas: `npm run lint`, `npm run typecheck`, `npm run test` (141 testes após os novos testes), `npm run build`, `node --check server/services.js` e `git diff --check` aprovados. O build mantém apenas o aviso existente de bundle acima de 500 kB.
 - Pendências: revisão funcional/visual, importação e verificação da Migration 010 pelo proprietário, testes online na Hostinger e publicação posterior na `main` somente com autorização explícita. Não iniciar a Fase 4.
 - Complemento posterior: adicionado o `Simulador declarativo` administrativo, com seleção real do catálogo ativo, grupo repetível e submissão ao mesmo endpoint backend do construtor. A conferência visual e a execução contra o banco online continuam pendentes.
+- O catálogo administrativo foi ampliado com edição das opções, requisitos de autorização/CSV/ECV, referência oficial, status jurídico, documentos, mensagens e orientações persistidas. Os endpoints de escopo por categoria/UF e de cobrança vinculada estão protegidos no backend; a tela visual ainda requer conferência humana.
 
 ## Fase 3.12 — publicada na main, homologação online pendente — 26/11/2026
 

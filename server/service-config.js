@@ -100,6 +100,8 @@ export const vehicleModificationSchema = z.object({
   guidance: z.string().trim().max(5000).optional().or(z.literal('')),
   legalStatus: z.enum(['CONFIRMED', 'A_CONFIRMAR', 'NOT_APPLICABLE']).default('A_CONFIRMAR'),
 }).strict()
+export const vehicleModificationDocumentSchema = z.object({ documentCode: z.string().trim().regex(/^[A-Z0-9_]{2,80}$/), name: z.string().trim().min(2).max(180), requirementType: z.enum(['REQUIRED', 'DISPENSED', 'CONDITIONAL', 'A_CONFIRMAR']), description: z.string().trim().max(500).optional().or(z.literal('')), conditionExpression: conditionSchema.nullable().optional(), displayOrder: z.coerce.number().int().min(0).max(100000).default(0) }).strict()
+export const vehicleModificationMessageSchema = z.object({ messageKey: z.string().trim().regex(/^[A-Z0-9_]{2,80}$/), severity: z.enum(['INFO', 'WARNING', 'ERROR', 'SUCCESS']).default('INFO'), content: z.string().trim().min(2).max(1000), conditionExpression: conditionSchema.nullable().optional(), displayOrder: z.coerce.number().int().min(0).max(100000).default(0) }).strict()
 
 function depth(value, current = 0) { if (!value || typeof value !== 'object') return current; if (current > 8) return current; const values = Array.isArray(value) ? value : Object.values(value); return values.reduce((max, item) => Math.max(max, depth(item, current + 1)), current) }
 function lookup(value, key) { return Object.prototype.hasOwnProperty.call(value, key) ? value[key] : undefined }

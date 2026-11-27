@@ -9,6 +9,7 @@
 - Criada a Migration 010 e os SQLs Hostinger; não executados remotamente.
 - Validações locais aprovadas; homologação online, importação manual e publicação na `main` permanecem pendentes.
 - Adicionado simulador declarativo administrativo com múltiplas modificações selecionadas do catálogo ativo.
+- Ampliada a administração do catálogo com edição de exigências, documentos, mensagens, referências oficiais e orientações persistidas.
 
 ## [0.4.8] — Ajustes finais do simulador — 26/11/2026
 
