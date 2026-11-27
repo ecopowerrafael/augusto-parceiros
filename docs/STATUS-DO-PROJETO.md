@@ -307,13 +307,14 @@ Fase 3.9 — regras declarativas, simulador comercial e PDF profissional — ver
 
 ### Atualização — Fase 3.14 / versão 0.4.10
 
-- Implementação local concluída na branch `feature/fase-3-14-usabilidade-suspensao`; a `main` não foi alterada.
+- Implementação concluída na branch `feature/fase-3-14-usabilidade-suspensao` e publicada na `main` pelo merge `f649d70c86e52a0f4fd15bb6617b149a35cf38ed`.
 - Os dois simuladores reutilizam `ServiceFieldRenderer` e `ServiceResultView`; erros estruturados preservam valores e destacam o primeiro campo inválido.
 - UF é apresentada como `São Paulo` e `Outros estados`; a Migration 011 foi aplicada e verificada pelo proprietário, incluindo a regra persistida de análise manual para `OTHER_STATE` e os rótulos semânticos dos checklists.
 - Modificações adicionais são carregadas do catálogo persistido, podem ser repetidas/removidas e aparecem individualmente no resultado, PDF e WhatsApp sem preço fixo no frontend.
-- Validações locais executadas nesta missão: lint, typecheck, build, `git diff --check`, sintaxe Node, validador SQL e 154 testes automatizados aprovados.
-- Limitações: não há MariaDB descartável disponível; a Migration 011 foi validada estaticamente e não foi executada remotamente. Navegador/Hostinger aguardam homologação manual.
+- Validações locais executadas nesta missão: lint, typecheck, build, `git diff --check`, sintaxe Node, validador SQL e 156 testes automatizados aprovados.
+- Migrations 011 e 012 foram aplicadas e verificadas pelo proprietário no banco `u891593158_doc`; não houve execução SQL pelo agente.
+- Limitações: não há MariaDB descartável disponível; os endpoints online não puderam ser verificados neste ambiente porque `docmotor.online` não resolveu por DNS. Homologação visual/funcional humana permanece pendente.
 - Correção posterior: precheck e verify 011 não utilizam mais `PREPARE`, `EXECUTE` ou `DEALLOCATE PREPARE`; as tabelas-base são verificadas antes das consultas estáticas de conteúdo.
-- Auditoria para publicação: incompatibilidade semântica confirmada nas regras persistidas 002/006 da suspensão. A Migration 012 foi criada e validada estaticamente; publicação na `main` está bloqueada até o proprietário importar/verificar essa correção.
+- Auditoria para publicação: incompatibilidade semântica confirmada nas regras persistidas 002/006 da suspensão e corrigida pela Migration 012, aplicada/verificada pelo proprietário.
 
-Próxima missão: importar a Migration 012, confirmar o verify, então publicar a branch em ambiente de testes e homologar manualmente os dois simuladores, PDF, impressão e WhatsApp com dados fictícios. Não iniciar a Fase 4.
+Próxima missão: homologar manualmente os dois simuladores, PDF, impressão e WhatsApp com dados fictícios diretamente na Hostinger. Não iniciar a Fase 4.

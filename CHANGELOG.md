@@ -5,9 +5,10 @@
 - Unificados os dois simuladores no renderer declarativo compartilhado, com erros estruturados, rótulos persistidos, foco no primeiro campo inválido e limpeza de valores ocultos.
 - Corrigida a apresentação de modificações adicionais no resultado, PDF e WhatsApp, preservando os totais calculados pelo backend.
 - Criada a Migration 011 para rótulos semânticos dos checklists e regra declarativa que encaminha `OTHER_STATE` para análise manual no serviço de suspensão.
-- Nenhum SQL remoto foi executado, nenhuma chamada real à Simples API foi realizada e a publicação na `main` permanece pendente de autorização.
+- Migrations 011 e 012 foram aplicadas e verificadas manualmente pelo proprietário; nenhuma chamada real à Simples API foi realizada.
 - Corrigidos os artefatos de precheck/verify 011 para usar somente SELECTs estáticos, evitando a incompatibilidade de renderização do phpMyAdmin com `EXECUTE`.
-- Auditoria pré-publicação identificou incompatibilidade semântica nas regras persistidas de contato da Migration 010; Migration 012 preparada para corrigir `YES` como contato irregular, `NO` como ausência de contato e `UNKNOWN` como análise manual. Publicação bloqueada até aplicação manual.
+- Auditoria pré-publicação identificou incompatibilidade semântica nas regras persistidas de contato da Migration 010; Migration 012 corrigiu `YES` como contato irregular, `NO` como ausência de contato e `UNKNOWN` como análise manual, após aplicação manual pelo proprietário.
+- Fase 3.14 publicada na `main` pelo merge `f649d70c86e52a0f4fd15bb6617b149a35cf38ed`; rollback `rollback-before-0-4-10-20261127`. Homologação online permanece pendente por falha de resolução DNS neste ambiente.
 
 ## [0.4.9] — Suspensão e catálogo de modificações — 26/11/2026
 

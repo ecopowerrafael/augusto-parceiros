@@ -156,9 +156,13 @@ A Migration 011 é incremental e necessária porque a regra persistida de `OTHER
 
 ## Diagnóstico temporário de conexão MySQL
 
-## Migration 012 — correção semântica pendente
+## Publicação 0.4.10
 
-A auditoria da Migration 011 confirmou que os textos dos checklists foram atualizados, mas as regras 002 e 006 persistidas anteriormente ainda tratavam `YES`/`NO` como se a pergunta tivesse sentido negativo. A Migration 012 corrige apenas essas condições: contato confirmado (`YES`) ou desconhecido (`UNKNOWN`) exige análise manual; ausência de contato (`NO`) é o valor favorável quando os demais requisitos são atendidos. Não publicar a aplicação nem reexecutar a Migration 011 antes de importar e verificar a 012. Os três arquivos são `database/updates/012_suspension_checklist_semantics_precheck.sql`, `database/updates/012_suspension_checklist_semantics.sql` e `database/updates/012_suspension_checklist_semantics_verify.sql`.
+A Fase 3.14 foi integrada na `main` pelo merge `f649d70c86e52a0f4fd15bb6617b149a35cf38ed`. O ponto de rollback é `rollback-before-0-4-10-20261127`, apontando para `cfffc8eaf055cb63633ae41d138e29af495169af`. As Migrations 011 e 012 foram aplicadas e verificadas manualmente pelo proprietário. A verificação HTTP pós-publicação retornou falha de resolução DNS (`curl: (6) Could not resolve host: docmotor.online`) neste ambiente; isso não comprova falha do deploy da Hostinger.
+
+## Migration 012 — correção semântica aplicada
+
+A auditoria da Migration 011 confirmou que os textos dos checklists foram atualizados, mas as regras 002 e 006 persistidas anteriormente ainda tratavam `YES`/`NO` como se a pergunta tivesse sentido negativo. A Migration 012 corrigiu essas condições: contato confirmado (`YES`) ou desconhecido (`UNKNOWN`) exige análise manual; ausência de contato (`NO`) é o valor favorável quando os demais requisitos são atendidos. O proprietário informou a aplicação e verificação bem-sucedidas no banco remoto. Não reexecutar a Migration 012 ou migrations anteriores. Os três arquivos são `database/updates/012_suspension_checklist_semantics_precheck.sql`, `database/updates/012_suspension_checklist_semantics.sql` e `database/updates/012_suspension_checklist_semantics_verify.sql`.
 
 Na inicialização do `server/index.js`, a aplicação executa o diagnóstico privado usando o mesmo pool de `server/database.js`. Os resultados aparecem nos logs da aplicação Node.js da Hostinger: painel da Web App → logs/runtime logs da aplicação → reiniciar/redeploy → procurar por `[database-diagnostic]`.
 
@@ -177,5 +181,5 @@ Para o estado parcial confirmado, não excluir as colunas `manual_whatsapp`, `ma
 
 # Fase 3.14 — procedimento de homologação
 
-A versão `0.4.10` permanece em branch de desenvolvimento até autorização expressa. A Migration 010 já está instalada no banco remoto; não executar SQL, não reimportar migrations e não criar Migration 011 para correções que sejam apenas de renderização. Após autorização futura, publicar a branch, aguardar o deploy da Hostinger e validar manualmente os dois simuladores, sem consumir a Simples API.
+A versão `0.4.10` foi integrada na `main`; a Migration 010 e as incrementais 011/012 estão instaladas no banco remoto conforme confirmação do proprietário. Não executar SQL, não reimportar migrations e não consumir a Simples API. A homologação manual dos dois simuladores, PDF, impressão e WhatsApp ainda deve ser realizada na Hostinger.
 

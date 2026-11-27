@@ -4,13 +4,13 @@
 
 - Versão: `0.4.10`.
 - Migration 011: aplicada e verificada pelo proprietário no banco `u891593158_doc`.
-- Migration 012: necessária para corrigir a semântica persistida dos checklists; ainda não aplicada.
-- Publicação na `main`: bloqueada até a aplicação e verificação da Migration 012.
+- Migration 012: aplicada e verificada pelo proprietário no banco `u891593158_doc`.
+- Publicação na `main`: concluída no merge `f649d70`; rollback `rollback-before-0-4-10-20261127`.
 - Homologação visual/funcional: pendente.
 
-## Correção pendente de banco
+## Correção de banco aplicada
 
-Executar somente após autorização, nesta ordem:
+Os arquivos foram executados pelo proprietário, nesta ordem:
 
 1. `database/updates/012_suspension_checklist_semantics_precheck.sql`
 2. `database/updates/012_suspension_checklist_semantics.sql`
