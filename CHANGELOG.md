@@ -9,6 +9,7 @@
 - Precheck corrigido executado pelo proprietário sem erro; banco confirmado sem registro, tabelas ou colunas da Migration 010 e sem execução parcial identificada.
 - Corrigida ambiguidade `#1052` na subconsulta da carga de opções (`SELECT sv.id`); o validador passou a detectar `SELECT id` não qualificado em consultas com `JOIN`.
 - Precheck de recuperação confirmou execução parcial segura para retomada: estruturas e catálogo criados, migration não registrada e campos finais ainda pendentes.
+- Corrigida a carga de `technical_rules` da Migration 010: os aliases `name` e `description` agora são declarados na primeira linha da tabela derivada, evitando `#1054` no MariaDB/phpMyAdmin. Artefatos Hostinger e `database/install.sql` regenerados; nenhuma operação remota executada.
 
 - Corrigida a inicialização do primeiro DRAFT no construtor para serviços existentes ainda sem versão.
 - Adicionado catálogo central reutilizável de modificações, com CRUD administrativo protegido, status ativo/inativo e bloqueio de cadastro de motor como adicional.
