@@ -150,4 +150,50 @@ WHERE NOT EXISTS (SELECT 1 FROM `u891593158_doc`.`schema_migrations` WHERE name 
   AND (SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('vehicle_modifications', 'vehicle_modification_categories', 'vehicle_modification_ufs', 'vehicle_modification_documents', 'vehicle_modification_messages')) = 5
   AND (SELECT COUNT(*) FROM `u891593158_doc`.`services` WHERE code = 'LOWERED_SUSPENSION' AND name = 'Regularização de suspensão') = 1
   AND (SELECT COUNT(*) FROM `u891593158_doc`.`vehicle_modifications`) >= 27
+  AND (SELECT COUNT(*) FROM `u891593158_doc`.`service_form_fields` f JOIN `u891593158_doc`.`service_versions` v ON v.id = f.service_version_id JOIN `u891593158_doc`.`services` s ON s.id = v.service_id WHERE s.code = 'LOWERED_SUSPENSION' AND f.field_key IN ('wheels.contact_check', 'wheels.diameter_check')) = 2
   AND (SELECT COUNT(*) FROM `u891593158_doc`.`service_form_fields` f JOIN `u891593158_doc`.`service_versions` v ON v.id = f.service_version_id JOIN `u891593158_doc`.`services` s ON s.id = v.service_id WHERE s.code = 'LOWERED_SUSPENSION' AND f.field_key = 'modifications.additional') = 1;
+
+-- Regras positivas e checklist complementar. Mantém a avaliação declarativa no banco.
+INSERT INTO `u891593158_doc`.`service_form_fields` (id, service_version_id, section_id, field_key, label, description, field_type, is_required, display_order, visibility_condition, required_condition, data_origin)
+SELECT x.id, v.id, sec.id, x.field_key, x.label, x.description, x.field_type, x.is_required, x.display_order, x.visibility_condition, x.required_condition, 'MANUAL'
+FROM `u891593158_doc`.`service_versions` v JOIN `u891593158_doc`.`services` s ON s.id = v.service_id JOIN `u891593158_doc`.`service_form_sections` sec ON sec.service_version_id = v.id AND sec.stable_key = 'wheels'
+JOIN (SELECT '53000000-0000-4000-8000-000000000016' id, 'wheels.contact_check' field_key, 'Os pneus não encostam na carroceria, suspensão ou outros componentes?' label, NULL description, 'SINGLE_SELECT' field_type, 0 is_required, 145 display_order, '{"all":[{"field":"wheels.include","operator":"EQUALS","value":"YES"},{"field":"wheels.compliance","operator":"EQUALS","value":"UNKNOWN"}]}' visibility_condition, '{"all":[{"field":"wheels.include","operator":"EQUALS","value":"YES"},{"field":"wheels.compliance","operator":"EQUALS","value":"UNKNOWN"}]}' required_condition UNION ALL SELECT '53000000-0000-4000-8000-000000000017', 'wheels.diameter_check', 'O diâmetro externo respeita a tolerância aplicável ao veículo?' label, NULL, 'SINGLE_SELECT', 0, 150, '{"all":[{"field":"wheels.include","operator":"EQUALS","value":"YES"},{"field":"wheels.compliance","operator":"EQUALS","value":"UNKNOWN"}]}', '{"all":[{"field":"wheels.include","operator":"EQUALS","value":"YES"},{"field":"wheels.compliance","operator":"EQUALS","value":"UNKNOWN"}]}') x
+ON s.code = 'LOWERED_SUSPENSION' AND v.version_number = 1
+ON DUPLICATE KEY UPDATE label = VALUES(label), description = VALUES(description), field_type = VALUES(field_type), is_required = VALUES(is_required), display_order = VALUES(display_order), visibility_condition = VALUES(visibility_condition), required_condition = VALUES(required_condition);
+
+INSERT INTO `u891593158_doc`.`service_field_options` (id, field_id, option_value, option_label, display_order)
+SELECT o.id, f.id, o.option_value, o.option_label, o.display_order FROM `u891593158_doc`.`service_form_fields` f JOIN (SELECT '54000000-0000-4000-8000-000000000033' id, 'wheels.contact_check' field_key, 'YES' option_value, 'Sim' option_label, 10 display_order UNION ALL SELECT '54000000-0000-4000-8000-000000000034', 'wheels.contact_check', 'NO', 'Não', 20 UNION ALL SELECT '54000000-0000-4000-8000-000000000035', 'wheels.contact_check', 'UNKNOWN', 'Não sei', 30 UNION ALL SELECT '54000000-0000-4000-8000-000000000036', 'wheels.diameter_check', 'YES', 'Sim', 10 UNION ALL SELECT '54000000-0000-4000-8000-000000000037', 'wheels.diameter_check', 'NO', 'Não', 20 UNION ALL SELECT '54000000-0000-4000-8000-000000000038', 'wheels.diameter_check', 'UNKNOWN', 'Não sei', 30) o ON o.field_key = f.field_key WHERE f.service_version_id = (SELECT v.id FROM `u891593158_doc`.`service_versions` v JOIN `u891593158_doc`.`services` s ON s.id = v.service_id WHERE s.code = 'LOWERED_SUSPENSION' ORDER BY v.version_number DESC LIMIT 1) ON DUPLICATE KEY UPDATE option_label = VALUES(option_label), display_order = VALUES(display_order);
+
+UPDATE `u891593158_doc`.`service_form_fields` f JOIN `u891593158_doc`.`service_versions` v ON v.id = f.service_version_id JOIN `u891593158_doc`.`services` s ON s.id = v.service_id
+SET f.is_required = 1,
+    f.required_condition = CASE
+      WHEN f.field_key = 'wheels.fender_check' THEN '{"all":[{"field":"wheels.include","operator":"EQUALS","value":"YES"},{"field":"wheels.compliance","operator":"EQUALS","value":"UNKNOWN"}]}'
+      ELSE f.required_condition
+    END
+WHERE s.code = 'LOWERED_SUSPENSION' AND v.version_number = 1
+  AND f.field_key IN ('suspension.clearance_check', 'suspension.contact_check', 'wheels.compliance', 'wheels.fender_check', 'wheels.contact_check', 'wheels.diameter_check');
+
+UPDATE `u891593158_doc`.`technical_rules`
+SET conditions = '{"all":[{"field":"suspension.compliance","operator":"EQUALS","value":"UNKNOWN"},{"any":[{"field":"suspension.clearance_check","operator":"IN_LIST","values":["NO","UNKNOWN"]},{"field":"suspension.contact_check","operator":"IN_LIST","values":["NO","UNKNOWN"]},{"field":"wheels.fender_check","operator":"IN_LIST","values":["NO","UNKNOWN"]},{"field":"wheels.contact_check","operator":"IN_LIST","values":["NO","UNKNOWN"]},{"field":"wheels.diameter_check","operator":"IN_LIST","values":["NO","UNKNOWN"]}]}]}'
+WHERE id = '5A000000-0000-4000-8000-000000000002';
+
+INSERT INTO `u891593158_doc`.`technical_rules` (id, service_id, service_version_id, name, description, conditions, expected_result, status, priority, version)
+SELECT r.id, s.id, v.id, r.name, r.description, r.conditions, r.expected_result, 'DRAFT', r.priority, 1
+FROM `u891593158_doc`.`services` s JOIN `u891593158_doc`.`service_versions` v ON v.service_id = s.id
+JOIN (SELECT '5A000000-0000-4000-8000-000000000005' id, 'Suspensão compatível' name, 'As respostas informadas são compatíveis com a análise preliminar.' description, '{"all":[{"field":"vehicle_target.category","operator":"IN_LIST","values":["AUTOMOBILE","PICKUP"]},{"field":"suspension.compliance","operator":"EQUALS","value":"YES"},{"any":[{"field":"wheels.include","operator":"EQUALS","value":"NO"},{"field":"wheels.compliance","operator":"EQUALS","value":"YES"}]}]}' conditions, 'VIABLE' expected_result, 100 priority UNION ALL SELECT '5A000000-0000-4000-8000-000000000006', 'Checklist compatível', 'O checklist informado permite um orçamento preliminar condicionado à conferência documental.', '{"all":[{"field":"vehicle_target.category","operator":"IN_LIST","values":["AUTOMOBILE","PICKUP"]},{"field":"suspension.compliance","operator":"EQUALS","value":"UNKNOWN"},{"field":"suspension.clearance_check","operator":"EQUALS","value":"YES"},{"field":"suspension.contact_check","operator":"EQUALS","value":"YES"},{"any":[{"field":"wheels.include","operator":"EQUALS","value":"NO"},{"all":[{"field":"wheels.compliance","operator":"EQUALS","value":"UNKNOWN"},{"field":"wheels.fender_check","operator":"EQUALS","value":"YES"},{"field":"wheels.contact_check","operator":"EQUALS","value":"YES"},{"field":"wheels.diameter_check","operator":"EQUALS","value":"YES"}]}]}' conditions, 'VIABLE_WITH_REQUIREMENTS' expected_result, 110 priority) r
+ON s.code = 'LOWERED_SUSPENSION' AND v.version_number = 1
+WHERE NOT EXISTS (SELECT 1 FROM `u891593158_doc`.`technical_rules` existing WHERE existing.id = r.id);
+
+INSERT INTO `u891593158_doc`.`schema_migrations` (name)
+SELECT '010_suspension_modification_catalog.sql'
+WHERE NOT EXISTS (SELECT 1 FROM `u891593158_doc`.`schema_migrations` WHERE name = '010_suspension_modification_catalog.sql')
+  AND (SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('vehicle_modifications', 'vehicle_modification_categories', 'vehicle_modification_ufs', 'vehicle_modification_documents', 'vehicle_modification_messages')) = 5
+  AND (SELECT COUNT(*) FROM `u891593158_doc`.`services` WHERE code = 'LOWERED_SUSPENSION' AND name = 'Regularização de suspensão') = 1
+  AND (SELECT COUNT(*) FROM `u891593158_doc`.`vehicle_modifications`) >= 27
+  AND (SELECT COUNT(*) FROM `u891593158_doc`.`service_form_fields` f JOIN `u891593158_doc`.`service_versions` v ON v.id = f.service_version_id JOIN `u891593158_doc`.`services` s ON s.id = v.service_id WHERE s.code = 'LOWERED_SUSPENSION' AND f.field_key IN ('wheels.contact_check', 'wheels.diameter_check', 'modifications.additional')) = 3;
+
+INSERT INTO `u891593158_doc`.`technical_rules` (id, service_id, service_version_id, name, description, conditions, expected_result, status, priority, version)
+SELECT '5A000000-0000-4000-8000-000000000007', s.id, v.id, 'Categoria sem configuração', 'Categorias fora do escopo inicial seguem para análise manual.', '{"field":"vehicle_target.category","operator":"NOT_IN_LIST","values":["AUTOMOBILE","PICKUP"]}', 'MANUAL_REVIEW', 'DRAFT', 45, 1
+FROM `u891593158_doc`.`services` s JOIN `u891593158_doc`.`service_versions` v ON v.service_id = s.id
+WHERE s.code = 'LOWERED_SUSPENSION' AND v.version_number = 1
+  AND NOT EXISTS (SELECT 1 FROM `u891593158_doc`.`technical_rules` existing WHERE existing.id = '5A000000-0000-4000-8000-000000000007');
