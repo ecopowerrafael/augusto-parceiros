@@ -8,6 +8,8 @@ Importação manual: `database/updates/010_suspension_modification_catalog_prech
 
 O precheck e o verify foram preparados para banco sem Migration 010 e para execução parcial: primeiro consultam `information_schema.tables`/`information_schema.columns`; consultas de dados a tabelas opcionais são montadas e executadas somente após confirmar a existência. As consultas preparadas dos artefatos Hostinger qualificam explicitamente `u891593158_doc`, pois o phpMyAdmin pode preparar o comando com `information_schema` como contexto corrente. Para evitar o erro de renderização `Undefined index: statement/parser`, `EXECUTE` não devolve result set: grava em variáveis com `SELECT ... INTO`, seguido de `SELECT` normal. A consulta antiga que acessava `vehicle_modifications` antes do `CREATE TABLE` foi removida. Se o precheck mostrar tabela ausente, não há evidência de que a atualização tenha sido aplicada; não reimporte até confirmar o estado real.
 
+Precheck real confirmado pelo proprietário em 27/11/2026: banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`, seis dependências-base presentes, Migration 010 não registrada, cinco tabelas novas ausentes, coluna `quantity_expression` ausente, serviço de suspensão sem versão e três itens-base de cobrança presentes. Não foi detectada execução parcial; a próxima etapa é importar o update corrigido e depois executar o verify.
+
 ## Fase 2 — schema inicial
 
 MySQL da Hostinger é conectado por `DATABASE_URL`. `migrations/001_initial.sql` cria usuários, parceiros, membros, clientes, sessões, tokens de reset, rate limits e auditoria, com chaves estrangeiras, índices e unicidade de e-mail/documento.

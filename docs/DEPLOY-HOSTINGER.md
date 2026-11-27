@@ -10,6 +10,8 @@ Baseado na documentação oficial consultada em 25/11/2026: Hostinger Web Apps N
 
 O erro `#1146 vehicle_modifications não existe` foi localizado no precheck antigo, não na criação da tabela: o arquivo consultava o catálogo antes da atualização. A tentativa seguinte revelou que comandos `PREPARE` ainda podiam ser resolvidos no contexto `information_schema`; as consultas dinâmicas agora qualificam explicitamente o banco alvo e não devolvem result set diretamente pelo `EXECUTE`, evitando a falha de renderização do phpMyAdmin. Os três artefatos foram corrigidos e regenerados. A ordem obrigatória permanece precheck somente leitura → update → verify. Não executar SQL remoto nem repetir a importação até o proprietário confirmar se a Migration 010 foi registrada ou se houve execução parcial. A execução real em MariaDB não foi validada neste ambiente, pois não há cliente/servidor MariaDB descartável disponível.
 
+Precheck aprovado pelo proprietário em 27/11/2026: `migration_010_already_registered = 0`, cinco tabelas novas ausentes, `quantity_expression` ausente, serviço de suspensão sem versão e nenhuma execução parcial identificada. Está autorizada a importação manual do arquivo `database/updates/010_suspension_modification_catalog.sql` corrigido, seguida do verify; o agente não executa SQL remoto.
+
 ## Configuração desta aplicação
 
 1. Conectar o repositório GitHub na opção Node.js Web App.
