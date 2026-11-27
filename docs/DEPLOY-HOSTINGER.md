@@ -150,6 +150,10 @@ Requests têm timeout de 120 s; não há WebSockets de entrada nem workers sempr
 
 Se o código publicado estiver em `0.2.1`, mas um login com payload válido retornar `INTERNAL_ERROR`, verificar o histórico de deploy: o commit pode estar no GitHub sem ter sido aplicado pela Web App. Após o redeploy, consultar o diagnóstico de conexão; a instalação da estrutura deve seguir o procedimento manual pelo phpMyAdmin. Falhas de banco devem aparecer como `503 DATABASE_NOT_READY`.
 
+## Migration 011 — Fase 3.14
+
+A Migration 011 é incremental e necessária porque a regra persistida de `OTHER_STATE` para `LOWERED_SUSPENSION` não existia na Migration 010, além de atualizar os rótulos dos checklists. Não executar SQL remoto a partir do Codex. Depois da revisão e autorização, importar no phpMyAdmin, nesta ordem: `database/updates/011_suspension_form_usability_precheck.sql`, `database/updates/011_suspension_form_usability.sql` e `database/updates/011_suspension_form_usability_verify.sql`. O precheck é somente leitura; o verify deve retornar a regra `MANUAL_REVIEW` de prioridade 1 e uma única linha em `schema_migrations`.
+
 ## Diagnóstico temporário de conexão MySQL
 
 Na inicialização do `server/index.js`, a aplicação executa o diagnóstico privado usando o mesmo pool de `server/database.js`. Os resultados aparecem nos logs da aplicação Node.js da Hostinger: painel da Web App → logs/runtime logs da aplicação → reiniciar/redeploy → procurar por `[database-diagnostic]`.

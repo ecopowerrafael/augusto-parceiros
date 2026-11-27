@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.10] — Usabilidade do simulador de suspensão — 27/11/2026
+
+- Unificados os dois simuladores no renderer declarativo compartilhado, com erros estruturados, rótulos persistidos, foco no primeiro campo inválido e limpeza de valores ocultos.
+- Corrigida a apresentação de modificações adicionais no resultado, PDF e WhatsApp, preservando os totais calculados pelo backend.
+- Criada a Migration 011 para rótulos semânticos dos checklists e regra declarativa que encaminha `OTHER_STATE` para análise manual no serviço de suspensão.
+- Nenhum SQL remoto foi executado, nenhuma chamada real à Simples API foi realizada e a publicação na `main` permanece pendente de autorização.
+
 ## [0.4.9] — Suspensão e catálogo de modificações — 26/11/2026
 
 - Corrigidos os precheck/verify da Migration 010 para não consultar tabelas novas antes da criação e para diagnosticar execução parcial sem interromper todas as verificações.

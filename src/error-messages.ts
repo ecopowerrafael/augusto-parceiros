@@ -49,6 +49,8 @@ const simulationFieldLabels: Record<string, string> = {
   'vehicle_donor.plate': 'Placa de origem',
   'vehicle_target.engine_cc': 'Cilindrada original',
   'vehicle_donor.engine_cc': 'Cilindrada do motor',
+  'wheels.include': 'Regularização de rodas e pneus',
+  'modifications.additional': 'Modificações adicionais',
 }
 
 export function friendlyApiDetails(code: unknown, details: unknown) {
@@ -59,7 +61,7 @@ export function friendlyApiDetails(code: unknown, details: unknown) {
       if (!detail || typeof detail !== 'object') return ''
       const field = 'field' in detail ? String(detail.field) : ''
       const message = 'message' in detail ? String(detail.message) : ''
-      return message ? `${simulationFieldLabels[field] || field}: ${message}` : ''
+      return message ? `${simulationFieldLabels[field] || 'Campo informado'}: ${message}` : ''
     }).filter(Boolean)
     return messages.length ? `Dados inválidos no simulador: ${messages.join(' ')}` : ''
   }

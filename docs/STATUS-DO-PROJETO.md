@@ -305,4 +305,13 @@ Fase 3.9 — regras declarativas, simulador comercial e PDF profissional — ver
 
 ## Próxima missão
 
-Homologar visualmente o resultado, PDF, impressão e compartilhamento da versão `0.3.9` na Hostinger com dados fictícios. Não iniciar a Fase 4.
+### Atualização — Fase 3.14 / versão 0.4.10
+
+- Implementação local concluída na branch `feature/fase-3-14-usabilidade-suspensao`; a `main` não foi alterada.
+- Os dois simuladores reutilizam `ServiceFieldRenderer` e `ServiceResultView`; erros estruturados preservam valores e destacam o primeiro campo inválido.
+- UF é apresentada como `São Paulo` e `Outros estados`; a Migration 011 prepara a regra persistida de análise manual para `OTHER_STATE` no serviço de suspensão e atualiza os rótulos semânticos dos checklists.
+- Modificações adicionais são carregadas do catálogo persistido, podem ser repetidas/removidas e aparecem individualmente no resultado, PDF e WhatsApp sem preço fixo no frontend.
+- Validações locais executadas nesta missão: lint, typecheck, build, `git diff --check`, sintaxe Node, validador SQL e 154 testes automatizados aprovados.
+- Limitações: não há MariaDB descartável disponível; a Migration 011 foi validada estaticamente e não foi executada remotamente. Navegador/Hostinger aguardam homologação manual.
+
+Próxima missão: importar a Migration 011 somente após autorização, publicar a branch em ambiente de testes e homologar manualmente os dois simuladores, PDF, impressão e WhatsApp com dados fictícios. Não iniciar a Fase 4.

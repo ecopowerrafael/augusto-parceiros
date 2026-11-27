@@ -6,7 +6,7 @@ Antes da nova homologação, conferir no simulador integrado ao construtor e no 
 
 ## Estado
 
-Implementação publicada na `main` em ambiente de testes, versão `0.4.9`. A Migration 010 foi instalada e verificada pelo proprietário na Hostinger; não reimportar a migration nem executar SQL remoto.
+Implementação publicada na `main` em ambiente de testes, versão `0.4.9`. A Migration 010 foi instalada e verificada pelo proprietário na Hostinger; não reimportar a migration nem executar SQL remoto. Para a Fase 3.14, a Migration 011 foi preparada para os rótulos semânticos e a regra de `OTHER_STATE`; sua importação aguarda autorização específica.
 
 ## Roteiro do administrador
 

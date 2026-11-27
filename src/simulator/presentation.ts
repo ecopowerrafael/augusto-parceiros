@@ -1,6 +1,7 @@
 import { evaluateDeclarativeCondition } from './conditions'
 
 type Field = Record<string, unknown>
+export type PresentationContext = { options?: Record<string, Record<string, string>>; modifications?: Record<string, { name?: string; description?: string | null }> }
 
 const labels: Record<string, string> = {
   'vehicle_target.plate': 'Placa do veículo',
@@ -27,8 +28,11 @@ const present = (value: unknown) => value !== undefined && value !== null && Str
 
 export const friendlyLabel = (field: Field) => labels[String(field.field_key || '')] || String(field.label || 'Informação')
 
-export const friendlyValue = (value: unknown, fieldKey = '') => {
+export const friendlyValue = (value: unknown, fieldKey = '', presentation?: PresentationContext) => {
   if (typeof value === 'boolean') return value ? 'Sim' : 'Não'
+  if (Array.isArray(value)) return value.map((entry) => { const code = String((entry as Record<string, unknown>)?.code || ''); const name = presentation?.modifications?.[code]?.name || code; const description = String((entry as Record<string, unknown>)?.description || '').trim(); return description ? `${name} — ${description}` : name }).join('; ')
+  const configured = presentation?.options?.[fieldKey]?.[String(value)]
+  if (configured) return configured
   const text = optionLabels[String(value)] || String(value)
   if (fieldKey.endsWith('power_cv')) return `${new Intl.NumberFormat('pt-BR').format(Number(value))} CV`
   if (fieldKey.endsWith('engine_cc')) return `${new Intl.NumberFormat('pt-BR').format(Number(value))} cm³`
@@ -43,12 +47,12 @@ export const visiblePresentationFields = (fields: Field[], values: Record<string
   return !condition || evaluateDeclarativeCondition(condition, values)
 })
 
-export const buildManualWhatsAppMessage = (args: { template?: unknown; serviceName: string; fields: Field[]; values: Record<string, unknown>; reasons?: string[] }) => {
+export const buildManualWhatsAppMessage = (args: { template?: unknown; serviceName: string; fields: Field[]; values: Record<string, unknown>; reasons?: string[]; presentation?: PresentationContext }) => {
   const rows = visiblePresentationFields(args.fields, args.values)
   const vehicle = rows.filter((field) => String(field.field_key).startsWith('vehicle_target.'))
   const donor = rows.filter((field) => String(field.field_key).startsWith('vehicle_donor.'))
   const other = rows.filter((field) => !String(field.field_key).startsWith('vehicle_target.') && !String(field.field_key).startsWith('vehicle_donor.'))
-  const section = (title: string, items: Field[]) => items.length ? `\n🚘 *${title}*\n${items.map((field) => `• ${friendlyLabel(field)}: ${friendlyValue(args.values[String(field.field_key)], String(field.field_key))}`).join('\n')}` : ''
+  const section = (title: string, items: Field[]) => items.length ? `\n🚘 *${title}*\n${items.map((field) => `• ${friendlyLabel(field)}: ${friendlyValue(args.values[String(field.field_key)], String(field.field_key), args.presentation)}`).join('\n')}` : ''
   const reason = args.reasons?.filter(Boolean).join(' ') || 'Os dados informados precisam ser analisados individualmente.'
   const base = String(args.template || '👋 Olá! Gostaria de solicitar uma análise manual do meu cadastro de motor.').trim()
   return `${base}\n\n${section('DADOS DO VEÍCULO', vehicle)}${section('MOTOR QUE DESEJO INSTALAR', donor)}${section('INFORMAÇÕES ADICIONAIS', other)}\n\n⚠️ *RESULTADO DA ANÁLISE*\n${reason}\n\nGostaria de verificar com um consultor se existe alguma alternativa para regularizar meu veículo.\n\n📲 Consulta realizada pela plataforma Doc Motor.\n🌐 docmotor.online`.replace(/\n{3,}/g, '\n\n')

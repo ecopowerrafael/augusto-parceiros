@@ -226,6 +226,32 @@ function validateModificationAnswers(values, catalog = []) {
   return errors
 }
 
+function presentationMetadata(fields, options, catalog) {
+  const optionsByField = new Map()
+  for (const field of fields) optionsByField.set(field.field_key, {})
+  for (const option of options) {
+    const field = fields.find((candidate) => candidate.id === option.field_id)
+    if (field) optionsByField.get(field.field_key)[String(option.option_value)] = String(option.option_label)
+  }
+  return {
+    options: Object.fromEntries(optionsByField),
+    modifications: Object.fromEntries(catalog.filter((item) => item?.code).map((item) => [String(item.code), { name: String(item.name || item.code), description: item.description || null }])),
+  }
+}
+
+function displayItems(items, values, catalog) {
+  const additional = Array.isArray(values['modifications.additional']) ? values['modifications.additional'].filter((entry) => entry && typeof entry === 'object' && String(entry.code || '').trim()) : []
+  if (!additional.length) return items
+  const base = items.find((item) => item.code === 'ADDITIONAL_MODIFICATION')
+  if (!base) return items
+  const unit = base.amount_override_cents ?? base.default_amount_cents
+  const expanded = additional.map((entry) => {
+    const item = catalog.find((candidate) => candidate.code === entry.code)
+    return { ...base, code: `${base.code}:${entry.code}`, source_billing_code: base.code, modification_code: String(entry.code), name: `Regularização de ${item?.name || entry.code}`, description: entry.description || null, quantity: 1, amount_cents: unit, unit_amount_cents: unit, total_cents: unit === null || unit === undefined ? null : Number(unit) }
+  })
+  return [...items.filter((item) => item.code !== 'ADDITIONAL_MODIFICATION'), ...expanded]
+}
+
 export function evaluateService({ fields, options = [], billingItems = [], rules = [], documents = [], messages = [], answers = {}, context = {}, modificationCatalog = [] }) {
   const input = { ...context, ...answers }
   const category = String(input['vehicle_target.category'] || '').toUpperCase()
@@ -243,7 +269,7 @@ export function evaluateService({ fields, options = [], billingItems = [], rules
     if (visible) visibleFields.add(field.field_key); else delete normalized.values[field.field_key]
     const applies = visible && (!requiredCondition || evaluateCondition(requiredCondition, normalized.values))
     const value = normalized.values[field.field_key]
-    if (applies && field.is_required && (value === undefined || value === null || value === '')) normalized.errors.push({ field: field.field_key, code: 'REQUIRED_FIELD', message: 'Preencha este campo para continuar.' })
+    if (applies && (field.is_required || requiredCondition) && (value === undefined || value === null || value === '')) normalized.errors.push({ field: field.field_key, label: field.label, code: 'REQUIRED_FIELD', message: 'Preencha este campo para continuar.' })
   }
   normalized.errors.push(...validateModificationAnswers(normalized.values, modificationCatalog))
   if (normalized.errors.length) { const error = new Error('INVALID_SIMULATION_INPUT'); error.code = 'INVALID_SIMULATION_INPUT'; error.details = normalized.errors; throw error }
@@ -253,10 +279,13 @@ export function evaluateService({ fields, options = [], billingItems = [], rules
     const ruleActions = (rule.actions || []).filter((action) => action && action.action_type); for (const action of ruleActions) { actions.push(action); if (action.action_type === 'BLOCK_AUTOMATED_QUOTE') blocked = true; if (action.action_type === 'MANUAL_REVIEW' || action.action_type === 'REQUIRE_ADMIN_APPROVAL') manualReview = true; if (action.action_type === 'CLASSIFY_VIABILITY') viability = action.payload?.result || viability; if (action.action_type === 'ADD_BILLING_ITEM' && action.target_key && !appliedItems.has(action.target_key)) { const target = billingItems.find((item) => item.code === action.target_key); if (target) appliedItems.set(target.code, { ...target, reason: 'Regra atendida' }) } if (action.action_type === 'REMOVE_BILLING_ITEM' && action.target_key) appliedItems.delete(action.target_key) }
   }
   for (const document of documents) { const condition = document.condition_expression ? (typeof document.condition_expression === 'string' ? JSON.parse(document.condition_expression) : document.condition_expression) : null; if (document.requirement_type === 'REQUIRED' || (condition && evaluateCondition(condition, values))) documentsResult.push(document) }
+  const selectedModificationCodes = new Set(Array.isArray(values['modifications.additional']) ? values['modifications.additional'].map((entry) => String(entry?.code || '')).filter(Boolean) : [])
+  for (const item of modificationCatalog) for (const document of item.documents || []) if (selectedModificationCodes.has(String(item.code)) && document.requirement_type !== 'DISPENSED') { const condition = document.condition_expression ? (typeof document.condition_expression === 'string' ? JSON.parse(document.condition_expression) : document.condition_expression) : null; if (!condition || evaluateCondition(condition, values)) documentsResult.push(document) }
+  const uniqueDocuments = [...new Map(documentsResult.map((document) => [String(document.document_code || document.name), document])).values()]
   const items = [...appliedItems.values()].map((item) => { const quantity = quantityFor(item, values); return { ...item, quantity, amount_cents: item.amount_override_cents ?? item.default_amount_cents, total_cents: item.amount_override_cents !== null && item.amount_override_cents !== undefined ? Number(item.amount_override_cents) * quantity : (item.default_amount_cents === null ? null : Number(item.default_amount_cents) * quantity) } })
   const commercialAvailable = !blocked && !manualReview && (viability === 'VIABLE' || viability === 'VIABLE_WITH_REQUIREMENTS')
   const commercialItems = commercialAvailable ? items : []
   const finalViability = blocked ? 'OUT_OF_CRITERIA' : manualReview ? 'MANUAL_REVIEW' : viability || 'UNCLASSIFIED'
   const messagesResult = messages.filter((message) => { const condition = message.condition_expression ? (typeof message.condition_expression === 'string' ? JSON.parse(message.condition_expression) : message.condition_expression) : null; if (condition && !evaluateCondition(condition, values)) return false; const key = String(message.message_key || ''); if (key.startsWith('MANUAL_REVIEW_')) return !commercialAvailable; return commercialAvailable || !key.startsWith('OUT_OF_CRITERIA_') })
-  return { values, items: commercialItems, total_cents: commercialAvailable ? commercialItems.reduce((sum, item) => sum + (item.include_in_total && item.total_cents !== null ? item.total_cents : 0), 0) : null, missing_amount_items: commercialAvailable ? items.filter((item) => item.total_cents === null).map((item) => item.code) : [], documents: documentsResult, messages: messagesResult, actions, trace, reasons: trace.filter((item) => item.matched && item.description).map((item) => item.description), blocked, manual_review: manualReview, commercial_available: commercialAvailable, viability: finalViability }
+  return { values, items: commercialItems, display_items: commercialAvailable ? displayItems(commercialItems, values, modificationCatalog) : [], total_cents: commercialAvailable ? commercialItems.reduce((sum, item) => sum + (item.include_in_total && item.total_cents !== null ? item.total_cents : 0), 0) : null, missing_amount_items: commercialAvailable ? items.filter((item) => item.total_cents === null).map((item) => item.code) : [], documents: uniqueDocuments, messages: messagesResult, presentation: presentationMetadata(fields, options, modificationCatalog), actions, trace, reasons: trace.filter((item) => item.matched && item.description).map((item) => item.description), blocked, manual_review: manualReview, commercial_available: commercialAvailable, viability: finalViability }
 }

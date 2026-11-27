@@ -98,14 +98,15 @@ export function simulateLoadedService(editor, payload) {
 }
 
 async function loadActiveModificationCatalog(pool) {
-  const [catalog] = await pool.execute('SELECT * FROM vehicle_modifications WHERE status = \'ACTIVE\' ORDER BY category, display_order, name')
+  const [catalog] = await pool.execute('SELECT vm.*, bi.default_amount_cents AS billing_amount_cents FROM vehicle_modifications vm LEFT JOIN billing_items bi ON bi.id = vm.billing_item_id WHERE vm.status = \'ACTIVE\' ORDER BY vm.category, vm.display_order, vm.name')
   if (!catalog.length) return catalog
   const [categoryScopes] = await pool.execute('SELECT vmc.modification_id, vc.code FROM vehicle_modification_categories vmc JOIN vehicle_categories vc ON vc.id = vmc.vehicle_category_id')
   const [ufScopes] = await pool.execute('SELECT modification_id, uf FROM vehicle_modification_ufs')
+  const [documents] = await pool.execute('SELECT * FROM vehicle_modification_documents ORDER BY modification_id, display_order, name')
   const categoriesByModification = new Map(); const ufsByModification = new Map()
   for (const scope of categoryScopes) { const values = categoriesByModification.get(scope.modification_id) || []; values.push(scope.code); categoriesByModification.set(scope.modification_id, values) }
   for (const scope of ufScopes) { const values = ufsByModification.get(scope.modification_id) || []; values.push(scope.uf); ufsByModification.set(scope.modification_id, values) }
-  return catalog.map((item) => ({ ...item, vehicle_category_codes: categoriesByModification.get(item.id) || [], ufs: ufsByModification.get(item.id) || [] }))
+  return catalog.map((item) => ({ ...item, vehicle_category_codes: categoriesByModification.get(item.id) || [], ufs: ufsByModification.get(item.id) || [], documents: documents.filter((document) => document.modification_id === item.id) }))
 }
 
 async function insertVersion(connection, serviceId, userId, sourceVersionId = null) {
