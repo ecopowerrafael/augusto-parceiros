@@ -60,7 +60,7 @@ function qualifySql(sql) {
     }
     chunk += current; index += 1
   }
-  flush(); return result
+  flush(); return result.replaceAll('__DOCMOTOR_DATABASE__', quoteDatabase)
 }
 
 function header(description) { return `-- ${description}\n-- Gerado por scripts/generate-hostinger-sql.mjs.\n-- Banco alvo: ${databaseName}.\n-- Importação manual pelo phpMyAdmin; não executar migrations antigas novamente.\n\nUSE ${quoteDatabase};\nSELECT DATABASE() AS selected_database;\n\n` }

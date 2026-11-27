@@ -6,7 +6,7 @@ A Migration 010 cria o catálogo reutilizável `vehicle_modifications`, suas rel
 
 Importação manual: `database/updates/010_suspension_modification_catalog_precheck.sql`, depois `010_suspension_modification_catalog.sql`, depois `010_suspension_modification_catalog_verify.sql`. Não executar remotamente nem reexecutar migrations 001–009. A migration registra-se somente quando as tabelas, catálogo, serviço e campos esperados existirem.
 
-O precheck e o verify foram preparados para banco sem Migration 010 e para execução parcial: primeiro consultam `information_schema.tables`/`information_schema.columns`; consultas de dados a tabelas opcionais são montadas e executadas somente após confirmar a existência. A consulta antiga que acessava `vehicle_modifications` antes do `CREATE TABLE` foi removida. Se o precheck mostrar tabela ausente, não há evidência de que a atualização tenha sido aplicada; não reimporte até confirmar o estado real.
+O precheck e o verify foram preparados para banco sem Migration 010 e para execução parcial: primeiro consultam `information_schema.tables`/`information_schema.columns`; consultas de dados a tabelas opcionais são montadas e executadas somente após confirmar a existência. As consultas preparadas dos artefatos Hostinger qualificam explicitamente `u891593158_doc`, pois o phpMyAdmin pode preparar o comando com `information_schema` como contexto corrente. A consulta antiga que acessava `vehicle_modifications` antes do `CREATE TABLE` foi removida. Se o precheck mostrar tabela ausente, não há evidência de que a atualização tenha sido aplicada; não reimporte até confirmar o estado real.
 
 ## Fase 2 — schema inicial
 

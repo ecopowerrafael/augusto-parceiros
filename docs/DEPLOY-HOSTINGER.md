@@ -8,7 +8,7 @@ Baseado na documentação oficial consultada em 25/11/2026: Hostinger Web Apps N
 
 ### Migration 010 — importação manual pendente
 
-O erro `#1146 vehicle_modifications não existe` foi localizado no precheck antigo, não na criação da tabela: o arquivo consultava o catálogo antes da atualização. Os três artefatos foram corrigidos e regenerados. A ordem obrigatória permanece precheck somente leitura → update → verify. Não executar SQL remoto nem repetir a importação até o proprietário confirmar se a Migration 010 foi registrada ou se houve execução parcial. A execução real em MariaDB não foi validada neste ambiente, pois não há cliente/servidor MariaDB descartável disponível.
+O erro `#1146 vehicle_modifications não existe` foi localizado no precheck antigo, não na criação da tabela: o arquivo consultava o catálogo antes da atualização. A tentativa seguinte revelou que comandos `PREPARE` ainda podiam ser resolvidos no contexto `information_schema`; as consultas dinâmicas agora qualificam explicitamente o banco alvo. Os três artefatos foram corrigidos e regenerados. A ordem obrigatória permanece precheck somente leitura → update → verify. Não executar SQL remoto nem repetir a importação até o proprietário confirmar se a Migration 010 foi registrada ou se houve execução parcial. A execução real em MariaDB não foi validada neste ambiente, pois não há cliente/servidor MariaDB descartável disponível.
 
 ## Configuração desta aplicação
 
