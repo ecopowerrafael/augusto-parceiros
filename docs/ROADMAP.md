@@ -1,5 +1,7 @@
 # Roadmap
 
+3.13. Regularização de suspensão e catálogo de modificações — versão local `0.4.9` em `feature/fase-3-13-suspensao-modificacoes`; implementação e validação local concluídas. Migration 010 gerada para importação manual, pendente revisão/importação/verificação do proprietário. Não publicada na `main`.
+
 3.12. Ajustes finais do simulador — versão `0.4.8` autorizada para publicação; Migration 009 importada/verificada manualmente na Hostinger. Homologação funcional online pendente dos testes do proprietário.
 
 1. Fundação e site comercial — concluída.

@@ -1,5 +1,21 @@
 # Banco de dados
 
+## Migration 010 — catálogo de modificações e suspensão
+
+A Migration 010 cria o catálogo reutilizável `vehicle_modifications`, suas relações de categorias/UFs, documentos e mensagens, além de `quantity_expression` para cobranças declarativas. Também renomeia o serviço existente `LOWERED_SUSPENSION` sem duplicá-lo e inicializa sua primeira versão DRAFT, campos, opções, regras e cobranças.
+
+Importação manual: `database/updates/010_suspension_modification_catalog_precheck.sql`, depois `010_suspension_modification_catalog.sql`, depois `010_suspension_modification_catalog_verify.sql`. Não executar remotamente nem reexecutar migrations 001–009. A migration registra-se somente quando as tabelas, catálogo, serviço e campos esperados existirem.
+
+O precheck e o verify foram preparados para banco sem Migration 010 e para execução parcial: primeiro consultam `information_schema.tables`/`information_schema.columns`; consultas de dados a tabelas opcionais são montadas e executadas somente após confirmar a existência. As consultas preparadas dos artefatos Hostinger qualificam explicitamente `u891593158_doc`, pois o phpMyAdmin pode preparar o comando com `information_schema` como contexto corrente. Para evitar o erro de renderização `Undefined index: statement/parser`, `EXECUTE` não devolve result set: grava em variáveis com `SELECT ... INTO`, seguido de `SELECT` normal. A consulta antiga que acessava `vehicle_modifications` antes do `CREATE TABLE` foi removida. Se o precheck mostrar tabela ausente, não há evidência de que a atualização tenha sido aplicada; não reimporte até confirmar o estado real.
+
+Precheck inicial confirmado pelo proprietário em 27/11/2026: banco `u891593158_doc`, MariaDB `11.8.9-MariaDB-log`, seis dependências-base presentes, Migration 010 não registrada, cinco tabelas novas ausentes, coluna `quantity_expression` ausente, serviço de suspensão sem versão e três itens-base de cobrança presentes. Após as falhas de importação, o precheck de recuperação confirmou execução parcial; a próxima etapa é executar novamente o precheck atualizado, importar o update corrigido e depois executar o verify.
+
+Após as tentativas de importação, o proprietário reportou `#1052` na carga de opções e, posteriormente, `#1054 Coluna 'r.name' desconhecida` na carga de regras técnicas. O primeiro erro foi causado por `SELECT id` ambíguo em uma subconsulta; o segundo, pela ausência dos aliases `name` e `description` na primeira linha da tabela derivada `r`, embora esses nomes fossem usados pelo `SELECT` externo. Ambos foram corrigidos na Migration 010 canônica e nos artefatos gerados. Como DDL e seeds anteriores podem ter permanecido após cada falha, o estado parcial deve ser reavaliado pelo precheck antes de repetir a importação.
+
+Na tentativa seguinte, o proprietário reportou `#4025 CONSTRAINT technical_rules.conditions failed`. A causa exata foi a regra `5A000000-0000-4000-8000-000000000006` (`Checklist compatível`): o literal JSON da condição complexa não fechava corretamente a estrutura externa após o grupo `any` aninhado. A regra 005 (`Suspensão compatível`) foi investigada e seu JSON é válido. A Migration 010 agora fecha corretamente `all`/`any`, o validador faz `JSON.parse` dos literais JSON presentes no SQL e o verify passou a contar as sete regras de suspensão com `JSON_VALID(conditions) = 1`.
+
+O precheck de recuperação confirmou execução parcial: as cinco tabelas novas, a coluna `quantity_expression`, os 27 itens do catálogo e uma versão do serviço já existem; a migration ainda não está registrada e somente 5 dos 7 campos específicos do checklist foram encontrados. Como os comandos são idempotentes e não destrutivos, retomar com o SQL completo corrigido e executar o verify imediatamente depois; não inserir manualmente o registro em `schema_migrations`.
+
 ## Fase 2 — schema inicial
 
 MySQL da Hostinger é conectado por `DATABASE_URL`. `migrations/001_initial.sql` cria usuários, parceiros, membros, clientes, sessões, tokens de reset, rate limits e auditoria, com chaves estrangeiras, índices e unicidade de e-mail/documento.
@@ -27,6 +43,8 @@ Toda entidade de negócio deve carregar o escopo de tenant quando aplicável. Al
 O banco `u891593158_doc` é selecionado explicitamente somente nos artefatos manuais de importação. Eles começam com `USE \`u891593158_doc\`;` e `SELECT DATABASE()`, qualificam as tabelas da aplicação e usam `table_schema = 'u891593158_doc'` nas consultas de `information_schema`. As migrations canônicas continuam sem nome de banco.
 
 O gerador local é `scripts/generate-hostinger-sql.mjs`. Ele produz pré-verificação, atualização e verificação posterior; a atualização deve ser executada somente depois da leitura da pré-verificação. DDL pode realizar commit implícito no MySQL, portanto não é prometido rollback transacional completo. Em falha parcial, preservar o erro, fazer backup/verificação e criar uma nova migration incremental; não repetir uma migration aplicada.
+
+O gerador preserva aspas SQL escapadas em comandos `PREPARE` e só qualifica identificadores fora de strings. O validador `scripts/validate-migration-inserts.mjs` verifica colunas/valores, `JSON_OBJECT`, ordem de criação/uso de tabelas e registro final em `schema_migrations`; isso é validação estática e não substitui MariaDB.
 # Fase 3.5 — comissões
 
 `004_partner_commissions.sql` cria `commission_settings` e `partner_commission_overrides`. O registro inicial é `NONE`, sem valores comerciais. A importação é manual e deve ser verificada antes de ativar as telas dependentes.

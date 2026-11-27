@@ -6,6 +6,20 @@ O código está na versão `0.4.8`, publicada na `main` no commit `3373ee5845ca0
 
 Baseado na documentação oficial consultada em 25/11/2026: Hostinger Web Apps Node.js suporta planos Business/Unlimited e Cloud; presets React, Vite e Express; Node 18, 20, 22 e 24; deploy via GitHub; variáveis de ambiente no painel; e MySQL com `127.0.0.1`.
 
+### Migration 010 — importação manual pendente
+
+O erro `#1146 vehicle_modifications não existe` foi localizado no precheck antigo, não na criação da tabela: o arquivo consultava o catálogo antes da atualização. Depois, foram corrigidos o contexto de `PREPARE`/`EXECUTE` para phpMyAdmin, a consulta `SELECT id` ambígua na carga de opções e a ausência de aliases `name`/`description` na tabela derivada da carga de regras técnicas (`#1054`). Os três artefatos foram regenerados após a última correção. A ordem obrigatória permanece precheck somente leitura → update → verify. Não executar SQL remoto nem repetir a importação sem confirmar o estado parcial pelo precheck. A execução real em MariaDB não foi validada neste ambiente, pois não há cliente/servidor MariaDB descartável disponível.
+
+O precheck inicial foi aprovado pelo proprietário em 27/11/2026, mas as tentativas seguintes deixaram execução parcial confirmada: cinco tabelas novas presentes, catálogo com 27 registros, uma versão do serviço, `quantity_expression` presente, `migration_010_already_registered = 0` e 5/7 campos específicos presentes. Antes da retomada, executar novamente o precheck atualizado; depois importar o arquivo corrigido e executar o verify. O agente não executa SQL remoto.
+
+A primeira importação falhou posteriormente com `#1052` na subconsulta da carga de opções; o alias foi corrigido para `sv.id`. Como o erro ocorreu depois de DDL e seeds iniciais, executar novamente o precheck antes de uma retomada. A retomada só deve usar o SQL regenerado após o commit da correção.
+
+O precheck de recuperação confirmou cinco tabelas novas, catálogo com 27 registros, uma versão do serviço, `quantity_expression` presente, migration ainda não registrada e 5/7 campos específicos presentes. Esse é o cenário parcial esperado após a falha; a retomada pode usar o SQL completo corrigido, sem excluir estruturas ou registrar a migration manualmente.
+
+Após a correção dos aliases, uma nova tentativa encontrou `#4025` em `technical_rules.conditions`. A regra afetada foi `5A000000-0000-4000-8000-000000000006` (`Checklist compatível`), cujo JSON tinha fechamento incompleto no `all` externo após o `any` aninhado. Os três SQLs foram regenerados; o verify agora também informa a quantidade de regras esperadas cujo `conditions` passa em `JSON_VALID`.
+
+Validação funcional posterior informada pelo proprietário: Migration 010 registrada com sucesso, verify com 53 consultas e estrutura completa (17 campos, 6 cobranças, 7 regras, 27 modificações e 54 vínculos de categoria). Não reimportar a Migration 010. A auditoria local também corrigiu o simulador para aplicar os escopos de categoria/UF persistidos no catálogo; esta alteração é de código e não exige nova migration.
+
 ## Configuração desta aplicação
 
 1. Conectar o repositório GitHub na opção Node.js Web App.

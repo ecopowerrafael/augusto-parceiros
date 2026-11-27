@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
+import { execFileSync } from 'node:child_process'
 import { describe, expect, it } from 'vitest'
 
 const root = process.cwd()
@@ -18,6 +19,7 @@ const manualFiles = [
   'database/updates/005_application_settings_precheck.sql',
   'database/updates/005_application_settings.sql',
   'database/updates/005_application_settings_verify.sql',
+  'database/updates/010_suspension_modification_catalog.sql',
   'database/install.sql',
   'database/verify.sql',
   'database/create-admin.sql',
@@ -58,5 +60,10 @@ describe('SQL manual da Hostinger', () => {
     expect(install).toContain('003_complete_engine_service_seed.sql')
     expect(install).toContain("'PERCENT_VARIATION'")
     expect(install).toContain("'ITL_CSV_INSPECTION'")
+  })
+
+  it('valida os literais JSON reais da Migration 010', () => {
+    const output = execFileSync(process.execPath, ['scripts/validate-migration-inserts.mjs', 'migrations/010_suspension_modification_catalog.sql'], { cwd: root, encoding: 'utf8' })
+    expect(output).toContain('literais JSON SQL verificados; sintaxe JSON aprovada.')
   })
 })

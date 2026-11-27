@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.4.9] — Suspensão e catálogo de modificações — 26/11/2026
+
+- Corrigidos os precheck/verify da Migration 010 para não consultar tabelas novas antes da criação e para diagnosticar execução parcial sem interromper todas as verificações.
+- Corrigido o gerador Hostinger para preservar aspas SQL escapadas em comandos `PREPARE`; ampliado o validador para conferir ordem de criação/uso e registro final da migration.
+- Corrigidas as consultas dinâmicas dos artefatos Hostinger para qualificar explicitamente `u891593158_doc`, evitando dependência do contexto `information_schema` do phpMyAdmin.
+- Ajustado o `PREPARE` para não devolver result sets diretamente ao phpMyAdmin: resultados são capturados com `SELECT ... INTO` e apresentados por consultas normais.
+- Precheck corrigido executado pelo proprietário sem erro; banco confirmado sem registro, tabelas ou colunas da Migration 010 e sem execução parcial identificada.
+- Corrigida ambiguidade `#1052` na subconsulta da carga de opções (`SELECT sv.id`); o validador passou a detectar `SELECT id` não qualificado em consultas com `JOIN`.
+- Precheck de recuperação confirmou execução parcial segura para retomada: estruturas e catálogo criados, migration não registrada e campos finais ainda pendentes.
+- Corrigida a carga de `technical_rules` da Migration 010: os aliases `name` e `description` agora são declarados na primeira linha da tabela derivada, evitando `#1054` no MariaDB/phpMyAdmin. Artefatos Hostinger e `database/install.sql` regenerados; nenhuma operação remota executada.
+- Corrigida a condição JSON da regra `5A000000-0000-4000-8000-000000000006` (`Checklist compatível`), que causava `#4025` por fechamento incompleto da estrutura `all`/`any`. O validador agora analisa literais JSON SQL e o verify confere `JSON_VALID` nas sete regras de suspensão.
+- Auditoria funcional local da Fase 3.13: o simulador passou a carregar e aplicar escopos de categoria/UF do catálogo de modificações; adicionados testes de filtragem, cenários financeiros e regressão do validador. Nenhum SQL remoto executado.
+
+- Corrigida a inicialização do primeiro DRAFT no construtor para serviços existentes ainda sem versão.
+- Adicionado catálogo central reutilizável de modificações, com CRUD administrativo protegido, status ativo/inativo e bloqueio de cadastro de motor como adicional.
+- Preparada a configuração declarativa de regularização de suspensão, rodas/pneus e grupo repetível de modificações adicionais.
+- Adicionada cobrança declarativa por quantidade e validação backend contra catálogo ativo, duplicidade e descrições obrigatórias.
+- Criada a Migration 010 e os SQLs Hostinger; não executados remotamente.
+- Ajustado o registro da Migration 010 para ocorrer somente após a última regra técnica e as verificações de completude.
+- Validações locais aprovadas; homologação online, importação manual e publicação na `main` permanecem pendentes.
+- Adicionado simulador declarativo administrativo com múltiplas modificações selecionadas do catálogo ativo.
+- Ampliada a administração do catálogo com edição de exigências, documentos, mensagens, referências oficiais e orientações persistidas.
+- Conectada a tela administrativa completa ao painel, incluindo vínculo de cobrança e escopo por categoria de veículo e UF, com persistência protegida no backend.
+- Corrigida a classificação declarativa da suspensão compatível e ampliado o checklist condicional de rodas e pneus; adicionados testes de obrigatoriedade e viabilidade.
+
 ## [0.4.8] — Ajustes finais do simulador — 26/11/2026
 
 - Alinhadas as condições declarativas dos campos do motor no modo PLATE/MANUAL e mantida a limpeza de valores ocultos.
