@@ -22,7 +22,7 @@ Serviços, versões, seções, campos, opções, cobranças, documentos, mensage
 - `generateSimulationPdf`: gerador único do PDF de simulação.
 - `DeclarativeSimulationPage`: carrega o serviço pelo código persistido e não por formulário específico em código.
 
-As páginas operacionais devem parametrizar o código do serviço e continuar usando essas mesmas camadas. Serviços sem configuração publicada permanecem em desenvolvimento até serem configurados e homologados pelo proprietário.
+As páginas operacionais devem parametrizar o código do serviço e continuar usando essas mesmas camadas. Para parceiros, a API aceita apenas versões `PUBLISHED` de serviços ativos e explicitamente disponíveis ao perfil; configurações administrativas e rascunhos não são expostos. Serviços sem configuração publicada permanecem em desenvolvimento até serem configurados e homologados pelo proprietário.
 
 ## Estado da Fase 3.15
 

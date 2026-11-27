@@ -6,6 +6,8 @@
 - Menus administrativo e de parceiros reorganizados; o simulador genérico foi removido do menu e a rota legada retorna ao contexto de configuração.
 - `DeclarativeSimulationPage` passou a receber o código persistido do serviço, preservando o renderer, avaliador, resultado e PDF compartilhados.
 - Rotas operacionais preparadas para cadastro de motor, suspensão, outras modificações, emissor de CRLV e consultas. Serviços não configurados informam desenvolvimento sem dados fictícios.
+- A API operacional de parceiros reutiliza o mesmo carregamento, renderer e avaliador, mas só permite versões publicadas, serviços ativos e disponibilidade explícita para parceiros.
+- O PDF compartilhado passou a medir títulos longos pela largura real antes de desenhar o conteúdo.
 - Não foi criada Migration 013: nenhuma alteração persistida foi comprovadamente necessária nesta etapa. Não houve SQL remoto nem chamada à Simples API.
 - Validações executadas: typecheck, lint, build e 156 testes automatizados aprovados. A inspeção visual online permanece pendente do proprietário.
 
