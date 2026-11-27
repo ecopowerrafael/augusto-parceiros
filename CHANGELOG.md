@@ -7,6 +7,7 @@
 - Criadas rotas operacionais para cadastro de motor, suspensão, outras modificações, emissor de CRLV e consultas; funcionalidades ainda não configuradas informam desenvolvimento sem simular resultados.
 - Adicionada API autenticada para parceiros, limitada a serviços ativos, publicados e disponíveis ao perfil; motor e suspensão reutilizam o mesmo fluxo declarativo do administrador.
 - O gerador de PDF passou a quebrar títulos longos pela largura disponível.
+- Fase 3.15 integrada na `main` pelo merge `4778456`; rollback `rollback-before-0-4-11-20261127`. Homologação visual online permanece pendente.
 - Criados `docs/ESTRUTURA-OPERACIONAL.md` e `docs/HOMOLOGACAO-FASE-3.15.md`. Nenhuma migration nova ou chamada à Simples API foi realizada.
 
 ## [0.4.10] — Usabilidade do simulador de suspensão — 27/11/2026

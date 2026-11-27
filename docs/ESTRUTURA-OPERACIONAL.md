@@ -26,4 +26,4 @@ As páginas operacionais devem parametrizar o código do serviço e continuar us
 
 ## Estado da Fase 3.15
 
-A versão `0.4.11` cria a navegação operacional e torna a página declarativa parametrizável. A publicação foi feita somente na branch de desenvolvimento para avaliação; não há Migration 013 nesta etapa, pois não foi comprovada necessidade de alterar o schema.
+A versão `0.4.11` cria a navegação operacional e torna a página declarativa parametrizável. Foi integrada na `main` pelo merge `4778456`; não há Migration 013 nesta etapa, pois não foi comprovada necessidade de alterar o schema.

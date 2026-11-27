@@ -162,7 +162,11 @@ A Fase 3.14 foi integrada na `main` pelo merge `f649d70c86e52a0f4fd15bb6617b149a
 
 ## Fase 3.15 — branch de desenvolvimento
 
-A versão `0.4.11` está na branch `feature/fase-3-15-estrutura-operacional` e não foi integrada à `main`. A alteração é de navegação, parametrização de páginas e documentação; não há Migration 013 nem SQL remoto. Publicar somente a branch autorizada para homologação e aguardar autorização específica antes de integrar na `main`.
+A versão `0.4.11` foi integrada na `main` pelo merge `4778456` após as validações locais. O rollback é `rollback-before-0-4-11-20261127`, apontando para `addc007a5d4bfe3954ae3dd4949adffa9cca7f34`. A alteração é de navegação, parametrização de páginas e documentação; não há Migration 013 nem SQL remoto. A Hostinger deve atualizar a partir da `main`; a homologação funcional continua manual.
+
+### Cache e PWA na publicação 0.4.11
+
+O repositório não contém registro de Service Worker ativo nem cache offline de rotas autenticadas. O `public/manifest.json` foi sincronizado para `0.4.11`; não é necessário revogar um Service Worker anterior. Se a interface antiga permanecer após o deploy, conferir o horário de propagação, recarregar sem cache e limpar somente o cache HTTP do domínio no navegador. Não armazenar dados privados ou documentos em cache offline.
 
 ## Migration 012 — correção semântica aplicada
 
