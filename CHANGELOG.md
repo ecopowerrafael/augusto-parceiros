@@ -10,6 +10,7 @@
 - Validações locais aprovadas; homologação online, importação manual e publicação na `main` permanecem pendentes.
 - Adicionado simulador declarativo administrativo com múltiplas modificações selecionadas do catálogo ativo.
 - Ampliada a administração do catálogo com edição de exigências, documentos, mensagens, referências oficiais e orientações persistidas.
+- Conectada a tela administrativa completa ao painel, incluindo vínculo de cobrança e escopo por categoria de veículo e UF, com persistência protegida no backend.
 - Corrigida a classificação declarativa da suspensão compatível e ampliado o checklist condicional de rodas e pneus; adicionados testes de obrigatoriedade e viabilidade.
 
 ## [0.4.8] — Ajustes finais do simulador — 26/11/2026

@@ -183,6 +183,14 @@ export function createServiceRouter({ databaseRequired, activeAccount }) {
     const [items] = await getDatabasePool().execute(`SELECT vm.*, bi.code AS billing_code, bi.name AS billing_name, bi.default_amount_cents AS billing_amount_cents FROM vehicle_modifications vm LEFT JOIN billing_items bi ON bi.id = vm.billing_item_id ORDER BY vm.category, vm.display_order, vm.name`)
     response.json({ items })
   })
+  router.get('/modification-catalog-reference-data', async (_request, response) => {
+    const [[categories], [states], [billingItems]] = await Promise.all([
+      getDatabasePool().execute('SELECT id, code, name FROM vehicle_categories ORDER BY name'),
+      getDatabasePool().execute('SELECT uf, name FROM brazilian_states ORDER BY uf'),
+      getDatabasePool().execute("SELECT id, code, name, default_amount_cents FROM billing_items WHERE status <> 'ARCHIVED' ORDER BY name"),
+    ])
+    response.json({ categories, states, billingItems })
+  })
   router.post('/modification-catalog', requireCsrf, async (request, response) => {
     const parsed = vehicleModificationSchema.safeParse(request.body); if (!parsed.success) return bodyError(response, parsed)
     const data = parsed.data

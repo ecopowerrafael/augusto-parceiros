@@ -6,7 +6,7 @@ import { FUEL_OPTIONS, normalizeCylinderInput, normalizeCylinderToCc, normalizeF
 import { evaluateDeclarativeCondition } from '../simulator/conditions'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ServiceResultView } from '../simulator/ServiceResultView'
-import { ModificationCatalogPage } from './ModificationCatalogPage'
+import { ModificationCatalogAdminPage } from './ModificationCatalogAdminPage'
 import { DeclarativeSimulationPage } from './DeclarativeSimulationPage'
 
 type User = { id: string; role: string; status: string; name: string; email: string }
@@ -191,7 +191,7 @@ export function DashboardPage({ role }: { role: 'ADMINISTRATOR' | 'PARTNER' | 'C
     if (path === '/admin/clientes') return <AdminUsersPage user={user} />
     if (path === '/admin/configuracao-servicos') return <DashboardFrame user={user} title="CONFIGURAÇÃO DE SERVIÇOS"><ServiceBuilder /></DashboardFrame>
     if (path === '/admin/simulador-declarativo') return <DashboardFrame user={user} title="SIMULADOR DECLARATIVO"><DeclarativeSimulationPage /></DashboardFrame>
-    if (path === '/admin/catalogo-modificacoes') return <DashboardFrame user={user} title="CATÁLOGO DE MODIFICAÇÕES"><ModificationCatalogPage /></DashboardFrame>
+    if (path === '/admin/catalogo-modificacoes') return <DashboardFrame user={user} title="CATÁLOGO DE MODIFICAÇÕES"><ModificationCatalogAdminPage /></DashboardFrame>
     if (path === '/admin/comissoes') return <AdminCommissionsPage user={user} />
     if (path === '/admin/servicos-solicitados') return <AdminPlaceholderPage user={user} title="SOLICITAÇÕES DE SERVIÇO" text="Nenhuma solicitação operacional é exibida nesta fase." />
     if (path === '/admin/chaves-api') return <AdminApiKeysPage user={user} />
