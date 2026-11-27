@@ -34,3 +34,6 @@ Hostinger Web Apps suporta Node 18/20/22/24, React/Vite/Express, variáveis de a
 # Fase 3.5
 
 A área administrativa usa rotas independentes sobre o mesmo shell autenticado. A aprovação de parceiro é uma transação única que bloqueia a empresa, sincroniza os usuários membros e registra auditoria. Falhas retornam request ID e são observáveis somente nos logs privados.
+# Fase 3.19 — fronteira híbrida da suspensão
+
+`SUSPENSION_V1` possui formulário e avaliador próprios em `src/suspension` e `server/suspension-flow.js`. O fluxo consulta no banco apenas catálogo, vínculos e preços comerciais; perguntas, opções, condições e semântica técnica ficam em uma única definição versionada no código. O `MOTOR_V1` não é alterado. O simulador declarativo legado continua disponível para rollback e serviços ainda não migrados.

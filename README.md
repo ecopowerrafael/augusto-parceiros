@@ -70,3 +70,6 @@ Plataforma de documentação veicular. A versão em desenvolvimento desta branch
 O serviço de regularização de motor utiliza o fluxo operacional `MOTOR_V1`, com formulário React e regras técnicas versionadas em código. Preços, comissões, permissões e disponibilidade continuam sob autoridade do backend e do MySQL. O fluxo declarativo legado permanece disponível para rollback e para os demais serviços durante a migração progressiva.
 
 Consulte `AGENTS.md`, `docs/STATUS-DO-PROJETO.md` e `docs/DEPLOY-HOSTINGER.md` antes de alterar o projeto.
+# Fase 3.19 em desenvolvimento
+
+O fluxo `SUSPENSION_V1` possui formulário React e avaliação backend próprios para administrador, parceiro e simulador do construtor. Perguntas e regras técnicas ficam no código versionado; preços, catálogo e permissões continuam sob autoridade do MySQL. Não há migration nova nesta fase. O cadastro de motor (`MOTOR_V1`) e o simulador declarativo legado permanecem preservados.

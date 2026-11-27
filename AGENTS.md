@@ -1,5 +1,9 @@
 # Doc Motor — instruções para futuras sessões
 
+## Fase 3.19
+
+O fluxo `SUSPENSION_V1` é a implementação híbrida da suspensão: formulário e regras técnicas ficam em `src/suspension/SuspensionForm.tsx` e `server/suspension-flow.js`; catálogo, preços, disponibilidade e comissão continuam persistidos e validados no backend. Não criar migration para perguntas ou condições da suspensão sem comprovar mudança de schema. O `MOTOR_V1` e o simulador declarativo legado devem permanecer regressáveis. Toda validação nova deve cobrir os três pontos de entrada (admin, parceiro e construtor) e nunca depender de chamadas à Simples API.
+
 Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, `docs/ARQUITETURA.md`, `docs/REGRAS-DE-NEGOCIO.md`, `docs/DECISOES-TECNICAS.md` e o `README.md`. O `AGENTS.md` fornecido na missão original define os princípios obrigatórios de engenharia e segurança; ele deve ser preservado como referência de trabalho.
 
 ## Regras locais

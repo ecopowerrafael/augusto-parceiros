@@ -97,7 +97,7 @@ export function simulateLoadedService(editor, payload) {
   return { result, simulated: true, version: editor.version.version_number, externalCalls: 0 }
 }
 
-async function loadActiveModificationCatalog(pool) {
+export async function loadActiveModificationCatalog(pool) {
   const [catalog] = await pool.execute('SELECT vm.*, bi.default_amount_cents AS billing_amount_cents FROM vehicle_modifications vm LEFT JOIN billing_items bi ON bi.id = vm.billing_item_id WHERE vm.status = \'ACTIVE\' ORDER BY vm.category, vm.display_order, vm.name')
   if (!catalog.length) return catalog
   const [categoryScopes] = await pool.execute('SELECT vmc.modification_id, vc.code FROM vehicle_modification_categories vmc JOIN vehicle_categories vc ON vc.id = vmc.vehicle_category_id')
