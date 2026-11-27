@@ -168,6 +168,8 @@ A versão `0.4.11` foi integrada na `main` pelo merge `4778456` após as valida�
 
 O repositório não contém registro de Service Worker ativo nem cache offline de rotas autenticadas. O `public/manifest.json` deve ser sincronizado para `0.5.0`; não é necessário revogar um Service Worker anterior. Se a interface antiga permanecer após o deploy, conferir o horário de propagação, recarregar sem cache e limpar somente o cache HTTP do domínio no navegador. Não armazenar dados privados ou documentos em cache offline.
 
+A versão 0.5.0 foi publicada na `main`. O health check online não foi confirmado pelo Codex nesta sessão porque a resolução DNS local de `docmotor.online` falhou; a validação funcional deve ser feita manualmente na Hostinger.
+
 ## Migration 012 — correção semântica aplicada
 
 A auditoria da Migration 011 confirmou que os textos dos checklists foram atualizados, mas as regras 002 e 006 persistidas anteriormente ainda tratavam `YES`/`NO` como se a pergunta tivesse sentido negativo. A Migration 012 corrigiu essas condições: contato confirmado (`YES`) ou desconhecido (`UNKNOWN`) exige análise manual; ausência de contato (`NO`) é o valor favorável quando os demais requisitos são atendidos. O proprietário informou a aplicação e verificação bem-sucedidas no banco remoto. Não reexecutar a Migration 012 ou migrations anteriores. Os três arquivos são `database/updates/012_suspension_checklist_semantics_precheck.sql`, `database/updates/012_suspension_checklist_semantics.sql` e `database/updates/012_suspension_checklist_semantics_verify.sql`.

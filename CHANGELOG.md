@@ -298,5 +298,6 @@
 - Formulário, opções e regras de motor passaram a ser definidos em código; preços, comissões, permissões e disponibilidade continuam persistidos e validados no backend.
 - Mantido o fluxo declarativo legado para compatibilidade e rollback dos serviços ainda não migrados.
 - Migration 013 retirada do fluxo ativo de instalação e geração Hostinger; seu histórico permanece no Git anterior.
-- Não houve SQL remoto, Migration 014, chamada à Simples API ou integração na `main`.
+- Não houve SQL remoto, Migration 014 ou chamada à Simples API.
+- Publicada na `main` pelo merge `b039b77f0ddef8f31ddb4ca44c16417d8877b504`; homologação visual online permanece pendente.
 

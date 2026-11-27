@@ -49,10 +49,10 @@ Fases posteriores dependem de validação das regras operacionais e não devem s
 ## Fase 3.8 — resultado visual, PDF e compartilhamento
 
 Concluída e incorporada à Fase 3.9 na versão `0.4.2`. A Migration 007 foi instalada manualmente no phpMyAdmin; a homologação funcional online permanece pendente.
-# Fase 3.18 — fundação híbrida e regularização de motor — versão `0.5.0`
+# Fase 3.18 — fundação híbrida e regularização de motor — publicada na `main` — versão `0.5.0`
 
-- Em desenvolvimento na branch `feature/fase-3-18-arquitetura-hibrida-motor`.
+- Implementada na branch `feature/fase-3-18-arquitetura-hibrida-motor` e integrada na `main` pelo commit `b039b77f0ddef8f31ddb4ca44c16417d8877b504`.
 - O serviço de motor utiliza formulário React próprio e regras `MOTOR_V1` em código.
 - O fluxo declarativo legado permanece para rollback e para suspensão, modificações, CRLV e consultas.
 - A Migration 013 está suspensa e não integra o instalador nem os SQLs gerados.
-- Homologação visual e funcional na Hostinger ainda não foi realizada.
+- Homologação visual e funcional na Hostinger aguarda conferência manual do proprietário.

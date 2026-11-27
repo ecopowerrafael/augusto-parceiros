@@ -341,15 +341,17 @@ Fase 3.9 — regras declarativas, simulador comercial e PDF profissional — ver
 - Auditoria para publicação: incompatibilidade semântica confirmada nas regras persistidas 002/006 da suspensão e corrigida pela Migration 012, aplicada/verificada pelo proprietário.
 
 Próxima missão: homologar manualmente os dois simuladores, PDF, impressão e WhatsApp com dados fictícios diretamente na Hostinger. Não iniciar a Fase 4.
-# Fase 3.18 — fundação híbrida e regularização de motor — branch de desenvolvimento — versão 0.5.0
+# Fase 3.18 — fundação híbrida e regularização de motor — publicada na main — versão 0.5.0
 
-- Branch: `feature/fase-3-18-arquitetura-hibrida-motor`.
+- Branch de implementação: `feature/fase-3-18-arquitetura-hibrida-motor`; integração na `main` pelo merge `b039b77f0ddef8f31ddb4ca44c16417d8877b504`.
 - O fluxo `MOTOR_V1` foi implementado para administrador e parceiro com formulário React específico e regras técnicas versionadas em código.
 - Preços e comissões continuam sendo obtidos do MySQL; permissões, disponibilidade e resultado continuam sob autoridade do backend.
 - `ServiceResultView`, PDF, WhatsApp e o layout autenticado permanecem compartilhados.
 - Fluxo declarativo preservado para suspensão e demais serviços, permitindo rollback explícito.
 - Migration 013 removida do fluxo ativo de instalação e geração SQL. Não foi importada, não foi registrada e não houve Migration 014.
 - Não houve SQL remoto, chamada à Simples API ou publicação na `main`.
-- Testes, build e homologação visual ainda pendentes nesta etapa.
+- Lint, typecheck, build, sintaxe Node, `git diff --check` e 164 testes automatizados foram aprovados.
+- Health check online não foi confirmado nesta sessão porque o DNS local não resolveu `docmotor.online`.
+- Homologação visual e funcional na Hostinger permanece pendente do proprietário.
 
-Próximo passo: executar a suíte local completa, revisar a paridade do motor e preparar a homologação manual sem integrar na `main`.
+Próximo passo: homologação manual do fluxo de motor na Hostinger. Não iniciar a Fase 3.19 antes da confirmação do proprietário.
