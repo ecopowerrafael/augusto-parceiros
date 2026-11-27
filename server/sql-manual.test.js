@@ -89,4 +89,9 @@ describe('SQL manual da Hostinger', () => {
       expect(sql).not.toMatch(/\b(?:PREPARE|EXECUTE|DEALLOCATE\s+PREPARE)\b/i)
     }
   })
+  it('mantém a Migration 013 fora do fluxo ativo', () => {
+    expect(fs.existsSync(path.join(root, 'migrations/013_suspension_documentation_fields.sql'))).toBe(false)
+    expect(fs.readFileSync(path.join(root, 'database/install.sql'), 'utf8')).not.toContain('013_suspension_documentation_fields')
+    expect(fs.readFileSync(path.join(root, 'scripts/generate-hostinger-sql.mjs'), 'utf8')).not.toContain('013_suspension_documentation_fields')
+  })
 })

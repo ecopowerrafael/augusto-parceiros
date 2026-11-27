@@ -16,12 +16,15 @@ const labels: Record<string, string> = {
   'vehicle_donor.fuel': 'Combustível do motor',
   'engine.has_invoice': 'Possui nota fiscal',
   'motorcycle.compatibility_declaration': 'Compatibilidade de cilindrada declarada',
+  'suspension.parts_invoice': 'Nota fiscal das peças',
+  'suspension.installation_invoice': 'Nota fiscal do serviço de instalação',
 }
 
 const optionLabels: Record<string, string> = {
   AUTOMOBILE: 'Automóvel', MOTORCYCLE: 'Motocicleta', TRUCK: 'Caminhão', BUS: 'Ônibus', OTHER: 'Outra categoria',
   SP: 'São Paulo', OTHER_STATE: 'Outros estados', YES: 'Sim', NO: 'Não', ALCOHOL: 'Álcool', GASOLINE: 'Gasolina', DIESEL: 'Diesel', FLEX: 'Flex',
-  PLATE: 'Consulta por placa', MANUAL: 'Informação manual', UNKNOWN: 'Dados desconhecidos',
+  PLATE: 'Consulta por placa', MANUAL: 'Informação manual', UNKNOWN: 'Não sei informar',
+  NOT_PURCHASED: 'Ainda não comprei as peças.', NOT_PERFORMED: 'Ainda não realizei o serviço.',
 }
 
 const present = (value: unknown) => value !== undefined && value !== null && String(value).trim() !== ''

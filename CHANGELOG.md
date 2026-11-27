@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.12] — Fase 3.16 — acabamento e documentação da suspensão
+
+- Menu autenticado com navegação alinhada, item ativo, colapso persistido e adaptação mobile.
+- Gestão de parceiros inicia em Ativos e mantém solicitações pendentes em seção independente, com contadores e os fluxos existentes de aprovação/recusa.
+- Campos declarativos de nota fiscal das peças e do serviço adicionados ao serviço de suspensão, sem cobrança automática e com rótulos amigáveis em resultado, PDF e WhatsApp.
+- Migration 013 e artefatos Hostinger gerados para importação manual; nenhuma operação SQL remota foi executada.
+- Homologação visual e funcional permanece pendente do proprietário.
+
 ## [0.4.11] — Fase 3.15 — estrutura operacional
 
 - Reorganizados os menus administrativo e de parceiros em Gestão, Serviços, Configurações e Conta; o simulador genérico deixou de ser item operacional do menu e sua rota legada permanece compatível.
@@ -283,4 +291,12 @@
 - Oculta PBT sem regra técnica aplicável e melhora a semântica dos checklists.
 - Conecta modificações adicionais ao catálogo persistido com grupos repetíveis.
 - Sem Migration 011, sem SQL remoto e sem integração Simples API nesta etapa.
+
+# [0.5.0] — Fase 3.18 — fundação híbrida de motor
+
+- Adicionado o fluxo operacional `MOTOR_V1` para regularização de motor, compartilhado entre administrador e parceiro.
+- Formulário, opções e regras de motor passaram a ser definidos em código; preços, comissões, permissões e disponibilidade continuam persistidos e validados no backend.
+- Mantido o fluxo declarativo legado para compatibilidade e rollback dos serviços ainda não migrados.
+- Migration 013 retirada do fluxo ativo de instalação e geração Hostinger; seu histórico permanece no Git anterior.
+- Não houve SQL remoto, Migration 014, chamada à Simples API ou integração na `main`.
 
