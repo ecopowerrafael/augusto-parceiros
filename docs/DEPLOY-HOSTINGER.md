@@ -18,6 +18,8 @@ O precheck de recuperação confirmou cinco tabelas novas, catálogo com 27 regi
 
 Após a correção dos aliases, uma nova tentativa encontrou `#4025` em `technical_rules.conditions`. A regra afetada foi `5A000000-0000-4000-8000-000000000006` (`Checklist compatível`), cujo JSON tinha fechamento incompleto no `all` externo após o `any` aninhado. Os três SQLs foram regenerados; o verify agora também informa a quantidade de regras esperadas cujo `conditions` passa em `JSON_VALID`.
 
+Validação funcional posterior informada pelo proprietário: Migration 010 registrada com sucesso, verify com 53 consultas e estrutura completa (17 campos, 6 cobranças, 7 regras, 27 modificações e 54 vínculos de categoria). Não reimportar a Migration 010. A auditoria local também corrigiu o simulador para aplicar os escopos de categoria/UF persistidos no catálogo; esta alteração é de código e não exige nova migration.
+
 ## Configuração desta aplicação
 
 1. Conectar o repositório GitHub na opção Node.js Web App.

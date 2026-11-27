@@ -11,6 +11,7 @@
 - Precheck de recuperação confirmou execução parcial segura para retomada: estruturas e catálogo criados, migration não registrada e campos finais ainda pendentes.
 - Corrigida a carga de `technical_rules` da Migration 010: os aliases `name` e `description` agora são declarados na primeira linha da tabela derivada, evitando `#1054` no MariaDB/phpMyAdmin. Artefatos Hostinger e `database/install.sql` regenerados; nenhuma operação remota executada.
 - Corrigida a condição JSON da regra `5A000000-0000-4000-8000-000000000006` (`Checklist compatível`), que causava `#4025` por fechamento incompleto da estrutura `all`/`any`. O validador agora analisa literais JSON SQL e o verify confere `JSON_VALID` nas sete regras de suspensão.
+- Auditoria funcional local da Fase 3.13: o simulador passou a carregar e aplicar escopos de categoria/UF do catálogo de modificações; adicionados testes de filtragem, cenários financeiros e regressão do validador. Nenhum SQL remoto executado.
 
 - Corrigida a inicialização do primeiro DRAFT no construtor para serviços existentes ainda sem versão.
 - Adicionado catálogo central reutilizável de modificações, com CRUD administrativo protegido, status ativo/inativo e bloqueio de cadastro de motor como adicional.

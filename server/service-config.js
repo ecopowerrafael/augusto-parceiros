@@ -216,6 +216,10 @@ function validateModificationAnswers(values, catalog = []) {
     const item = catalogByCode.get(code)
     if (catalog.length && !item) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_NOT_FOUND', message: 'A modificação selecionada não está disponível no catálogo.' })
     if (item && String(item.status).toUpperCase() !== 'ACTIVE') errors.push({ field: 'modifications.additional', code: 'MODIFICATION_INACTIVE', message: 'A modificação selecionada está inativa.' })
+    const categoryScopes = Array.isArray(item?.vehicle_category_codes) ? item.vehicle_category_codes.map((value) => String(value).toUpperCase()) : []
+    if (item && categoryScopes.length && !categoryScopes.includes(String(values['vehicle_target.category'] || '').toUpperCase())) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_CATEGORY_NOT_ALLOWED', message: 'A modificação selecionada não está configurada para a categoria do veículo.' })
+    const ufScopes = Array.isArray(item?.ufs) ? item.ufs.map((value) => String(value).toUpperCase()) : []
+    if (item && ufScopes.length && !ufScopes.includes(String(values['vehicle_target.state'] || '').toUpperCase())) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_UF_NOT_ALLOWED', message: 'A modificação selecionada não está configurada para a UF informada.' })
     if (item?.requires_description && !description) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_DESCRIPTION_REQUIRED', message: 'Descreva a alteração realizada.' })
   }
   if (values['wheels.include'] === 'YES' && seen.has('WHEELS_TIRES')) errors.push({ field: 'modifications.additional', code: 'DUPLICATE_WHEELS_MODIFICATION', message: 'Rodas e pneus já foram selecionados como serviço adicional.' })

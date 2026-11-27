@@ -64,6 +64,8 @@ describe('configuração no-code de serviços', () => {
     expect(simulate('OLD', 'NO').total_cents).toBe(97580)
     expect(simulate('MERCOSUR', 'YES').total_cents).toBe(105580)
     expect(simulate('OLD', 'YES').total_cents).toBe(127580)
+    expect(simulate('MERCOSUR', 'NO', [{ code: 'COLOR_CHANGE' }]).total_cents).toBe(105580)
+    expect(simulate('MERCOSUR', 'NO', [{ code: 'COLOR_CHANGE' }, { code: 'OTHER_MODIFICATION' }]).total_cents).toBe(135580)
     expect(simulate('MERCOSUR', 'YES', [{ code: 'COLOR_CHANGE' }]).total_cents).toBe(135580)
     const twoAdditional = simulate('OLD', 'YES', [{ code: 'COLOR_CHANGE' }, { code: 'OTHER_MODIFICATION' }])
     expect(twoAdditional.total_cents).toBe(187580)
@@ -71,6 +73,13 @@ describe('configuração no-code de serviços', () => {
     expect(twoAdditional.items.find((item) => item.code === 'SERVICE_FEE').total_cents).toBe(16000)
   })
   it('rejeita duplicidade, item inativo e cadastro de motor no grupo repetível', () => { expect(() => evaluateService({ fields: [{ field_key: 'modifications.additional', field_type: 'REPEATABLE_MODIFICATIONS' }], modificationCatalog: [{ code: 'COLOR_CHANGE', status: 'INACTIVE', requires_description: false }], answers: { 'modifications.additional': [{ code: 'COLOR_CHANGE' }, { code: 'COLOR_CHANGE' }, { code: 'ENGINE_REGISTRATION' }] } })).toThrow('INVALID_SIMULATION_INPUT') })
+  it('rejeita modificação fora dos escopos de categoria ou UF configurados', () => {
+    const catalog = [{ code: 'COLOR_CHANGE', status: 'ACTIVE', requires_description: false, vehicle_category_codes: ['AUTOMOBILE'], ufs: ['SP'] }]
+    const base = { fields: [{ field_key: 'vehicle_target.category', field_type: 'SINGLE_SELECT' }, { field_key: 'vehicle_target.state', field_type: 'SINGLE_SELECT' }, { field_key: 'modifications.additional', field_type: 'REPEATABLE_MODIFICATIONS' }], modificationCatalog: catalog, answers: { 'vehicle_target.category': 'AUTOMOBILE', 'vehicle_target.state': 'RJ', 'modifications.additional': [{ code: 'COLOR_CHANGE' }] } }
+    expect(() => evaluateService(base)).toThrow('INVALID_SIMULATION_INPUT')
+    expect(() => evaluateService({ ...base, answers: { ...base.answers, 'vehicle_target.state': 'SP', 'vehicle_target.category': 'TRUCK' } })).toThrow('INVALID_SIMULATION_INPUT')
+    expect(() => evaluateService({ ...base, answers: { ...base.answers, 'vehicle_target.state': 'SP' } })).not.toThrow()
+  })
   it('classifica suspensão compatível como viável e exige checklist somente quando visível', () => { const suspensionFields = [{ field_key: 'vehicle_target.category', field_type: 'SINGLE_SELECT' }, { field_key: 'suspension.compliance', field_type: 'SINGLE_SELECT', is_required: true }, { field_key: 'wheels.include', field_type: 'YES_NO', is_required: true }, { field_key: 'wheels.compliance', field_type: 'SINGLE_SELECT', is_required: true, visibility_condition: { field: 'wheels.include', operator: 'EQUALS', value: 'YES' }, required_condition: { field: 'wheels.include', operator: 'EQUALS', value: 'YES' } }]; const result = evaluateService({ fields: suspensionFields, rules: [{ name: 'compatível', priority: 1, expected_result: 'VIABLE', conditions: { all: [{ field: 'vehicle_target.category', operator: 'IN_LIST', values: ['AUTOMOBILE', 'PICKUP'] }, { field: 'suspension.compliance', operator: 'EQUALS', value: 'YES' }, { field: 'wheels.include', operator: 'EQUALS', value: 'NO' }] }, actions: [] }], answers: { 'vehicle_target.category': 'AUTOMOBILE', 'suspension.compliance': 'YES', 'wheels.include': 'NO', 'wheels.compliance': 'NO' } }); expect(result.viability).toBe('VIABLE'); expect(result.values['wheels.compliance']).toBeUndefined() })
   it('rejeita checklist de rodas incompleto quando a condição o torna obrigatório', () => { expect(() => evaluateService({ fields: [{ field_key: 'wheels.include', field_type: 'YES_NO', is_required: true }, { field_key: 'wheels.compliance', field_type: 'SINGLE_SELECT', is_required: true, visibility_condition: { field: 'wheels.include', operator: 'EQUALS', value: 'YES' }, required_condition: { field: 'wheels.include', operator: 'EQUALS', value: 'YES' } }], answers: { 'wheels.include': 'YES' } })).toThrow('INVALID_SIMULATION_INPUT') })
 })
