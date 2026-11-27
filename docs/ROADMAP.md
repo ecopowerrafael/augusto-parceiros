@@ -32,7 +32,7 @@
 3.9.3. Hotfix 0.4.5 corrige a validação de campos declarativos legados da Migration 007; 127 testes aprovados. Homologação online pendente.
 3.10. Fluxo condicional, análise manual e PDF — versão `0.4.6` integrada na `main` pelo merge `aa20697`; rollback `rollback-before-0-4-6-20261126`; sem nova migration. Homologação funcional do proprietário pendente.
 3.11. Correção funcional do simulador — versão `0.4.7` integrada na `main` pelo merge `365980a`; rollback `rollback-before-0-4-7-20261126`; Migration 008 importada e verificada manualmente pelo proprietário. Homologação visual online pendente.
-3.14. Usabilidade do simulador de suspensão — versão `0.4.10` em `feature/fase-3-14-usabilidade-suspensao`. Renderer compartilhado, validação estruturada, catálogo repetível, apresentação dinâmica e Migration 011 preparada para importação manual. Publicação na `main` e homologação humana pendentes.
+3.14. Usabilidade do simulador de suspensão — versão `0.4.10` em `feature/fase-3-14-usabilidade-suspensao`. Migration 011 aplicada pelo proprietário; auditoria pré-publicação identificou incompatibilidade semântica nas regras de contato e preparou a Migration 012. Publicação na `main` e homologação humana aguardam a aplicação/verificação da 012.
 4. Integração Simples API, após validação contratual e técnica.
 5. Motor de regras de cadastro de motor.
 6. Orçamentos em PDF e conversão em solicitação.

@@ -7,6 +7,7 @@
 - Criada a Migration 011 para rótulos semânticos dos checklists e regra declarativa que encaminha `OTHER_STATE` para análise manual no serviço de suspensão.
 - Nenhum SQL remoto foi executado, nenhuma chamada real à Simples API foi realizada e a publicação na `main` permanece pendente de autorização.
 - Corrigidos os artefatos de precheck/verify 011 para usar somente SELECTs estáticos, evitando a incompatibilidade de renderização do phpMyAdmin com `EXECUTE`.
+- Auditoria pré-publicação identificou incompatibilidade semântica nas regras persistidas de contato da Migration 010; Migration 012 preparada para corrigir `YES` como contato irregular, `NO` como ausência de contato e `UNKNOWN` como análise manual. Publicação bloqueada até aplicação manual.
 
 ## [0.4.9] — Suspensão e catálogo de modificações — 26/11/2026
 

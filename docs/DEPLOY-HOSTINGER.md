@@ -156,6 +156,10 @@ A Migration 011 é incremental e necessária porque a regra persistida de `OTHER
 
 ## Diagnóstico temporário de conexão MySQL
 
+## Migration 012 — correção semântica pendente
+
+A auditoria da Migration 011 confirmou que os textos dos checklists foram atualizados, mas as regras 002 e 006 persistidas anteriormente ainda tratavam `YES`/`NO` como se a pergunta tivesse sentido negativo. A Migration 012 corrige apenas essas condições: contato confirmado (`YES`) ou desconhecido (`UNKNOWN`) exige análise manual; ausência de contato (`NO`) é o valor favorável quando os demais requisitos são atendidos. Não publicar a aplicação nem reexecutar a Migration 011 antes de importar e verificar a 012. Os três arquivos são `database/updates/012_suspension_checklist_semantics_precheck.sql`, `database/updates/012_suspension_checklist_semantics.sql` e `database/updates/012_suspension_checklist_semantics_verify.sql`.
+
 Na inicialização do `server/index.js`, a aplicação executa o diagnóstico privado usando o mesmo pool de `server/database.js`. Os resultados aparecem nos logs da aplicação Node.js da Hostinger: painel da Web App → logs/runtime logs da aplicação → reiniciar/redeploy → procurar por `[database-diagnostic]`.
 
 O diagnóstico executa somente `SELECT 1 AS connected`, `SELECT DATABASE() AS database_name` e `SHOW TABLES`. Não cria tabelas, não executa migrations e não cria administrador. A senha, a URL completa e o conteúdo de `DATABASE_URL` nunca são registrados.
