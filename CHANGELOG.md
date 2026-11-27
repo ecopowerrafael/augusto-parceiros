@@ -2,12 +2,12 @@
 
 ## [0.5.1] — Fase 3.19 — arquitetura híbrida da suspensão
 
-- Em desenvolvimento na branch `feature/fase-3-19-arquitetura-hibrida-suspensao`.
+- Publicada na `main` pelo merge `432bcf2`; commit final da implementação `21b2081`.
 - Criado o fluxo `SUSPENSION_V1`, com formulário React próprio, regras técnicas versionadas em código e uso do catálogo/preços persistidos.
 - Operação administrativa, parceiro e simulador do construtor passam a compartilhar o mesmo fluxo de suspensão; cadastro de motor e simulador legado permanecem preservados.
 - Auditoria complementar corrigiu checklist duplicado, combinações de conformidade, catálogo vazio, limite de modificações, `fixtureContext` operacional e seleção de versão publicada para parceiros.
 - Nenhuma migration, operação SQL remota ou chamada à Simples API foi realizada.
-- Homologação visual e online pendente.
+- Rollback: `rollback-before-0-5-1-20261127` (`8208c7e2943e1de59fbde23dab055a8bf3f8a256`). Homologação visual e online pendente.
 
 ## [0.4.12] — Fase 3.16 — acabamento e documentação da suspensão
 

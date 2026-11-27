@@ -1,5 +1,11 @@
 # Deploy na Hostinger
 
+## Fase 3.19 — versão 0.5.1
+
+A versão `0.5.1` foi integrada na `main` pelo merge `432bcf2` e publicada no GitHub para o deploy da Hostinger. O rollback é `rollback-before-0-5-1-20261127`, apontando para `8208c7e2943e1de59fbde23dab055a8bf3f8a256`. Não há migration nova, a Migration 013 permanece fora do fluxo ativo e nenhuma operação SQL remota foi executada.
+
+O ambiente deve permanecer em `APP_ENV=staging`, `ALLOW_INDEXING=false`, `APP_DEBUG=false`, com o manifesto PWA em `0.5.1`. A propagação da Hostinger e a homologação visual devem ser confirmadas por HTTP e manualmente em `docmotor.online`; o push no GitHub não comprova sozinho o deploy.
+
 ## Fase 3.12
 
 O código está na versão `0.4.8`, publicada na `main` no commit `3373ee5845ca0a25a6091c4f4fa715ec50281cb7`. A Migration 008 e, posteriormente, a Migration 009 foram importadas e verificadas manualmente pelo proprietário; não devem ser reexecutadas. A Migration 009 foi confirmada com cinco campos atualizados, registro único em `schema_migrations` e `migration_009_count = 1`. Rollback: `rollback-before-0-4-8-20261126` (`03d263d738df59e5e683464344b4d3de7caf4528`). O health check local não resolveu `docmotor.online`; a homologação funcional permanece pendente dos testes reais do proprietário.
