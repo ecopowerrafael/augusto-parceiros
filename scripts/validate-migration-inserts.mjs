@@ -57,6 +57,35 @@ function validateJsonObjectArguments(source) {
   return errors
 }
 
+function sqlStringLiterals(source) {
+  const literals = []; let index = 0
+  while (index < source.length) {
+    if (source[index] !== "'") { index += 1; continue }
+    index += 1; let value = ''
+    while (index < source.length) {
+      const char = source[index]
+      if (char === '\\' && index + 1 < source.length) { value += source[index + 1]; index += 2; continue }
+      if (char === "'") {
+        if (source[index + 1] === "'") { value += "'"; index += 2; continue }
+        index += 1; break
+      }
+      value += char; index += 1
+    }
+    literals.push(value)
+  }
+  return literals
+}
+
+function validateJsonLiterals(source) {
+  const errors = []
+  for (const literal of sqlStringLiterals(source)) {
+    const trimmed = literal.trim()
+    if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) continue
+    try { JSON.parse(trimmed) } catch (error) { errors.push(`literal JSON inválido (${error.message}): ${trimmed.slice(0, 180)}`) }
+  }
+  return errors
+}
+
 function maskSqlStringsAndComments(source) {
   let result = ''; let index = 0; let quote = null
   while (index < source.length) {
@@ -128,6 +157,9 @@ console.log(`${file}: ${checked} linhas INSERT verificadas; correspondência de 
 const jsonErrors = validateJsonObjectArguments(sql)
 if (jsonErrors.length) throw new Error(`${file}: ${jsonErrors.join('; ')}`)
 console.log(`${file}: JSON_OBJECT verificados; quantidade de argumentos aprovada.`)
+const jsonLiteralErrors = validateJsonLiterals(sql)
+if (jsonLiteralErrors.length) throw new Error(`${file}: ${jsonLiteralErrors.join('; ')}`)
+console.log(`${file}: literais JSON SQL verificados; sintaxe JSON aprovada.`)
 const orderErrors = validateCreationOrder(sql)
 if (orderErrors.length) throw new Error(`${file}: ${orderErrors.join('; ')}`)
 console.log(`${file}: ordem de criação e uso das tabelas aprovada.`)

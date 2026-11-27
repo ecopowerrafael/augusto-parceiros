@@ -16,6 +16,8 @@ A primeira importação falhou posteriormente com `#1052` na subconsulta da carg
 
 O precheck de recuperação confirmou cinco tabelas novas, catálogo com 27 registros, uma versão do serviço, `quantity_expression` presente, migration ainda não registrada e 5/7 campos específicos presentes. Esse é o cenário parcial esperado após a falha; a retomada pode usar o SQL completo corrigido, sem excluir estruturas ou registrar a migration manualmente.
 
+Após a correção dos aliases, uma nova tentativa encontrou `#4025` em `technical_rules.conditions`. A regra afetada foi `5A000000-0000-4000-8000-000000000006` (`Checklist compatível`), cujo JSON tinha fechamento incompleto no `all` externo após o `any` aninhado. Os três SQLs foram regenerados; o verify agora também informa a quantidade de regras esperadas cujo `conditions` passa em `JSON_VALID`.
+
 ## Configuração desta aplicação
 
 1. Conectar o repositório GitHub na opção Node.js Web App.

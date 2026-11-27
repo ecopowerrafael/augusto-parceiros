@@ -58,6 +58,13 @@ DEALLOCATE PREPARE docmotor_verify_stmt;
 SELECT @docmotor_service_version_count AS suspension_version_count, @docmotor_field_count AS suspension_field_count, 17 AS expected_suspension_field_count, @docmotor_field_count = 17 AS suspension_field_count_matches, @docmotor_billing_count AS billing_item_count, 6 AS expected_billing_item_count, @docmotor_billing_count = 6 AS billing_item_count_matches, @docmotor_rule_count AS technical_rule_count, 7 AS expected_technical_rule_count, @docmotor_rule_count = 7 AS technical_rule_count_matches;
 
 SET @docmotor_verify_value = NULL;
+SET @docmotor_verify_sql = IF(EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name = 'technical_rules'), 'SELECT COUNT(*) INTO @docmotor_verify_value FROM `u891593158_doc`.technical_rules WHERE id IN (''5A000000-0000-4000-8000-000000000001'', ''5A000000-0000-4000-8000-000000000002'', ''5A000000-0000-4000-8000-000000000003'', ''5A000000-0000-4000-8000-000000000004'', ''5A000000-0000-4000-8000-000000000005'', ''5A000000-0000-4000-8000-000000000006'', ''5A000000-0000-4000-8000-000000000007'') AND JSON_VALID(conditions) = 1', 'SELECT CAST(NULL AS UNSIGNED) INTO @docmotor_verify_value');
+PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
+EXECUTE docmotor_verify_stmt;
+DEALLOCATE PREPARE docmotor_verify_stmt;
+SELECT @docmotor_verify_value AS valid_suspension_rule_json_count, 7 AS expected_valid_suspension_rule_json_count, @docmotor_verify_value = 7 AS valid_suspension_rule_json_count_matches;
+
+SET @docmotor_verify_value = NULL;
 SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('services', 'service_versions', 'service_form_fields')) = 3, 'SELECT COUNT(*) INTO @docmotor_verify_value FROM `u891593158_doc`.service_form_fields f JOIN `u891593158_doc`.service_versions v ON v.id = f.service_version_id JOIN `u891593158_doc`.services s ON s.id = v.service_id WHERE s.code = ''LOWERED_SUSPENSION'' AND f.field_key IN (''suspension.compliance'', ''wheels.include'', ''wheels.compliance'', ''wheels.fender_check'', ''wheels.contact_check'', ''wheels.diameter_check'', ''modifications.additional'')', 'SELECT CAST(NULL AS UNSIGNED) INTO @docmotor_verify_value');
 PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
 EXECUTE docmotor_verify_stmt;
