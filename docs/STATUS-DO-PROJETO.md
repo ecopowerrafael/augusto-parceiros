@@ -4,6 +4,7 @@
 
 - Auditoria de 27/11/2026: o erro `#1146 vehicle_modifications não existe` foi causado pela linha 8 do source precheck, gerada como linha 16 do SQL Hostinger, que consultava a tabela antes do `CREATE TABLE`. Precheck e verify foram reescritos com `information_schema` e SQL preparado condicional.
 - Evidência visual posterior: o phpMyAdmin falhou no `PREPARE` com `#1109 schema_migrations desconhecida em information_schema`; as strings dinâmicas agora usam qualificação explícita do banco alvo, além do `USE` inicial.
+- Nova evidência: o importador do phpMyAdmin também falhou ao renderizar o result set de `EXECUTE`, com `Undefined index: statement/parser`. Os artefatos foram ajustados para capturar resultados em variáveis e emitir somente `SELECT` normais.
 - O gerador passou a preservar strings com aspas SQL escapadas; o validador agora verifica ordem de criação/uso, além de `INSERT`s, JSON e registro final em `schema_migrations`. Todos os artefatos 010 foram regenerados.
 - Não há MariaDB local/descartável disponível; a execução real em banco sem Migration 010, após update e em cenário parcial permanece não validada. Nenhum SQL remoto foi executado e a importação manual aguarda confirmação do estado do banco pelo proprietário.
 

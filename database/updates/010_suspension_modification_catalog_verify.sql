@@ -7,8 +7,8 @@ USE `u891593158_doc`;
 SELECT DATABASE() AS selected_database;
 
 -- Verificação posterior somente leitura da Migration 010.
--- Cada consulta dependente de uma tabela usa SQL preparado após o diagnóstico
--- de information_schema, permitindo observar falhas parciais sem abortar o lote.
+-- O EXECUTE grava apenas variáveis; os resultados são emitidos por SELECTs
+-- normais para compatibilidade com a importação do phpMyAdmin.
 SELECT VERSION() AS mysql_version;
 
 SELECT expected.table_name, COUNT(actual.table_name) AS table_present
@@ -29,67 +29,51 @@ WHERE table_schema = 'u891593158_doc'
 GROUP BY table_name, column_name
 ORDER BY table_name, column_name;
 
-SET @docmotor_verify_sql = IF(EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name = 'schema_migrations'), 'SELECT COUNT(*) AS migration_010_count FROM `u891593158_doc`.schema_migrations WHERE name = ''010_suspension_modification_catalog.sql''', 'SELECT CAST(NULL AS UNSIGNED) AS migration_010_count');
+SET @docmotor_verify_value = NULL;
+SET @docmotor_verify_sql = IF(EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name = 'schema_migrations'), 'SELECT COUNT(*) INTO @docmotor_verify_value FROM `u891593158_doc`.schema_migrations WHERE name = ''010_suspension_modification_catalog.sql''', 'SELECT CAST(NULL AS UNSIGNED) INTO @docmotor_verify_value');
 PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
 EXECUTE docmotor_verify_stmt;
 DEALLOCATE PREPARE docmotor_verify_stmt;
+SELECT @docmotor_verify_value AS migration_010_count;
 
-SET @docmotor_verify_sql = IF(EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name = 'vehicle_modifications'), 'SELECT COUNT(*) AS catalog_count, 27 AS expected_catalog_count, COUNT(*) = 27 AS catalog_count_matches, COUNT(DISTINCT code) AS catalog_distinct_code_count, SUM(status = ''ACTIVE'') AS active_catalog_count FROM `u891593158_doc`.vehicle_modifications', 'SELECT CAST(NULL AS UNSIGNED) AS catalog_count, 27 AS expected_catalog_count, 0 AS catalog_count_matches, CAST(NULL AS UNSIGNED) AS catalog_distinct_code_count, CAST(NULL AS UNSIGNED) AS active_catalog_count');
+SET @docmotor_verify_value = NULL;
+SET @docmotor_verify_sql = IF(EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name = 'vehicle_modifications'), 'SELECT COUNT(*) INTO @docmotor_verify_value FROM `u891593158_doc`.vehicle_modifications', 'SELECT CAST(NULL AS UNSIGNED) INTO @docmotor_verify_value');
 PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
 EXECUTE docmotor_verify_stmt;
 DEALLOCATE PREPARE docmotor_verify_stmt;
+SELECT @docmotor_verify_value AS catalog_count, 27 AS expected_catalog_count, @docmotor_verify_value = 27 AS catalog_count_matches;
 
-SET @docmotor_verify_sql = IF(EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name = 'vehicle_modifications'), 'SELECT code, name, category, status, requires_manual_review, requires_description, legal_status FROM `u891593158_doc`.vehicle_modifications ORDER BY display_order, name', 'SELECT ''vehicle_modifications ausente'' AS diagnostic');
+SET @docmotor_verify_value = NULL;
+SET @docmotor_verify_sql = IF(EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name = 'vehicle_modifications'), 'SELECT COUNT(DISTINCT code) INTO @docmotor_verify_value FROM `u891593158_doc`.vehicle_modifications', 'SELECT CAST(NULL AS UNSIGNED) INTO @docmotor_verify_value');
 PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
 EXECUTE docmotor_verify_stmt;
 DEALLOCATE PREPARE docmotor_verify_stmt;
+SELECT @docmotor_verify_value AS catalog_distinct_code_count;
 
-SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('services', 'service_versions', 'service_form_fields', 'service_billing_items', 'technical_rules')) = 5, 'SELECT s.code, s.name, v.version_number, v.status, COUNT(DISTINCT f.id) AS field_count, COUNT(DISTINCT sbi.id) AS billing_item_count, COUNT(DISTINCT r.id) AS rule_count FROM `u891593158_doc`.services s LEFT JOIN `u891593158_doc`.service_versions v ON v.service_id = s.id LEFT JOIN `u891593158_doc`.service_form_fields f ON f.service_version_id = v.id LEFT JOIN `u891593158_doc`.service_billing_items sbi ON sbi.service_version_id = v.id LEFT JOIN `u891593158_doc`.technical_rules r ON r.service_version_id = v.id WHERE s.code = ''LOWERED_SUSPENSION'' GROUP BY s.code, s.name, v.version_number, v.status', 'SELECT ''tabelas do serviço ou configuração ausentes'' AS diagnostic');
+SET @docmotor_verify_value = NULL;
+SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('services', 'service_versions', 'service_form_fields', 'service_billing_items', 'technical_rules')) = 5, 'SELECT COUNT(DISTINCT v.id), COUNT(DISTINCT f.id), COUNT(DISTINCT sbi.id), COUNT(DISTINCT r.id) INTO @docmotor_service_version_count, @docmotor_field_count, @docmotor_billing_count, @docmotor_rule_count FROM `u891593158_doc`.services s LEFT JOIN `u891593158_doc`.service_versions v ON v.service_id = s.id LEFT JOIN `u891593158_doc`.service_form_fields f ON f.service_version_id = v.id LEFT JOIN `u891593158_doc`.service_billing_items sbi ON sbi.service_version_id = v.id LEFT JOIN `u891593158_doc`.technical_rules r ON r.service_version_id = v.id WHERE s.code = ''LOWERED_SUSPENSION''', 'SELECT NULL INTO @docmotor_service_version_count, @docmotor_field_count, @docmotor_billing_count, @docmotor_rule_count');
 PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
 EXECUTE docmotor_verify_stmt;
 DEALLOCATE PREPARE docmotor_verify_stmt;
+SELECT @docmotor_service_version_count AS suspension_version_count, @docmotor_field_count AS suspension_field_count, 17 AS expected_suspension_field_count, @docmotor_field_count = 17 AS suspension_field_count_matches, @docmotor_billing_count AS billing_item_count, 6 AS expected_billing_item_count, @docmotor_billing_count = 6 AS billing_item_count_matches, @docmotor_rule_count AS technical_rule_count, 7 AS expected_technical_rule_count, @docmotor_rule_count = 7 AS technical_rule_count_matches;
 
-SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('services', 'service_versions', 'service_form_fields')) = 3, 'SELECT field_key, field_type, is_required, visibility_condition, required_condition FROM `u891593158_doc`.service_form_fields f JOIN `u891593158_doc`.service_versions v ON v.id = f.service_version_id JOIN `u891593158_doc`.services s ON s.id = v.service_id WHERE s.code = ''LOWERED_SUSPENSION'' ORDER BY f.display_order', 'SELECT ''tabelas de formulário ausentes'' AS diagnostic');
+SET @docmotor_verify_value = NULL;
+SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('services', 'service_versions', 'service_form_fields')) = 3, 'SELECT COUNT(*) INTO @docmotor_verify_value FROM `u891593158_doc`.service_form_fields f JOIN `u891593158_doc`.service_versions v ON v.id = f.service_version_id JOIN `u891593158_doc`.services s ON s.id = v.service_id WHERE s.code = ''LOWERED_SUSPENSION'' AND f.field_key IN (''suspension.compliance'', ''wheels.include'', ''wheels.compliance'', ''wheels.fender_check'', ''wheels.contact_check'', ''wheels.diameter_check'', ''modifications.additional'')', 'SELECT CAST(NULL AS UNSIGNED) INTO @docmotor_verify_value');
 PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
 EXECUTE docmotor_verify_stmt;
 DEALLOCATE PREPARE docmotor_verify_stmt;
+SELECT @docmotor_verify_value AS required_suspension_fields_present, 7 AS expected_required_suspension_fields, @docmotor_verify_value = 7 AS required_suspension_fields_match;
 
-SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('services', 'service_versions', 'service_form_fields')) = 3, 'SELECT COUNT(DISTINCT f.field_key) AS suspension_field_count, 17 AS expected_suspension_field_count, COUNT(DISTINCT f.field_key) = 17 AS suspension_field_count_matches FROM `u891593158_doc`.service_form_fields f JOIN `u891593158_doc`.service_versions v ON v.id = f.service_version_id JOIN `u891593158_doc`.services s ON s.id = v.service_id WHERE s.code = ''LOWERED_SUSPENSION''', 'SELECT CAST(NULL AS UNSIGNED) AS suspension_field_count, 17 AS expected_suspension_field_count, 0 AS suspension_field_count_matches');
+SET @docmotor_verify_value = NULL;
+SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('vehicle_modifications', 'vehicle_modification_categories', 'vehicle_categories')) = 3, 'SELECT COUNT(*) INTO @docmotor_verify_value FROM `u891593158_doc`.vehicle_modification_categories', 'SELECT CAST(NULL AS UNSIGNED) INTO @docmotor_verify_value');
 PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
 EXECUTE docmotor_verify_stmt;
 DEALLOCATE PREPARE docmotor_verify_stmt;
+SELECT @docmotor_verify_value AS catalog_category_relationships, 54 AS expected_catalog_category_relationships, @docmotor_verify_value = 54 AS catalog_category_relationships_match;
 
-SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('services', 'service_versions', 'service_form_fields')) = 3, 'SELECT field_key, is_required, required_condition FROM `u891593158_doc`.service_form_fields f JOIN `u891593158_doc`.service_versions v ON v.id = f.service_version_id JOIN `u891593158_doc`.services s ON s.id = v.service_id WHERE s.code = ''LOWERED_SUSPENSION'' AND f.field_key IN (''suspension.clearance_check'', ''suspension.contact_check'', ''wheels.compliance'', ''wheels.fender_check'', ''wheels.contact_check'', ''wheels.diameter_check'')', 'SELECT ''campos de checklist ausentes'' AS diagnostic');
+SET @docmotor_verify_value = NULL;
+SET @docmotor_verify_sql = IF(EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name = 'vehicle_modifications'), 'SELECT COUNT(*) INTO @docmotor_verify_value FROM (SELECT code FROM `u891593158_doc`.vehicle_modifications GROUP BY code HAVING COUNT(*) > 1) duplicates', 'SELECT CAST(NULL AS UNSIGNED) INTO @docmotor_verify_value');
 PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
 EXECUTE docmotor_verify_stmt;
 DEALLOCATE PREPARE docmotor_verify_stmt;
-
-SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('services', 'service_versions', 'service_billing_items', 'billing_items')) = 4, 'SELECT COUNT(DISTINCT sbi.id) AS billing_item_count, 6 AS expected_billing_item_count, COUNT(DISTINCT sbi.id) = 6 AS billing_item_count_matches FROM `u891593158_doc`.service_billing_items sbi JOIN `u891593158_doc`.service_versions v ON v.id = sbi.service_version_id JOIN `u891593158_doc`.services s ON s.id = v.service_id WHERE s.code = ''LOWERED_SUSPENSION''', 'SELECT CAST(NULL AS UNSIGNED) AS billing_item_count, 6 AS expected_billing_item_count, 0 AS billing_item_count_matches');
-PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
-EXECUTE docmotor_verify_stmt;
-DEALLOCATE PREPARE docmotor_verify_stmt;
-
-SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('services', 'service_versions', 'service_billing_items', 'billing_items')) = 4, 'SELECT bi.code, bi.name, bi.default_amount_cents, sbi.billing_mode, sbi.quantity_expression, sbi.condition_expression FROM `u891593158_doc`.service_billing_items sbi JOIN `u891593158_doc`.billing_items bi ON bi.id = sbi.billing_item_id JOIN `u891593158_doc`.service_versions v ON v.id = sbi.service_version_id JOIN `u891593158_doc`.services s ON s.id = v.service_id WHERE s.code = ''LOWERED_SUSPENSION'' ORDER BY sbi.display_order', 'SELECT ''tabelas de cobrança ausentes'' AS diagnostic');
-PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
-EXECUTE docmotor_verify_stmt;
-DEALLOCATE PREPARE docmotor_verify_stmt;
-
-SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('services', 'service_versions', 'technical_rules')) = 3, 'SELECT COUNT(DISTINCT r.id) AS technical_rule_count, 7 AS expected_technical_rule_count, COUNT(DISTINCT r.id) = 7 AS technical_rule_count_matches FROM `u891593158_doc`.technical_rules r JOIN `u891593158_doc`.service_versions v ON v.id = r.service_version_id JOIN `u891593158_doc`.services s ON s.id = v.service_id WHERE s.code = ''LOWERED_SUSPENSION''', 'SELECT CAST(NULL AS UNSIGNED) AS technical_rule_count, 7 AS expected_technical_rule_count, 0 AS technical_rule_count_matches');
-PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
-EXECUTE docmotor_verify_stmt;
-DEALLOCATE PREPARE docmotor_verify_stmt;
-
-SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('services', 'service_versions', 'technical_rules')) = 3, 'SELECT name, expected_result, priority, conditions FROM `u891593158_doc`.technical_rules r JOIN `u891593158_doc`.service_versions v ON v.id = r.service_version_id JOIN `u891593158_doc`.services s ON s.id = v.service_id WHERE s.code = ''LOWERED_SUSPENSION'' ORDER BY priority, name', 'SELECT ''tabelas de regras ausentes'' AS diagnostic');
-PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
-EXECUTE docmotor_verify_stmt;
-DEALLOCATE PREPARE docmotor_verify_stmt;
-
-SET @docmotor_verify_sql = IF((SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name IN ('vehicle_modifications', 'vehicle_modification_categories', 'vehicle_categories')) = 3, 'SELECT COUNT(*) AS catalog_category_relationships, 54 AS expected_catalog_category_relationships, COUNT(*) = 54 AS catalog_category_relationships_match, COUNT(DISTINCT CONCAT(modification_id, ''|'', vehicle_category_id)) AS distinct_catalog_category_relationships FROM `u891593158_doc`.vehicle_modification_categories', 'SELECT CAST(NULL AS UNSIGNED) AS catalog_category_relationships, 54 AS expected_catalog_category_relationships, 0 AS catalog_category_relationships_match, CAST(NULL AS UNSIGNED) AS distinct_catalog_category_relationships');
-PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
-EXECUTE docmotor_verify_stmt;
-DEALLOCATE PREPARE docmotor_verify_stmt;
-
-SET @docmotor_verify_sql = IF(EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'u891593158_doc' AND table_name = 'vehicle_modifications'), 'SELECT code, COUNT(*) AS duplicate_count FROM `u891593158_doc`.vehicle_modifications GROUP BY code HAVING COUNT(*) > 1', 'SELECT ''vehicle_modifications ausente; duplicidades não avaliadas'' AS diagnostic');
-PREPARE docmotor_verify_stmt FROM @docmotor_verify_sql;
-EXECUTE docmotor_verify_stmt;
-DEALLOCATE PREPARE docmotor_verify_stmt;
+SELECT @docmotor_verify_value AS duplicate_catalog_code_groups;
