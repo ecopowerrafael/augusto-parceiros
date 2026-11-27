@@ -2,6 +2,9 @@
 
 ## [0.4.9] — Suspensão e catálogo de modificações — 26/11/2026
 
+- Corrigidos os precheck/verify da Migration 010 para não consultar tabelas novas antes da criação e para diagnosticar execução parcial sem interromper todas as verificações.
+- Corrigido o gerador Hostinger para preservar aspas SQL escapadas em comandos `PREPARE`; ampliado o validador para conferir ordem de criação/uso e registro final da migration.
+
 - Corrigida a inicialização do primeiro DRAFT no construtor para serviços existentes ainda sem versão.
 - Adicionado catálogo central reutilizável de modificações, com CRUD administrativo protegido, status ativo/inativo e bloqueio de cadastro de motor como adicional.
 - Preparada a configuração declarativa de regularização de suspensão, rodas/pneus e grupo repetível de modificações adicionais.

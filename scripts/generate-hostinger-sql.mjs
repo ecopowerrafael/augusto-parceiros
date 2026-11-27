@@ -40,7 +40,14 @@ function qualifySql(sql) {
     const next = sql[index + 1]
     if (current === "'" || current === '"') {
       flush(); const quote = current; let end = index + 1
-      while (end < sql.length) { if (sql[end] === '\\') { end += 2; continue } if (sql[end] === quote && sql[end + 1] !== quote) { end += 1; break } end += 1 }
+      while (end < sql.length) {
+        if (sql[end] === '\\') { end += 2; continue }
+        if (sql[end] === quote) {
+          if (sql[end + 1] === quote) { end += 2; continue }
+          end += 1; break
+        }
+        end += 1
+      }
       result += sql.slice(index, end); index = end; continue
     }
     if (current === '-' && next === '-') {

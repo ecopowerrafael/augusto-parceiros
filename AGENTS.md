@@ -17,6 +17,8 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - Para a Migration 007, executar também `node scripts/validate-migration-config.mjs migrations/007_engine_rules_and_documents.sql` para validar a condição persistida da cobrança com o avaliador real.
 - Para a Fase 3.13, a Migration 010 (`010_suspension_modification_catalog.sql`) é manual e ainda não foi importada: gerar precheck/update/verify, executar `node scripts/validate-migration-inserts.mjs migrations/010_suspension_modification_catalog.sql`, registrar a limitação de não haver MariaDB descartável e aguardar confirmação do proprietário. Não executar SQL remoto.
 - O validador de migrations também confirma que, quando presente, o registro em `schema_migrations` é o último comando executável; não registrar uma migration antes de seus seeds e verificações finais.
+- Prechecks e verifies de migrations devem consultar primeiro `information_schema`; para tabelas/colunas opcionais, usar SQL preparado somente após confirmar a existência. Nunca colocar uma referência direta a uma estrutura criada pela própria migration antes do `CREATE` correspondente.
+- A validação estática de ordem não substitui MariaDB: quando não houver servidor descartável disponível, declarar explicitamente que a sintaxe/execução SQL real não foi comprovada.
 - O catálogo de modificações e a configuração de suspensão devem permanecer no-code: listas, preços, exigências e condições pertencem ao MySQL/configuração declarativa; não hardcodar opções comerciais no frontend ou no avaliador.
 - Ao mudar autenticação ou autorização, atualizar `docs/AUTENTICACAO-E-PERMISSOES.md` e revisar a matriz de acesso.
 - Ao concluir uma missão, atualize `CHANGELOG.md` e `docs/STATUS-DO-PROJETO.md`.

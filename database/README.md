@@ -54,9 +54,15 @@ Para gerar os arquivos manuais, execute localmente `node scripts/generate-hostin
 
 Toda alteração estrutural deve entregar, nesta ordem, pré-verificação somente leitura, atualização incremental e verificação posterior. O `database/install.sql` também deve ser regenerado. Como as migrations 001 e 002 já foram aplicadas, novas alterações começam na 003; não reexecutar migrations antigas ou seeds já instalados.
 
+Precheck e verify devem começar por `information_schema.tables`/`information_schema.columns`. Se uma tabela ou coluna puder ainda não existir, a consulta de dados deve ser executada por SQL preparado apenas depois da confirmação; um `IF` envolvendo uma referência direta não é suficiente no MariaDB. O verify deve continuar apresentando diagnósticos das demais estruturas quando houver execução parcial. A validação estática de ordem, `INSERT`s e JSON não substitui execução em MariaDB.
+
 Se o phpMyAdmin interromper a importação, não registre a migration manualmente e não prossiga para o painel. Salve a mensagem do erro, execute novamente o precheck e compare as tabelas esperadas. Como os comandos usam seeds idempotentes, a retomada deve ser feita somente após identificar a causa. Não há `DROP TABLE` ou `DROP DATABASE` nesses arquivos.
 
 Após a confirmação da importação, a implementação dos endpoints e telas administrativas será feita em etapa separada e publicada na `main` somente depois dos testes locais.
+
+## Migration 010 — recuperação segura
+
+O precheck da Migration 010 não consulta diretamente `vehicle_modifications` antes de sua criação. Ele informa a existência individual das cinco tabelas novas e retorna `NULL`/diagnóstico quando estruturas dependentes ainda não existem. O verify usa o mesmo padrão para não interromper todas as verificações em caso de falha parcial. Execute sempre: precheck, atualização, verify; não marque a migration manualmente e aguarde a análise do estado real antes de repetir uma importação interrompida.
 # Migration 004 — comissionamento
 
 Após a importação das migrations anteriores, execute `migrations/004_partner_commissions.sql` manualmente pelo phpMyAdmin. O script é não destrutivo e cria o modelo inicial `NONE`; ele não publica preços, não calcula comissões históricas e não executa migrations no startup.

@@ -6,6 +6,10 @@ O código está na versão `0.4.8`, publicada na `main` no commit `3373ee5845ca0
 
 Baseado na documentação oficial consultada em 25/11/2026: Hostinger Web Apps Node.js suporta planos Business/Unlimited e Cloud; presets React, Vite e Express; Node 18, 20, 22 e 24; deploy via GitHub; variáveis de ambiente no painel; e MySQL com `127.0.0.1`.
 
+### Migration 010 — importação manual pendente
+
+O erro `#1146 vehicle_modifications não existe` foi localizado no precheck antigo, não na criação da tabela: o arquivo consultava o catálogo antes da atualização. Os três artefatos foram corrigidos e regenerados. A ordem obrigatória permanece precheck somente leitura → update → verify. Não executar SQL remoto nem repetir a importação até o proprietário confirmar se a Migration 010 foi registrada ou se houve execução parcial. A execução real em MariaDB não foi validada neste ambiente, pois não há cliente/servidor MariaDB descartável disponível.
+
 ## Configuração desta aplicação
 
 1. Conectar o repositório GitHub na opção Node.js Web App.

@@ -2,6 +2,10 @@
 
 ## Fase 3.13 — implementação local em branch, Migration 010 pendente — 26/11/2026
 
+- Auditoria de 27/11/2026: o erro `#1146 vehicle_modifications não existe` foi causado pela linha 8 do source precheck, gerada como linha 16 do SQL Hostinger, que consultava a tabela antes do `CREATE TABLE`. Precheck e verify foram reescritos com `information_schema` e SQL preparado condicional.
+- O gerador passou a preservar strings com aspas SQL escapadas; o validador agora verifica ordem de criação/uso, além de `INSERT`s, JSON e registro final em `schema_migrations`. Todos os artefatos 010 foram regenerados.
+- Não há MariaDB local/descartável disponível; a execução real em banco sem Migration 010, após update e em cenário parcial permanece não validada. Nenhum SQL remoto foi executado e a importação manual aguarda confirmação do estado do banco pelo proprietário.
+
 - Branch de trabalho: `feature/fase-3-13-suspensao-modificacoes`; versão local `0.4.9`. A `main` não foi alterada e não houve SQL remoto.
 - Corrigida a causa do `SERVICE_NOT_FOUND` no construtor: serviço existente sem versão agora recebe uma única versão DRAFT inicializada dentro de transação, preservando o versionamento.
 - Implementado o catálogo central declarativo de modificações, endpoints administrativos protegidos e menu `Catálogo de modificações`. Cadastro de motor continua bloqueado como modificação adicional.

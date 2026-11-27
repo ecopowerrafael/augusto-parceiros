@@ -6,6 +6,8 @@ A Migration 010 cria o catálogo reutilizável `vehicle_modifications`, suas rel
 
 Importação manual: `database/updates/010_suspension_modification_catalog_precheck.sql`, depois `010_suspension_modification_catalog.sql`, depois `010_suspension_modification_catalog_verify.sql`. Não executar remotamente nem reexecutar migrations 001–009. A migration registra-se somente quando as tabelas, catálogo, serviço e campos esperados existirem.
 
+O precheck e o verify foram preparados para banco sem Migration 010 e para execução parcial: primeiro consultam `information_schema.tables`/`information_schema.columns`; consultas de dados a tabelas opcionais são montadas e executadas somente após confirmar a existência. A consulta antiga que acessava `vehicle_modifications` antes do `CREATE TABLE` foi removida. Se o precheck mostrar tabela ausente, não há evidência de que a atualização tenha sido aplicada; não reimporte até confirmar o estado real.
+
 ## Fase 2 — schema inicial
 
 MySQL da Hostinger é conectado por `DATABASE_URL`. `migrations/001_initial.sql` cria usuários, parceiros, membros, clientes, sessões, tokens de reset, rate limits e auditoria, com chaves estrangeiras, índices e unicidade de e-mail/documento.
@@ -33,6 +35,8 @@ Toda entidade de negócio deve carregar o escopo de tenant quando aplicável. Al
 O banco `u891593158_doc` é selecionado explicitamente somente nos artefatos manuais de importação. Eles começam com `USE \`u891593158_doc\`;` e `SELECT DATABASE()`, qualificam as tabelas da aplicação e usam `table_schema = 'u891593158_doc'` nas consultas de `information_schema`. As migrations canônicas continuam sem nome de banco.
 
 O gerador local é `scripts/generate-hostinger-sql.mjs`. Ele produz pré-verificação, atualização e verificação posterior; a atualização deve ser executada somente depois da leitura da pré-verificação. DDL pode realizar commit implícito no MySQL, portanto não é prometido rollback transacional completo. Em falha parcial, preservar o erro, fazer backup/verificação e criar uma nova migration incremental; não repetir uma migration aplicada.
+
+O gerador preserva aspas SQL escapadas em comandos `PREPARE` e só qualifica identificadores fora de strings. O validador `scripts/validate-migration-inserts.mjs` verifica colunas/valores, `JSON_OBJECT`, ordem de criação/uso de tabelas e registro final em `schema_migrations`; isso é validação estática e não substitui MariaDB.
 # Fase 3.5 — comissões
 
 `004_partner_commissions.sql` cria `commission_settings` e `partner_commission_overrides`. O registro inicial é `NONE`, sem valores comerciais. A importação é manual e deve ser verificada antes de ativar as telas dependentes.
