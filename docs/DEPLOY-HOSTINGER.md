@@ -160,6 +160,10 @@ A Migration 011 é incremental e necessária porque a regra persistida de `OTHER
 
 A Fase 3.14 foi integrada na `main` pelo merge `f649d70c86e52a0f4fd15bb6617b149a35cf38ed`. O ponto de rollback é `rollback-before-0-4-10-20261127`, apontando para `cfffc8eaf055cb63633ae41d138e29af495169af`. As Migrations 011 e 012 foram aplicadas e verificadas manualmente pelo proprietário. A verificação HTTP pós-publicação retornou falha de resolução DNS (`curl: (6) Could not resolve host: docmotor.online`) neste ambiente; isso não comprova falha do deploy da Hostinger.
 
+## Fase 3.15 — branch de desenvolvimento
+
+A versão `0.4.11` está na branch `feature/fase-3-15-estrutura-operacional` e não foi integrada à `main`. A alteração é de navegação, parametrização de páginas e documentação; não há Migration 013 nem SQL remoto. Publicar somente a branch autorizada para homologação e aguardar autorização específica antes de integrar na `main`.
+
 ## Migration 012 — correção semântica aplicada
 
 A auditoria da Migration 011 confirmou que os textos dos checklists foram atualizados, mas as regras 002 e 006 persistidas anteriormente ainda tratavam `YES`/`NO` como se a pergunta tivesse sentido negativo. A Migration 012 corrigiu essas condições: contato confirmado (`YES`) ou desconhecido (`UNKNOWN`) exige análise manual; ausência de contato (`NO`) é o valor favorável quando os demais requisitos são atendidos. O proprietário informou a aplicação e verificação bem-sucedidas no banco remoto. Não reexecutar a Migration 012 ou migrations anteriores. Os três arquivos são `database/updates/012_suspension_checklist_semantics_precheck.sql`, `database/updates/012_suspension_checklist_semantics.sql` e `database/updates/012_suspension_checklist_semantics_verify.sql`.

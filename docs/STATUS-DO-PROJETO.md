@@ -1,5 +1,16 @@
 # Status do projeto
 
+## Fase 3.15 — estrutura operacional — branch de desenvolvimento — versão 0.4.11
+
+- Branch criada a partir da `main`: `feature/fase-3-15-estrutura-operacional`.
+- Menus administrativo e de parceiros reorganizados; o simulador genérico foi removido do menu e a rota legada retorna ao contexto de configuração.
+- `DeclarativeSimulationPage` passou a receber o código persistido do serviço, preservando o renderer, avaliador, resultado e PDF compartilhados.
+- Rotas operacionais preparadas para cadastro de motor, suspensão, outras modificações, emissor de CRLV e consultas. Serviços não configurados informam desenvolvimento sem dados fictícios.
+- Não foi criada Migration 013: nenhuma alteração persistida foi comprovadamente necessária nesta etapa. Não houve SQL remoto nem chamada à Simples API.
+- Validações executadas: typecheck, lint, build e 156 testes automatizados aprovados. A inspeção visual online permanece pendente do proprietário.
+
+Próxima missão: publicar a branch para homologação, conferir navegação e formulários na Hostinger e aguardar autorização antes da integração na `main`.
+
 ## Fase 3.14 — correções de usabilidade da suspensão — branch de desenvolvimento — versão 0.4.10
 
 - Causa confirmada: os simuladores integrado e declarativo mantinham renderizadores de formulário distintos; o integrado não renderizava `REPEATABLE_MODIFICATIONS`.

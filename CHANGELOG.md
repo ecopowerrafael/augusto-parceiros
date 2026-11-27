@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.11] — Fase 3.15 — estrutura operacional
+
+- Reorganizados os menus administrativo e de parceiros em Gestão, Serviços, Configurações e Conta; o simulador genérico deixou de ser item operacional do menu e sua rota legada permanece compatível.
+- A página declarativa passou a receber o código do serviço persistido, preparando a reutilização do renderer, avaliador, resultado e PDF nas páginas operacionais.
+- Criadas rotas operacionais para cadastro de motor, suspensão, outras modificações, emissor de CRLV e consultas; funcionalidades ainda não configuradas informam desenvolvimento sem simular resultados.
+- Criados `docs/ESTRUTURA-OPERACIONAL.md` e `docs/HOMOLOGACAO-FASE-3.15.md`. Nenhuma migration nova ou chamada à Simples API foi realizada.
+
 ## [0.4.10] — Usabilidade do simulador de suspensão — 27/11/2026
 
 - Unificados os dois simuladores no renderer declarativo compartilhado, com erros estruturados, rótulos persistidos, foco no primeiro campo inválido e limpeza de valores ocultos.

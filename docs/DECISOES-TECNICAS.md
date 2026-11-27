@@ -46,3 +46,7 @@ O logo oficial é lido pelo Vite durante o build e incorporado ao bundle como by
 ## 2026-11-26 — catálogo de modificações e quantidade declarativa
 
 Modificações adicionais são entidades persistidas em catálogo próprio, com status, exigências, referências e cobrança vinculada. O serviço de suspensão apenas seleciona essas entidades por campo repetível no-code; não reproduz a lista nem valores no React. A cobrança por quantidade usa `quantity_expression` e o operador fechado `COUNT_FILLED`, calculado no backend.
+
+## 2026-11-27 — páginas operacionais reutilizam o motor declarativo
+
+A operação não terá um formulário fixo por serviço. `DeclarativeSimulationPage` recebe o código persistido do serviço e reaproveita o renderer, avaliador, resultado e PDF já existentes. Isso evita divergência entre simulador administrativo e páginas futuras. Não foi criada Migration 013 porque a Fase 3.15 não comprovou alteração necessária no schema.

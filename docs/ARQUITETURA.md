@@ -12,6 +12,10 @@ O computador local é usado para edição, lint, testes unitários e build. A Ho
 
 ## Direção futura
 
+### Estrutura operacional — Fase 3.15
+
+O painel mantém o construtor e o simulador declarativo no contexto administrativo. Rotas operacionais são orientadas pelo código persistido do serviço e reutilizam `DeclarativeSimulationPage`, `ServiceFieldRenderer`, `ServiceResultView` e o gerador único de PDF. Serviços sem configuração adequada exibem estado de desenvolvimento, sem simular disponibilidade comercial. A autorização continua sendo feita no servidor por sessão, perfil, aprovação e empresa; o menu não é mecanismo de segurança.
+
 Migrations SQL versionadas foram escolhidas para reduzir dependência de binários no ambiente compartilhado. Prisma não é necessário. O modelo no-code separa `services` de `service_versions`; formulário, cobranças, regras, documentos e mensagens apontam para a versão. O avaliador em `server/service-config.js` aceita somente operadores e ações enumerados, não usa `eval`, SQL do usuário ou scripts configuráveis. Na Fase 3.7, normalizadores reutilizáveis convertem combustível, placas e cilindradas antes do cálculo; o frontend não é autoridade para totais ou viabilidade.
 
 `server/services.js` concentra a API administrativa com autorização de administrador, CSRF, validação Zod, transações e auditoria. A interface `ServiceBuilder` é genérica: os campos do simulador são renderizados pelas linhas do banco, não por componentes de cadastro de motor. Fontes externas são apenas registros de adaptadores permitidos; a Simples API real continua fora da fase.

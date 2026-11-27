@@ -1,6 +1,6 @@
 # Doc Motor — Documentação Veicular
 
-Plataforma comercial e operacional da Doc Motor. A Fase 1 entrega o site comercial; a Fase 2 adiciona autenticação, perfis, permissões e persistência MySQL. A Fase 3 usa o construtor no-code, o catálogo central de modificações e o simulador administrativo. A versão 0.4.9 prepara a regularização de suspensão; Simples API real, documentos de clientes e financeiro permanecem fora do escopo atual.
+Plataforma comercial e operacional da Doc Motor. A Fase 1 entrega o site comercial; a Fase 2 adiciona autenticação, perfis, permissões e persistência MySQL. A Fase 3 usa o construtor no-code, o catálogo central de modificações, páginas operacionais e o simulador administrativo. A versão 0.4.11 prepara a estrutura operacional; Simples API real, documentos de clientes e financeiro permanecem fora do escopo atual.
 
 ## Stack
 
@@ -35,6 +35,8 @@ O formulário da Fase 1 não grava dados. Não utilize dados reais de clientes d
 - `docs/HOMOLOGACAO-FASE-3.2.md`: roteiro dos 12 cenários do motor e homologação do segundo serviço no-code.
 - `docs/HOMOLOGACAO-FASE-3.7.md`: roteiro da correção de normalização e importação manual da Migration 006.
 - `docs/CATALOGO-MODIFICACOES.md`: catálogo reutilizável e limites de aplicabilidade.
+- `docs/ESTRUTURA-OPERACIONAL.md`: separação entre configuração administrativa e operação.
+- `docs/HOMOLOGACAO-FASE-3.15.md`: roteiro da estrutura operacional e da navegação.
 - `docs/REGULARIZACAO-SUSPENSAO.md`: regras e fluxo declarativo do serviço de suspensão.
 - `docs/HOMOLOGACAO-FASE-3.13.md`: roteiro e pendências de homologação.
 
