@@ -73,5 +73,9 @@ describe('SQL manual da Hostinger', () => {
     const output = execFileSync(process.execPath, ['scripts/validate-migration-inserts.mjs', 'migrations/011_suspension_form_usability.sql'], { cwd: root, encoding: 'utf8' })
     expect(output).toContain('ordem de criação e uso das tabelas aprovada.')
     expect(output).toContain('literais JSON SQL verificados; sintaxe JSON aprovada.')
+    for (const relativePath of ['database/updates/011_suspension_form_usability_precheck.sql', 'database/updates/011_suspension_form_usability_verify.sql']) {
+      const sql = fs.readFileSync(path.join(root, relativePath), 'utf8')
+      expect(sql).not.toMatch(/\b(?:PREPARE|EXECUTE|DEALLOCATE\s+PREPARE)\b/i)
+    }
   })
 })

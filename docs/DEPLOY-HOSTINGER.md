@@ -152,7 +152,7 @@ Se o código publicado estiver em `0.2.1`, mas um login com payload válido reto
 
 ## Migration 011 — Fase 3.14
 
-A Migration 011 é incremental e necessária porque a regra persistida de `OTHER_STATE` para `LOWERED_SUSPENSION` não existia na Migration 010, além de atualizar os rótulos dos checklists. Não executar SQL remoto a partir do Codex. Depois da revisão e autorização, importar no phpMyAdmin, nesta ordem: `database/updates/011_suspension_form_usability_precheck.sql`, `database/updates/011_suspension_form_usability.sql` e `database/updates/011_suspension_form_usability_verify.sql`. O precheck é somente leitura; o verify deve retornar a regra `MANUAL_REVIEW` de prioridade 1 e uma única linha em `schema_migrations`.
+A Migration 011 é incremental e necessária porque a regra persistida de `OTHER_STATE` para `LOWERED_SUSPENSION` não existia na Migration 010, além de atualizar os rótulos dos checklists. Não executar SQL remoto a partir do Codex. Depois da revisão e autorização, importar no phpMyAdmin, nesta ordem: `database/updates/011_suspension_form_usability_precheck.sql`, `database/updates/011_suspension_form_usability.sql` e `database/updates/011_suspension_form_usability_verify.sql`. O precheck e o verify usam somente SELECTs estáticos; não usam PREPARE/EXECUTE. O precheck deve mostrar `schema_migrations_table_present = 1` e `migration_011_registered = 0`; se a tabela-base não existir, interromper. Após o update, o verify deve retornar `migration_011_count = 1`, a regra `MANUAL_REVIEW` de prioridade 1 e uma única linha em `schema_migrations`.
 
 ## Diagnóstico temporário de conexão MySQL
 

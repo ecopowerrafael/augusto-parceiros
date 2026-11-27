@@ -6,6 +6,7 @@
 - Corrigida a apresentação de modificações adicionais no resultado, PDF e WhatsApp, preservando os totais calculados pelo backend.
 - Criada a Migration 011 para rótulos semânticos dos checklists e regra declarativa que encaminha `OTHER_STATE` para análise manual no serviço de suspensão.
 - Nenhum SQL remoto foi executado, nenhuma chamada real à Simples API foi realizada e a publicação na `main` permanece pendente de autorização.
+- Corrigidos os artefatos de precheck/verify 011 para usar somente SELECTs estáticos, evitando a incompatibilidade de renderização do phpMyAdmin com `EXECUTE`.
 
 ## [0.4.9] — Suspensão e catálogo de modificações — 26/11/2026
 

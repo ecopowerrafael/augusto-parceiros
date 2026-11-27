@@ -36,6 +36,7 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - A recuperação de senha depende de SMTP configurado no ambiente; nunca retornar o token de recuperação na API.
 - A instalação inicial do MySQL desta fase é manual pelo phpMyAdmin usando `database/install.sql`; não executar migrations, provisionamento ou operações remotas sem autorização explícita da missão.
 - Toda migration nova deve ser auditada pela ordem de criação e uso de tabelas/colunas, ter precheck somente de leitura seguro antes das estruturas existirem e verify diagnóstico para execução parcial. A validação estática não substitui MariaDB real quando este estiver disponível.
+- Nos arquivos novos de precheck e verify destinados ao phpMyAdmin, usar SELECTs estáticos, tabelas qualificadas e contagens exatas; não usar PREPARE, EXECUTE, DEALLOCATE PREPARE ou procedures temporárias para emitir resultados tabulares. Se uma tabela-base obrigatória não existir, informar a dependência e interromper antes da consulta de conteúdo.
 - Os simuladores devem reutilizar os componentes compartilhados de campos, condições, opções, grupos repetíveis e resultados; não criar renderizadores divergentes para a mesma configuração declarativa.
 - Campos técnicos só podem aparecer ou ser obrigatórios por condições declarativas persistidas; não espalhar regras comerciais rígidas no frontend.
 - Para a Migration 007, a publicação fica suspensa até confirmação manual do proprietário no phpMyAdmin; não executar SQL remoto pelo agente.
