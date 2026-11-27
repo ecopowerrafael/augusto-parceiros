@@ -26,9 +26,6 @@ const manualFiles = [
   'database/updates/012_suspension_checklist_semantics_precheck.sql',
   'database/updates/012_suspension_checklist_semantics.sql',
   'database/updates/012_suspension_checklist_semantics_verify.sql',
-  'database/updates/013_suspension_documentation_fields_precheck.sql',
-  'database/updates/013_suspension_documentation_fields.sql',
-  'database/updates/013_suspension_documentation_fields_verify.sql',
   'database/install.sql',
   'database/verify.sql',
   'database/create-admin.sql',
@@ -92,12 +89,9 @@ describe('SQL manual da Hostinger', () => {
       expect(sql).not.toMatch(/\b(?:PREPARE|EXECUTE|DEALLOCATE\s+PREPARE)\b/i)
     }
   })
-  it('valida a Migration 013 de documentação da suspensão', () => {
-    const output = execFileSync(process.execPath, ['scripts/validate-migration-inserts.mjs', 'migrations/013_suspension_documentation_fields.sql'], { cwd: root, encoding: 'utf8' })
-    expect(output).toContain('ordem de criação e uso das tabelas aprovada.')
-    for (const relativePath of ['database/updates/013_suspension_documentation_fields_precheck.sql', 'database/updates/013_suspension_documentation_fields_verify.sql']) {
-      const sql = fs.readFileSync(path.join(root, relativePath), 'utf8')
-      expect(sql).not.toMatch(/\b(?:PREPARE|EXECUTE|DEALLOCATE\s+PREPARE)\b/i)
-    }
+  it('mantém a Migration 013 fora do fluxo ativo', () => {
+    expect(fs.existsSync(path.join(root, 'migrations/013_suspension_documentation_fields.sql'))).toBe(false)
+    expect(fs.readFileSync(path.join(root, 'database/install.sql'), 'utf8')).not.toContain('013_suspension_documentation_fields')
+    expect(fs.readFileSync(path.join(root, 'scripts/generate-hostinger-sql.mjs'), 'utf8')).not.toContain('013_suspension_documentation_fields')
   })
 })

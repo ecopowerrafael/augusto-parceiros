@@ -1,11 +1,11 @@
 # Status do projeto
 
-## Fase 3.16 — acabamento visual e documentação da suspensão — branch de desenvolvimento — versão 0.4.12
+## Fase 3.16 — acabamento visual e documentação da suspensão — branch histórica — versão 0.4.12
 
 - Branch: `feature/fase-3-16-acabamento-documentacao`, criada a partir da `main` publicada em 0.4.11.
 - Implementados ajustes de navegação autenticada, gestão de parceiros com ativos como filtro inicial, seção independente de pendentes e renderer compartilhado com acessibilidade de erros.
-- Criada a Migration 013 para os campos `suspension.parts_invoice` e `suspension.installation_invoice`, com seis opções persistidas, sem valores padrão e sem alteração de cobrança.
-- Artefatos gerados em `database/updates/013_suspension_documentation_fields_*.sql`; importação e verificação manual pelo proprietário ainda pendentes.
+- A Migration 013 foi criada historicamente na feature, mas está suspensa e não integra o fluxo ativo. Não foi importada nem registrada pelo agente.
+- Os campos documentais serão implementados em React na migração futura da suspensão, sem depender de nova migration para perguntas visuais.
 - Não houve SQL remoto, chamadas à Simples API ou integração na `main`. Homologação visual não foi declarada concluída.
 
 Próximo passo: executar as validações locais, publicar somente a branch de feature e aguardar a importação/verificação da Migration 013 antes de qualquer integração na `main`.
@@ -341,3 +341,15 @@ Fase 3.9 — regras declarativas, simulador comercial e PDF profissional — ver
 - Auditoria para publicação: incompatibilidade semântica confirmada nas regras persistidas 002/006 da suspensão e corrigida pela Migration 012, aplicada/verificada pelo proprietário.
 
 Próxima missão: homologar manualmente os dois simuladores, PDF, impressão e WhatsApp com dados fictícios diretamente na Hostinger. Não iniciar a Fase 4.
+# Fase 3.18 — fundação híbrida e regularização de motor — branch de desenvolvimento — versão 0.5.0
+
+- Branch: `feature/fase-3-18-arquitetura-hibrida-motor`.
+- O fluxo `MOTOR_V1` foi implementado para administrador e parceiro com formulário React específico e regras técnicas versionadas em código.
+- Preços e comissões continuam sendo obtidos do MySQL; permissões, disponibilidade e resultado continuam sob autoridade do backend.
+- `ServiceResultView`, PDF, WhatsApp e o layout autenticado permanecem compartilhados.
+- Fluxo declarativo preservado para suspensão e demais serviços, permitindo rollback explícito.
+- Migration 013 removida do fluxo ativo de instalação e geração SQL. Não foi importada, não foi registrada e não houve Migration 014.
+- Não houve SQL remoto, chamada à Simples API ou publicação na `main`.
+- Testes, build e homologação visual ainda pendentes nesta etapa.
+
+Próximo passo: executar a suíte local completa, revisar a paridade do motor e preparar a homologação manual sem integrar na `main`.

@@ -12,6 +12,12 @@ O computador local é usado para edição, lint, testes unitários e build. A Ho
 
 ## Direção futura
 
+### Fundação híbrida — Fase 3.18
+
+O serviço de regularização de motor é o primeiro fluxo migrado para componentes React específicos e regras técnicas versionadas em `server/motor-flow.js`. O contrato `MOTOR_V1` define campos, opções e versão das regras sem depender de `service_form_sections`, `service_form_fields` ou `service_field_options` para renderização operacional. O backend continua carregando preços e permissões do banco e é a autoridade do resultado.
+
+O fluxo declarativo permanece como compatibilidade e rollback. Suspensão e demais serviços não foram migrados nesta fase. Não há feature flag complexa: o roteamento explícito `/api/admin/motor` e `/api/partner/motor` seleciona o novo fluxo, enquanto as demais rotas continuam no pipeline declarativo.
+
 ### Estrutura operacional — Fase 3.15
 
 O painel mantém o construtor e o simulador declarativo no contexto administrativo. Rotas operacionais são orientadas pelo código persistido do serviço e reutilizam `DeclarativeSimulationPage`, `ServiceFieldRenderer`, `ServiceResultView` e o gerador único de PDF. Serviços sem configuração adequada exibem estado de desenvolvimento, sem simular disponibilidade comercial. A autorização continua sendo feita no servidor por sessão, perfil, aprovação e empresa; o menu não é mecanismo de segurança.

@@ -166,7 +166,7 @@ A versão `0.4.11` foi integrada na `main` pelo merge `4778456` após as valida�
 
 ### Cache e PWA na publicação 0.4.11
 
-O repositório não contém registro de Service Worker ativo nem cache offline de rotas autenticadas. O `public/manifest.json` foi sincronizado para `0.4.12`; não é necessário revogar um Service Worker anterior. Se a interface antiga permanecer após o deploy, conferir o horário de propagação, recarregar sem cache e limpar somente o cache HTTP do domínio no navegador. Não armazenar dados privados ou documentos em cache offline.
+O repositório não contém registro de Service Worker ativo nem cache offline de rotas autenticadas. O `public/manifest.json` deve ser sincronizado para `0.5.0`; não é necessário revogar um Service Worker anterior. Se a interface antiga permanecer após o deploy, conferir o horário de propagação, recarregar sem cache e limpar somente o cache HTTP do domínio no navegador. Não armazenar dados privados ou documentos em cache offline.
 
 ## Migration 012 — correção semântica aplicada
 
@@ -193,10 +193,6 @@ A versão `0.4.10` foi integrada na `main`; a Migration 010 e as incrementais 01
 
 ## Fase 3.16 / Migration 013
 
-A versão 0.4.12 inclui a Migration 013 (`013_suspension_documentation_fields.sql`) para os campos declarativos de documentação do serviço de suspensão. A aplicação é manual pelo phpMyAdmin, nesta ordem:
-
-1. `database/updates/013_suspension_documentation_fields_precheck.sql`
-2. `database/updates/013_suspension_documentation_fields.sql`
-3. `database/updates/013_suspension_documentation_fields_verify.sql`
+A versão 0.5.0 não inclui a Migration 013. Ela permanece suspensa e fora do fluxo ativo de instalação, geração SQL e deploy. Não executar SQL remoto nem importar essa migration. Os campos documentais da suspensão serão implementados no componente React próprio da próxima fase, sem migration para perguntas visuais.
 
 O precheck e o verify são somente leitura. Não executar SQL remotamente pelo agente, não reimportar migrations anteriores e não integrar a branch na `main` antes de confirmar que o verify retornou os dois campos, seis opções e o registro da migration.

@@ -292,3 +292,11 @@
 - Conecta modificações adicionais ao catálogo persistido com grupos repetíveis.
 - Sem Migration 011, sem SQL remoto e sem integração Simples API nesta etapa.
 
+# [0.5.0] — Fase 3.18 — fundação híbrida de motor
+
+- Adicionado o fluxo operacional `MOTOR_V1` para regularização de motor, compartilhado entre administrador e parceiro.
+- Formulário, opções e regras de motor passaram a ser definidos em código; preços, comissões, permissões e disponibilidade continuam persistidos e validados no backend.
+- Mantido o fluxo declarativo legado para compatibilidade e rollback dos serviços ainda não migrados.
+- Migration 013 retirada do fluxo ativo de instalação e geração Hostinger; seu histórico permanece no Git anterior.
+- Não houve SQL remoto, Migration 014, chamada à Simples API ou integração na `main`.
+

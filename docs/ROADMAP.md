@@ -1,6 +1,6 @@
 # Roadmap
 
-3.16. Acabamento visual, gestão de parceiros e documentação da suspensão — versão `0.4.12` em `feature/fase-3-16-acabamento-documentacao`; Migration 013 gerada para importação manual e verificação do proprietário. Não publicar na `main` antes da confirmação da migration.
+3.16. Acabamento visual e gestão de parceiros — versão histórica `0.4.12` em `feature/fase-3-16-acabamento-documentacao`; a Migration 013 foi suspensa e não deve ser importada.
 
 3.14. Correções de usabilidade do serviço de suspensão — versão `0.4.10` em `feature/fase-3-14-usabilidade-suspensao`; renderização compartilhada, UF SP/Outros estados, PBT condicional e modificações repetíveis em validação local. Não publicar na `main` sem autorização.
 
@@ -49,3 +49,10 @@ Fases posteriores dependem de validação das regras operacionais e não devem s
 ## Fase 3.8 — resultado visual, PDF e compartilhamento
 
 Concluída e incorporada à Fase 3.9 na versão `0.4.2`. A Migration 007 foi instalada manualmente no phpMyAdmin; a homologação funcional online permanece pendente.
+# Fase 3.18 — fundação híbrida e regularização de motor — versão `0.5.0`
+
+- Em desenvolvimento na branch `feature/fase-3-18-arquitetura-hibrida-motor`.
+- O serviço de motor utiliza formulário React próprio e regras `MOTOR_V1` em código.
+- O fluxo declarativo legado permanece para rollback e para suspensão, modificações, CRLV e consultas.
+- A Migration 013 está suspensa e não integra o instalador nem os SQLs gerados.
+- Homologação visual e funcional na Hostinger ainda não foi realizada.
