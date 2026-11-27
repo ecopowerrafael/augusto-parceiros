@@ -61,3 +61,8 @@ Para a instalação atual da Hostinger, siga `database/README.md`: importe os SQ
 ## Escopo da Fase 1
 
 Inclui home comercial, navegação por âncoras, FAQ, atendimento geral por WhatsApp, CTAs por serviço, cadastro real de parceiros, SEO técnico básico, sitemap, robots, manifest PWA e área autenticada do parceiro com acompanhamento de status.
+# Doc Motor
+
+Plataforma de documentação veicular. A versão em desenvolvimento desta branch é `0.4.12`, Fase 3.16. O ambiente oficial de homologação é a Hostinger; a conferência visual continua manual e nenhuma homologação é declarada automaticamente.
+
+Consulte `AGENTS.md`, `docs/STATUS-DO-PROJETO.md` e `docs/DEPLOY-HOSTINGER.md` antes de alterar o projeto.

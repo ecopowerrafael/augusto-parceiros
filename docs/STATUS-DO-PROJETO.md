@@ -1,5 +1,15 @@
 # Status do projeto
 
+## Fase 3.16 — acabamento visual e documentação da suspensão — branch de desenvolvimento — versão 0.4.12
+
+- Branch: `feature/fase-3-16-acabamento-documentacao`, criada a partir da `main` publicada em 0.4.11.
+- Implementados ajustes de navegação autenticada, gestão de parceiros com ativos como filtro inicial, seção independente de pendentes e renderer compartilhado com acessibilidade de erros.
+- Criada a Migration 013 para os campos `suspension.parts_invoice` e `suspension.installation_invoice`, com seis opções persistidas, sem valores padrão e sem alteração de cobrança.
+- Artefatos gerados em `database/updates/013_suspension_documentation_fields_*.sql`; importação e verificação manual pelo proprietário ainda pendentes.
+- Não houve SQL remoto, chamadas à Simples API ou integração na `main`. Homologação visual não foi declarada concluída.
+
+Próximo passo: executar as validações locais, publicar somente a branch de feature e aguardar a importação/verificação da Migration 013 antes de qualquer integração na `main`.
+
 ## Fase 3.15 — estrutura operacional — publicada na main — versão 0.4.11
 
 - Branch de implementação `feature/fase-3-15-estrutura-operacional` integrada na `main` pelo merge `4778456`.

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.12] — Fase 3.16 — acabamento e documentação da suspensão
+
+- Menu autenticado com navegação alinhada, item ativo, colapso persistido e adaptação mobile.
+- Gestão de parceiros inicia em Ativos e mantém solicitações pendentes em seção independente, com contadores e os fluxos existentes de aprovação/recusa.
+- Campos declarativos de nota fiscal das peças e do serviço adicionados ao serviço de suspensão, sem cobrança automática e com rótulos amigáveis em resultado, PDF e WhatsApp.
+- Migration 013 e artefatos Hostinger gerados para importação manual; nenhuma operação SQL remota foi executada.
+- Homologação visual e funcional permanece pendente do proprietário.
+
 ## [0.4.11] — Fase 3.15 — estrutura operacional
 
 - Reorganizados os menus administrativo e de parceiros em Gestão, Serviços, Configurações e Conta; o simulador genérico deixou de ser item operacional do menu e sua rota legada permanece compatível.

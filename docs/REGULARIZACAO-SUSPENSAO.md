@@ -9,3 +9,6 @@ Motocicletas, caminhões, ônibus, veículos acima de 3.500 kg e categorias sem 
 Rodas e pneus são uma única modificação comercial. Modificações adicionais são itens distintos do catálogo, com descrição própria e cobrança por item válido. Linhas vazias, duplicadas, inativas e cadastro de motor são rejeitados pelo backend.
 
 Fontes de referência inicial: Resolução CONTRAN nº 916/2022 e alterações, Detran-SP, Poupatempo-SP, SENATRAN e Inmetro quando aplicável. A data e a condição normativa devem ser confirmadas antes de transformar um item em regra definitiva.
+### Documentação da modificação
+
+O formulário declarativo possui os campos obrigatórios `suspension.parts_invoice` e `suspension.installation_invoice`, sem seleção inicial. Os códigos permanecem internos; a interface, o PDF e a mensagem de WhatsApp exibem os textos persistidos em português. Esses campos são informativos, não criam cobrança nem garantem aprovação oficial.
