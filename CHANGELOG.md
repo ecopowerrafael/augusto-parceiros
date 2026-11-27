@@ -5,6 +5,7 @@
 - Em desenvolvimento na branch `feature/fase-3-19-arquitetura-hibrida-suspensao`.
 - Criado o fluxo `SUSPENSION_V1`, com formulário React próprio, regras técnicas versionadas em código e uso do catálogo/preços persistidos.
 - Operação administrativa, parceiro e simulador do construtor passam a compartilhar o mesmo fluxo de suspensão; cadastro de motor e simulador legado permanecem preservados.
+- Auditoria complementar corrigiu checklist duplicado, combinações de conformidade, catálogo vazio, limite de modificações, `fixtureContext` operacional e seleção de versão publicada para parceiros.
 - Nenhuma migration, operação SQL remota ou chamada à Simples API foi realizada.
 - Homologação visual e online pendente.
 

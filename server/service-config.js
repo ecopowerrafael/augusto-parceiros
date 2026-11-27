@@ -203,9 +203,10 @@ function validateModificationAnswers(values, catalog = []) {
   const entries = values['modifications.additional']
   if (entries === undefined || entries === null || entries === '') return []
   if (!Array.isArray(entries)) return [{ field: 'modifications.additional', code: 'INVALID_MODIFICATIONS', message: 'Selecione as modificações adicionais em uma lista válida.' }]
-  const catalogByCode = new Map(catalog.filter((item) => item && item.code).map((item) => [String(item.code), item]))
+  const catalogByCode = new Map(catalog.filter((item) => item && item.code).map((item) => [String(item.code).trim().toUpperCase(), item]))
   const seen = new Set()
   const errors = []
+  if (entries.length > 10) errors.push({ field: 'modifications.additional', code: 'TOO_MANY_MODIFICATIONS', message: 'Adicione no máximo 10 modificações por análise.' })
   for (const entry of entries) {
     const code = String(entry?.code || '').trim().toUpperCase()
     const description = String(entry?.description || '').trim()
@@ -214,7 +215,7 @@ function validateModificationAnswers(values, catalog = []) {
     seen.add(code)
     if (['ENGINE_REGISTRATION', 'ENGINE_NO_INVOICE', 'SUSPENSION_LOWERING', 'SUSPENSION_LIFT', 'SUSPENSION_OTHER', 'WHEELS_TIRES'].includes(code)) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_NOT_ALLOWED', message: 'Esta modificação possui fluxo próprio e não pode ser adicionada aqui.' })
     const item = catalogByCode.get(code)
-    if (catalog.length && !item) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_NOT_FOUND', message: 'A modificação selecionada não está disponível no catálogo.' })
+    if (!item) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_NOT_FOUND', message: 'A modificação selecionada não está disponível no catálogo.' })
     if (item && String(item.status).toUpperCase() !== 'ACTIVE') errors.push({ field: 'modifications.additional', code: 'MODIFICATION_INACTIVE', message: 'A modificação selecionada está inativa.' })
     const categoryScopes = Array.isArray(item?.vehicle_category_codes) ? item.vehicle_category_codes.map((value) => String(value).toUpperCase()) : []
     if (item && categoryScopes.length && !categoryScopes.includes(String(values['vehicle_target.category'] || '').toUpperCase())) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_CATEGORY_NOT_ALLOWED', message: 'A modificação selecionada não está configurada para a categoria do veículo.' })
@@ -222,6 +223,10 @@ function validateModificationAnswers(values, catalog = []) {
     if (item && ufScopes.length && !ufScopes.includes(String(values['vehicle_target.state'] || '').toUpperCase())) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_UF_NOT_ALLOWED', message: 'A modificação selecionada não está configurada para a UF informada.' })
     if (item?.requires_description && !description) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_DESCRIPTION_REQUIRED', message: 'Descreva a alteração realizada.' })
   }
+  const otherDescriptions = entries.filter((entry) => String(entry?.code || '').trim().toUpperCase() === 'OTHER_MODIFICATION').map((entry) => String(entry?.description || '').trim().toLocaleLowerCase()).filter(Boolean)
+  const otherCount = entries.filter((entry) => String(entry?.code || '').trim().toUpperCase() === 'OTHER_MODIFICATION').length
+  if (otherCount > 1 && otherDescriptions.length !== otherCount) errors.push({ field: 'modifications.additional', code: 'OTHER_DESCRIPTION_REQUIRED', message: 'Descreva cada outra modificação quando houver mais de uma.' })
+  if (new Set(otherDescriptions).size !== otherDescriptions.length) errors.push({ field: 'modifications.additional', code: 'DUPLICATE_OTHER_DESCRIPTION', message: 'Descreva cada outra modificação de forma diferente.' })
   if (values['wheels.include'] === 'YES' && seen.has('WHEELS_TIRES')) errors.push({ field: 'modifications.additional', code: 'DUPLICATE_WHEELS_MODIFICATION', message: 'Rodas e pneus já foram selecionados como serviço adicional.' })
   return errors
 }

@@ -7,6 +7,7 @@
 - Operação administrativa, parceiro e simulador do construtor apontam para o mesmo componente React e os mesmos endpoints backend; o fluxo MOTOR_V1 e o legado declarativo permanecem disponíveis.
 - O catálogo de modificações e os preços continuam vindo do MySQL; não foi criada migration adicional.
 - Ainda pendentes: validações completas, homologação visual do proprietário, publicação da branch e verificação online.
+- Auditoria complementar em andamento: formulário reorganizado sem preenchimento automático de rodas/outros, erros padronizados, regras combinatórias ampliadas e segurança de catálogo/versões reforçada.
 
 ## Fase 3.16 — acabamento visual e documentação da suspensão — branch histórica — versão 0.4.12
 

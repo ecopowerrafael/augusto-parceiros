@@ -37,3 +37,5 @@ A área administrativa usa rotas independentes sobre o mesmo shell autenticado. 
 # Fase 3.19 — fronteira híbrida da suspensão
 
 `SUSPENSION_V1` possui formulário e avaliador próprios em `src/suspension` e `server/suspension-flow.js`. O fluxo consulta no banco apenas catálogo, vínculos e preços comerciais; perguntas, opções, condições e semântica técnica ficam em uma única definição versionada no código. O `MOTOR_V1` não é alterado. O simulador declarativo legado continua disponível para rollback e serviços ainda não migrados.
+
+Os endpoints operacionais rejeitam `fixtureContext` enviado pelo cliente. Parceiros usam somente a versão publicada e cobranças não ativas são ignoradas; administradores usam a configuração mais recente do ambiente de homologação.
