@@ -56,3 +56,9 @@ Concluída e incorporada à Fase 3.9 na versão `0.4.2`. A Migration 007 foi ins
 - O fluxo declarativo legado permanece para rollback e para suspensão, modificações, CRLV e consultas.
 - A Migration 013 está suspensa e não integra o instalador nem os SQLs gerados.
 - Homologação visual e funcional na Hostinger aguarda conferência manual do proprietário.
+# Fase 3.19 — arquitetura híbrida da suspensão
+
+- Formulário próprio `SUSPENSION_V1` para admin, parceiro e construtor.
+- Regras técnicas semânticas centralizadas no backend, catálogo e preços persistidos reutilizados.
+- Documentos informativos de peças/instalação em React, sem nova migration.
+- Aguardar testes locais, publicação da branch e homologação manual antes de integrar à `main`.

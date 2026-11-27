@@ -9,6 +9,7 @@ import { config } from './config.js'
 import { getDatabasePool, isDatabaseConfigured, withTransaction } from './database.js'
 import { createPartnerServiceRouter, createPublicServiceRouter, createServiceRouter } from './services.js'
 import { createMotorRouter } from './motor-flow.js'
+import { createSuspensionRouter } from './suspension-flow.js'
 import { isPartnerCompanyStatus, partnerUserStatusForCompanyStatus } from './partner-flow.js'
 import { COMMISSION_MODELS, evaluateCommission, resolveCommissionConfig, validateCommissionConfig } from './commissions.js'
 import {
@@ -450,6 +451,8 @@ app.use('/api/partner', createPartnerServiceRouter({ databaseRequired, activeAcc
 app.use('/api/admin', createServiceRouter({ databaseRequired, activeAccount }))
 app.use('/api/admin/motor', createMotorRouter({ databaseRequired, activeAccount, role: 'ADMINISTRATOR' }))
 app.use('/api/partner/motor', createMotorRouter({ databaseRequired, activeAccount, role: 'PARTNER' }))
+app.use('/api/admin/suspension', createSuspensionRouter({ databaseRequired, activeAccount, role: 'ADMINISTRATOR' }))
+app.use('/api/partner/suspension', createSuspensionRouter({ databaseRequired, activeAccount, role: 'PARTNER' }))
 
 app.use(express.static(dist, { index: false }))
 app.get('*', asyncRoute(async (_request, response, next) => {

@@ -1,5 +1,14 @@
 # Status do projeto
 
+## Fase 3.19 — arquitetura híbrida da suspensão — em desenvolvimento — versão 0.5.1
+
+- Branch: `feature/fase-3-19-arquitetura-hibrida-suspensao`, criada a partir da `main` em `0.5.0`.
+- Implementado em código o fluxo `SUSPENSION_V1`, separado da dependência de `service_form_fields`, `technical_rules` e `service_field_options` para o formulário e a avaliação da suspensão.
+- Operação administrativa, parceiro e simulador do construtor apontam para o mesmo componente React e os mesmos endpoints backend; o fluxo MOTOR_V1 e o legado declarativo permanecem disponíveis.
+- O catálogo de modificações e os preços continuam vindo do MySQL; não foi criada migration adicional.
+- Ainda pendentes: validações completas, homologação visual do proprietário, publicação da branch e verificação online.
+- Auditoria complementar em andamento: formulário reorganizado sem preenchimento automático de rodas/outros, erros padronizados, regras combinatórias ampliadas e segurança de catálogo/versões reforçada.
+
 ## Fase 3.16 — acabamento visual e documentação da suspensão — branch histórica — versão 0.4.12
 
 - Branch: `feature/fase-3-16-acabamento-documentacao`, criada a partir da `main` publicada em 0.4.11.
