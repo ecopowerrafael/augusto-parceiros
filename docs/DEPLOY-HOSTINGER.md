@@ -14,6 +14,8 @@ Precheck aprovado pelo proprietário em 27/11/2026: `migration_010_already_regis
 
 A primeira importação falhou posteriormente com `#1052` na subconsulta da carga de opções; o alias foi corrigido para `sv.id`. Como o erro ocorreu depois de DDL e seeds iniciais, executar novamente o precheck antes de uma retomada. A retomada só deve usar o SQL regenerado após o commit da correção.
 
+O precheck de recuperação confirmou cinco tabelas novas, catálogo com 27 registros, uma versão do serviço, `quantity_expression` presente, migration ainda não registrada e 5/7 campos específicos presentes. Esse é o cenário parcial esperado após a falha; a retomada pode usar o SQL completo corrigido, sem excluir estruturas ou registrar a migration manualmente.
+
 ## Configuração desta aplicação
 
 1. Conectar o repositório GitHub na opção Node.js Web App.

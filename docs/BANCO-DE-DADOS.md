@@ -12,6 +12,8 @@ Precheck real confirmado pelo proprietário em 27/11/2026: banco `u891593158_doc
 
 Após a tentativa de importação, o proprietário reportou `#1052` na carga de opções. A causa foi a subconsulta não qualificada `SELECT id FROM service_versions sv JOIN services ss`; a Migration 010 canônica agora usa `SELECT sv.id`. Não repetir a importação sem executar novamente o precheck corrigido, pois DDL e seeds anteriores podem ter permanecido após a falha.
 
+O precheck de recuperação confirmou execução parcial: as cinco tabelas novas, a coluna `quantity_expression`, os 27 itens do catálogo e uma versão do serviço já existem; a migration ainda não está registrada e somente 5 dos 7 campos específicos do checklist foram encontrados. Como os comandos são idempotentes e não destrutivos, retomar com o SQL completo corrigido e executar o verify imediatamente depois; não inserir manualmente o registro em `schema_migrations`.
+
 ## Fase 2 — schema inicial
 
 MySQL da Hostinger é conectado por `DATABASE_URL`. `migrations/001_initial.sql` cria usuários, parceiros, membros, clientes, sessões, tokens de reset, rate limits e auditoria, com chaves estrangeiras, índices e unicidade de e-mail/documento.
