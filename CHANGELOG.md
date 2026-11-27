@@ -256,3 +256,11 @@
 - Modo manual agora remove a placa e o padrão derivados do motor de origem.
 - Documentação permanente em `docs/GERACAO-DE-DOCUMENTOS.md`.
 
+# 0.4.10 — Fase 3.14 — em desenvolvimento
+
+- Centraliza a renderização dos campos declarativos nos dois simuladores.
+- Corrige a disponibilidade visual de São Paulo e Outros estados.
+- Oculta PBT sem regra técnica aplicável e melhora a semântica dos checklists.
+- Conecta modificações adicionais ao catálogo persistido com grupos repetíveis.
+- Sem Migration 011, sem SQL remoto e sem integração Simples API nesta etapa.
+

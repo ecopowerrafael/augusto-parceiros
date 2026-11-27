@@ -167,3 +167,7 @@ O hotfix do editor deve ser publicado somente após `lint`, `typecheck`, testes,
 
 Para o estado parcial confirmado, não excluir as colunas `manual_whatsapp`, `manual_team_name` ou `manual_message_template`; a Migration 007 usa `ADD COLUMN IF NOT EXISTS` e `ON DUPLICATE KEY UPDATE` para permitir a recuperação segura.
 
+# Fase 3.14 — procedimento de homologação
+
+A versão `0.4.10` permanece em branch de desenvolvimento até autorização expressa. A Migration 010 já está instalada no banco remoto; não executar SQL, não reimportar migrations e não criar Migration 011 para correções que sejam apenas de renderização. Após autorização futura, publicar a branch, aguardar o deploy da Hostinger e validar manualmente os dois simuladores, sem consumir a Simples API.
+

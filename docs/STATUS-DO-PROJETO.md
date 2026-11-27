@@ -1,5 +1,13 @@
 # Status do projeto
 
+## Fase 3.14 — correções de usabilidade da suspensão — branch de desenvolvimento — versão 0.4.10
+
+- Causa confirmada: os simuladores integrado e declarativo mantinham renderizadores de formulário distintos; o integrado não renderizava `REPEATABLE_MODIFICATIONS`.
+- Implementação em andamento nesta branch: `ServiceFieldRenderer` compartilhado, catálogo persistido para modificações adicionais, opções de UF restritas a `SP`/`OTHER_STATE`, rótulos semânticos para checklists e PBT condicionado à referência declarativa de regra.
+- A Migration 010 já aplicada não foi alterada e não há necessidade confirmada de Migration 011: os ajustes atuais são de renderização, seleção defensiva e consumo das relações já persistidas.
+- Nenhum SQL remoto foi executado, nenhuma chamada à Simples API foi realizada e a `main` não foi alterada.
+- Homologação visual e funcional na Hostinger permanece pendente do proprietário.
+
 ## Fase 3.13 — implementação local em branch, Migration 010 pendente — 26/11/2026
 
 - Auditoria de 27/11/2026: o erro `#1146 vehicle_modifications não existe` foi causado pela linha 8 do source precheck, gerada como linha 16 do SQL Hostinger, que consultava a tabela antes do `CREATE TABLE`. Precheck e verify foram reescritos com `information_schema` e SQL preparado condicional.

@@ -1,5 +1,9 @@
 # Homologação da Fase 3.13
 
+## Atualização da Fase 3.14
+
+Antes da nova homologação, conferir no simulador integrado ao construtor e no simulador declarativo: UF com exatamente `São Paulo` e `Outros estados`; PBT inicialmente oculto; perguntas de contato sem ambiguidade; grupo repetível de outras modificações com seletor, descrição, remoção e adição; filtros por catálogo, categoria, UF e itens já selecionados. A Migration 010 não deve ser reimportada. A validação visual continua humana.
+
 ## Estado
 
 Implementação publicada na `main` em ambiente de testes, versão `0.4.9`. A Migration 010 foi instalada e verificada pelo proprietário na Hostinger; não reimportar a migration nem executar SQL remoto.

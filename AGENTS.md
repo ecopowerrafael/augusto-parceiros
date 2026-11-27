@@ -35,6 +35,8 @@ Antes de implementar qualquer funcionalidade, leia `docs/STATUS-DO-PROJETO.md`, 
 - Para autenticação, use sessões opacas persistidas no MySQL, cookies HttpOnly/Secure/SameSite, CSRF e rate limit persistido; não use tokens de autenticação em localStorage.
 - A recuperação de senha depende de SMTP configurado no ambiente; nunca retornar o token de recuperação na API.
 - A instalação inicial do MySQL desta fase é manual pelo phpMyAdmin usando `database/install.sql`; não executar migrations, provisionamento ou operações remotas sem autorização explícita da missão.
+- Os simuladores devem reutilizar os componentes compartilhados de campos, condições, opções, grupos repetíveis e resultados; não criar renderizadores divergentes para a mesma configuração declarativa.
+- Campos técnicos só podem aparecer ou ser obrigatórios por condições declarativas persistidas; não espalhar regras comerciais rígidas no frontend.
 - Para a Migration 007, a publicação fica suspensa até confirmação manual do proprietário no phpMyAdmin; não executar SQL remoto pelo agente.
 - Na Fase 3.5, a migration `004_partner_commissions.sql` também é manual: executar precheck, importar, verificar e aguardar confirmação do proprietário antes de integrar dependências de schema na `main`.
 - Aprovação administrativa deve ser atômica, sincronizar empresa e usuários vinculados, registrar auditoria e, em falha SQL, registrar apenas request ID/código SQL sem PII ou credenciais.
