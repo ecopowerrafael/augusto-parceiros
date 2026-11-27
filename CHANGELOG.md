@@ -8,6 +8,7 @@
 - Adicionada cobrança declarativa por quantidade e validação backend contra catálogo ativo, duplicidade e descrições obrigatórias.
 - Criada a Migration 010 e os SQLs Hostinger; não executados remotamente.
 - Validações locais aprovadas; homologação online, importação manual e publicação na `main` permanecem pendentes.
+- Adicionado simulador declarativo administrativo com múltiplas modificações selecionadas do catálogo ativo.
 
 ## [0.4.8] — Ajustes finais do simulador — 26/11/2026
 
