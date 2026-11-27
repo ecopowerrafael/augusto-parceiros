@@ -283,3 +283,37 @@ export function createPublicServiceRouter({ databaseRequired }) {
   })
   return publicRouter
 }
+
+export function createPartnerServiceRouter({ databaseRequired, activeAccount }) {
+  const partnerRouter = express.Router()
+  const partnerAsync = (handler) => (request, response, next) => Promise.resolve(handler(request, response, next)).catch(next)
+  partnerRouter.use(databaseRequired)
+  partnerRouter.use(requireRole('PARTNER'))
+  partnerRouter.use(activeAccount)
+  partnerRouter.get('/services', partnerAsync(async (_request, response) => {
+    const [items] = await getDatabasePool().execute(`SELECT s.id, s.code, s.name, s.slug, s.category, s.service_type, s.display_order FROM services s WHERE s.is_active = 1 AND s.available_to_partner = 1 ORDER BY s.display_order, s.name`)
+    response.json({ items })
+  }))
+  partnerRouter.get('/services/:serviceId/editor', partnerAsync(async (request, response) => {
+    const [[version]] = await getDatabasePool().execute(`SELECT v.id FROM service_versions v JOIN services s ON s.id = v.service_id WHERE s.id = ? AND s.is_active = 1 AND s.available_to_partner = 1 AND v.status = 'PUBLISHED' ORDER BY v.version_number DESC LIMIT 1`, [request.params.serviceId])
+    if (!version) return response.status(404).json({ error: 'SERVICE_NOT_AVAILABLE' })
+    const editor = await loadEditor(version.id, request.requestId)
+    response.json(editor)
+  }))
+  partnerRouter.post('/service-versions/:versionId/simulate', requireCsrf, partnerAsync(async (request, response) => {
+    const parsed = simulationRequestSchema.safeParse(request.body || {})
+    if (!parsed.success) return bodyError(response, parsed)
+    const [[allowed]] = await getDatabasePool().execute(`SELECT v.id FROM service_versions v JOIN services s ON s.id = v.service_id WHERE v.id = ? AND s.is_active = 1 AND s.available_to_partner = 1 AND v.status = 'PUBLISHED' LIMIT 1`, [request.params.versionId])
+    if (!allowed) return response.status(404).json({ error: 'SERVICE_NOT_AVAILABLE' })
+    try {
+      const editor = await loadEditor(request.params.versionId, request.requestId)
+      const modificationCatalog = await loadActiveModificationCatalog(getDatabasePool()).catch((error) => error.code === 'ER_NO_SUCH_TABLE' ? [] : Promise.reject(error))
+      const result = simulateLoadedService({ ...editor, modificationCatalog }, parsed.data)
+      response.json({ ...result, manualContact: null })
+    } catch (error) {
+      if (error.code === 'INVALID_SERVICE_CONFIGURATION' || error.code === 'INVALID_SIMULATION_INPUT') return response.status(422).json({ error: error.code, details: error.details })
+      response.status(422).json({ error: 'SERVICE_SIMULATION_FAILED' })
+    }
+  }))
+  return partnerRouter
+}
