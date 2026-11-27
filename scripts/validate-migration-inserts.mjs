@@ -74,3 +74,12 @@ console.log(`${file}: ${checked} linhas INSERT verificadas; correspondência de 
 const jsonErrors = validateJsonObjectArguments(sql)
 if (jsonErrors.length) throw new Error(`${file}: ${jsonErrors.join('; ')}`)
 console.log(`${file}: JSON_OBJECT verificados; quantidade de argumentos aprovada.`)
+
+if (/INSERT\s+INTO\s+schema_migrations/i.test(sql)) {
+  const executableStatements = sql.split(';').map((statement) => statement.replace(/--[^\r\n]*/g, '').trim()).filter(Boolean)
+  const lastStatement = executableStatements.at(-1) || ''
+  if (!/INSERT\s+INTO\s+schema_migrations/i.test(lastStatement)) {
+    throw new Error(`${file}: schema_migrations deve ser registrado somente no último comando executável da migration.`)
+  }
+  console.log(`${file}: registro de schema_migrations ocorre após os demais comandos.`)
+}
