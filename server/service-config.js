@@ -206,7 +206,9 @@ function validateModificationAnswers(values, catalog = []) {
   const catalogByCode = new Map(catalog.filter((item) => item && item.code).map((item) => [String(item.code).trim().toUpperCase(), item]))
   const seen = new Set()
   const errors = []
-  if (entries.length > 10) errors.push({ field: 'modifications.additional', code: 'TOO_MANY_MODIFICATIONS', message: 'Adicione no máximo 10 modificações por análise.' })
+  const nonEmptyEntries = entries.filter((entry) => String(entry?.code || '').trim())
+  if (values['modifications.include'] === 'YES' && nonEmptyEntries.length === 0) errors.push({ field: 'modifications.additional', code: 'MODIFICATION_REQUIRED', message: 'Adicione pelo menos uma modificação válida ou selecione Não.' })
+  if (nonEmptyEntries.length > 10) errors.push({ field: 'modifications.additional', code: 'TOO_MANY_MODIFICATIONS', message: 'Adicione no máximo 10 modificações por análise.' })
   for (const entry of entries) {
     const code = String(entry?.code || '').trim().toUpperCase()
     const description = String(entry?.description || '').trim()
@@ -284,7 +286,9 @@ export function evaluateService({ fields, options = [], billingItems = [], rules
     const ruleActions = (rule.actions || []).filter((action) => action && action.action_type); for (const action of ruleActions) { actions.push(action); if (action.action_type === 'BLOCK_AUTOMATED_QUOTE') blocked = true; if (action.action_type === 'MANUAL_REVIEW' || action.action_type === 'REQUIRE_ADMIN_APPROVAL') manualReview = true; if (action.action_type === 'CLASSIFY_VIABILITY') viability = action.payload?.result || viability; if (action.action_type === 'ADD_BILLING_ITEM' && action.target_key && !appliedItems.has(action.target_key)) { const target = billingItems.find((item) => item.code === action.target_key); if (target) appliedItems.set(target.code, { ...target, reason: 'Regra atendida' }) } if (action.action_type === 'REMOVE_BILLING_ITEM' && action.target_key) appliedItems.delete(action.target_key) }
   }
   for (const document of documents) { const condition = document.condition_expression ? (typeof document.condition_expression === 'string' ? JSON.parse(document.condition_expression) : document.condition_expression) : null; if (document.requirement_type === 'REQUIRED' || (condition && evaluateCondition(condition, values))) documentsResult.push(document) }
-  const selectedModificationCodes = new Set(Array.isArray(values['modifications.additional']) ? values['modifications.additional'].map((entry) => String(entry?.code || '')).filter(Boolean) : [])
+  const selectedModificationCodes = new Set(Array.isArray(values['modifications.additional']) ? values['modifications.additional'].map((entry) => String(entry?.code || '').trim().toUpperCase()).filter(Boolean) : [])
+  const manualCatalogItems = modificationCatalog.filter((item) => selectedModificationCodes.has(String(item.code || '').trim().toUpperCase()) && item.requires_manual_review)
+  if (manualCatalogItems.length) { manualReview = true; trace.push({ rule: 'Modificação adicional exige análise manual', matched: true, expectedResult: 'MANUAL_REVIEW', description: 'Uma das modificações adicionais selecionadas exige análise manual.' }) }
   for (const item of modificationCatalog) for (const document of item.documents || []) if (selectedModificationCodes.has(String(item.code)) && document.requirement_type !== 'DISPENSED') { const condition = document.condition_expression ? (typeof document.condition_expression === 'string' ? JSON.parse(document.condition_expression) : document.condition_expression) : null; if (!condition || evaluateCondition(condition, values)) documentsResult.push(document) }
   const uniqueDocuments = [...new Map(documentsResult.map((document) => [String(document.document_code || document.name), document])).values()]
   const items = [...appliedItems.values()].map((item) => { const quantity = quantityFor(item, values); return { ...item, quantity, amount_cents: item.amount_override_cents ?? item.default_amount_cents, total_cents: item.amount_override_cents !== null && item.amount_override_cents !== undefined ? Number(item.amount_override_cents) * quantity : (item.default_amount_cents === null ? null : Number(item.default_amount_cents) * quantity) } })

@@ -80,4 +80,11 @@ describe('SUSPENSION_V1', () => {
     expect(result.messages.some((message) => message.message_key === 'DOCUMENTARY_CONTRADICTION')).toBe(true)
     expect(result.total_cents).toBe(75580)
   })
+  it('exige uma modificação válida quando a resposta é Sim e preserva análise manual do catálogo', () => {
+    expect(() => evaluateSuspension({ answers: { ...base, 'modifications.include': 'YES', 'modifications.additional': [] }, billingItems: billing, modificationCatalog: catalog })).toThrow('INVALID_SIMULATION_INPUT')
+    const manualCatalog = [{ ...catalog[0], requires_manual_review: 1 }]
+    const result = evaluateSuspension({ answers: { ...base, 'modifications.include': 'YES', 'modifications.additional': [{ code: 'COLOR_CHANGE' }] }, billingItems: billing, modificationCatalog: manualCatalog })
+    expect(result.viability).toBe('MANUAL_REVIEW')
+    expect(result.commercial_available).toBe(false)
+  })
 })
