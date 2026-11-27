@@ -12,6 +12,7 @@
 - Complemento posterior: adicionado o `Simulador declarativo` administrativo, com seleção real do catálogo ativo, grupo repetível e submissão ao mesmo endpoint backend do construtor. A conferência visual e a execução contra o banco online continuam pendentes.
 - O catálogo administrativo foi ampliado com edição das opções, requisitos de autorização/CSV/ECV, referência oficial, status jurídico, documentos, mensagens e orientações persistidas. Os endpoints de escopo por categoria/UF e de cobrança vinculada estão protegidos no backend; a tela visual ainda requer conferência humana.
 - A tela administrativa completa do catálogo foi conectada ao painel: permite selecionar cobrança, categorias e UFs aplicáveis, além de manter documentos e mensagens no mesmo fluxo protegido. Essa alteração não altera o schema além da Migration 010 pendente.
+- A auditoria da Migration 010 corrigiu a ordem de registro em `schema_migrations`: o registro agora ocorre após a regra de categoria sem configuração e exige as três regras técnicas finais na verificação. Os SQLs Hostinger foram regenerados.
 
 ## Fase 3.12 — publicada na main, homologação online pendente — 26/11/2026
 

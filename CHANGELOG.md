@@ -7,6 +7,7 @@
 - Preparada a configuração declarativa de regularização de suspensão, rodas/pneus e grupo repetível de modificações adicionais.
 - Adicionada cobrança declarativa por quantidade e validação backend contra catálogo ativo, duplicidade e descrições obrigatórias.
 - Criada a Migration 010 e os SQLs Hostinger; não executados remotamente.
+- Ajustado o registro da Migration 010 para ocorrer somente após a última regra técnica e as verificações de completude.
 - Validações locais aprovadas; homologação online, importação manual e publicação na `main` permanecem pendentes.
 - Adicionado simulador declarativo administrativo com múltiplas modificações selecionadas do catálogo ativo.
 - Ampliada a administração do catálogo com edição de exigências, documentos, mensagens, referências oficiais e orientações persistidas.
