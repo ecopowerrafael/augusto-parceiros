@@ -14,6 +14,8 @@ export const getVehicleStateOptions = () => [{ value: 'SP', label: 'São Paulo' 
 const valueString = (value: unknown) => String(value ?? '')
 const isPresent = (value: unknown) => value !== undefined && value !== null && valueString(value).trim() !== ''
 
+export const documentaryWarningFor = (values: Record<string, unknown>) => values['suspension.already_done'] === 'YES' && values['suspension.installation_invoice'] === 'NOT_PERFORMED' ? 'Confira as respostas: a modificação foi informada como já realizada, mas o serviço de instalação ainda não foi realizado.' : ''
+
 function referencesField(condition: unknown, fieldKey: string): boolean {
   if (!condition || typeof condition !== 'object') return false
   if (Array.isArray(condition)) return condition.some((item) => referencesField(item, fieldKey))
@@ -49,9 +51,9 @@ function catalogFor(catalog: CatalogItem[], values: Record<string, unknown>, sel
   })
 }
 
-type Props = { field: Field; options?: Option[]; catalog?: CatalogItem[]; rules?: Rule[]; values: Record<string, unknown>; onChange: (key: string, value: unknown) => void; error?: string }
+type Props = { field: Field; options?: Option[]; catalog?: CatalogItem[]; rules?: Rule[]; values: Record<string, unknown>; onChange: (key: string, value: unknown) => void; error?: string; focusOnError?: boolean }
 
-export function ServiceFieldRenderer({ field, options = [], catalog = [], values, onChange, error }: Props): ReactNode {
+export function ServiceFieldRenderer({ field, options = [], catalog = [], values, onChange, error, focusOnError = false }: Props): ReactNode {
   const [loadedCatalog, setLoadedCatalog] = useState<CatalogItem[]>([])
   useEffect(() => {
     if (catalog.length > 0) return
@@ -67,14 +69,16 @@ export function ServiceFieldRenderer({ field, options = [], catalog = [], values
   const isFuel = key.toLowerCase().endsWith('.fuel')
   const isCylinder = key.toLowerCase().includes('cylinder') || key.toLowerCase().includes('cilind') || key.toLowerCase().endsWith('.engine_cc')
   const isChecklist = ['suspension.contact_check', 'wheels.contact_check', 'suspension.clearance_check', 'wheels.fender_check', 'wheels.diameter_check'].includes(key)
-  useEffect(() => {
-    if (!error) return
-    const element = [...document.querySelectorAll<HTMLElement>('[data-field-key]')].find((candidate) => candidate.dataset.fieldKey === key)
-    if (element) { element.scrollIntoView({ behavior: 'smooth', block: 'center' }); element.focus({ preventScroll: true }) }
-  }, [error, key])
   const fieldClass = `builder-field${error ? ' has-error' : ''}`
   const errorId = error ? `${key.replace(/[^a-zA-Z0-9_-]/g, '-')}-error` : undefined
   const errorMessage = error ? <small id={errorId} className="builder-field-error" role="alert">{error}</small> : null
+  const documentaryWarning = key === 'suspension.installation_invoice' && documentaryWarningFor(values)
+  useEffect(() => {
+    if (!error || !focusOnError) return
+    const element = [...document.querySelectorAll<HTMLElement>('[data-field-key]')].find((candidate) => candidate.dataset.fieldKey === key)
+    const control = element?.querySelector<HTMLElement>('input, select, textarea') || element
+    if (control) { control.scrollIntoView({ behavior: 'smooth', block: 'center' }); control.focus({ preventScroll: true }) }
+  }, [error, focusOnError, key])
   if (type === 'INFO') return <p className="builder-info">{valueString(field.label)}</p>
   if (type === 'REPEATABLE_MODIFICATIONS') {
     const entries = Array.isArray(value) ? value as Array<{ code?: string; description?: string }> : []
@@ -87,8 +91,8 @@ export function ServiceFieldRenderer({ field, options = [], catalog = [], values
   if (type === 'CHECKBOX') return <label className={`${fieldClass} builder-checkbox`} data-field-key={key}><span><input type="checkbox" aria-invalid={Boolean(error)} aria-describedby={errorId} checked={value === true} onChange={(event) => update(event.target.checked)} /> {valueString(field.label)}</span>{description && <small>{description}</small>}{errorMessage}</label>
   if (type === 'YES_NO' || isFuel || ['SINGLE_SELECT', 'RADIO'].includes(type)) {
     const selectOptions = key === 'vehicle_target.state' ? getVehicleStateOptions() : isFuel ? FUEL_OPTIONS : isChecklist ? options.map((option) => ({ value: valueString(option.option_value), label: valueString(option.option_label) })) : type === 'YES_NO' ? [{ value: 'YES', label: 'Sim' }, { value: 'NO', label: 'Não' }] : options.map((option) => ({ value: valueString(option.option_value), label: valueString(option.option_label) }))
-    return <label className={fieldClass} data-field-key={key}><span>{valueString(field.label)}{required ? ' *' : ''}</span><select aria-invalid={Boolean(error)} aria-describedby={errorId} value={valueString(value)} onChange={(event) => update(isFuel ? normalizeFuel(event.target.value) : event.target.value)}><option value="">Selecione</option>{selectOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>{description && <small>{description}</small>}{errorMessage}</label>
+    return <label className={fieldClass} data-field-key={key}><span>{valueString(field.label)}{required ? ' *' : ''}</span><select required={required} aria-invalid={Boolean(error)} aria-describedby={errorId} value={valueString(value)} onChange={(event) => update(isFuel ? normalizeFuel(event.target.value) : event.target.value)}><option value="">Selecione</option>{selectOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>{description && <small>{description}</small>}{documentaryWarning && <small className="builder-field-warning" role="alert">{documentaryWarning}</small>}{errorMessage}</label>
   }
   const normalizeOnBlur = () => { if (!isCylinder) return; const normalized = normalizeCylinderToCc(valueString(value)); if (normalized !== null) update(normalized) }
-  return <label className={fieldClass} data-field-key={key}><span>{valueString(field.label)}{required ? ' *' : ''}</span><input aria-invalid={Boolean(error)} aria-describedby={errorId} type={type === 'DATE' ? 'date' : 'text'} inputMode={isCylinder || ['INTEGER', 'DECIMAL', 'MONEY', 'PERCENT'].includes(type) ? 'decimal' : undefined} maxLength={type === 'VEHICLE_PLATE' ? 7 : undefined} value={valueString(value)} onChange={(event) => update(type === 'VEHICLE_PLATE' ? normalizePlateInput(event.target.value) : isCylinder ? normalizeCylinderInput(event.target.value) : event.target.value)} onBlur={normalizeOnBlur} />{type === 'VEHICLE_PLATE' && <small>Use uma placa antiga ou Mercosul. Espaços e hífens são removidos automaticamente.</small>}{isCylinder && <small>Informe em litros ou cm³; o valor será normalizado para cm³ ao sair do campo.</small>}{description && <small>{description}</small>}{errorMessage}</label>
+  return <label className={fieldClass} data-field-key={key}><span>{valueString(field.label)}{required ? ' *' : ''}</span><input required={required} aria-invalid={Boolean(error)} aria-describedby={errorId} type={type === 'DATE' ? 'date' : 'text'} inputMode={isCylinder || ['INTEGER', 'DECIMAL', 'MONEY', 'PERCENT'].includes(type) ? 'decimal' : undefined} maxLength={type === 'VEHICLE_PLATE' ? 7 : undefined} value={valueString(value)} onChange={(event) => update(type === 'VEHICLE_PLATE' ? normalizePlateInput(event.target.value) : isCylinder ? normalizeCylinderInput(event.target.value) : event.target.value)} onBlur={normalizeOnBlur} />{type === 'VEHICLE_PLATE' && <small>Use uma placa antiga ou Mercosul. Espaços e hífens são removidos automaticamente.</small>}{isCylinder && <small>Informe em litros ou cm³; o valor será normalizado para cm³ ao sair do campo.</small>}{description && <small>{description}</small>}{documentaryWarning && <small className="builder-field-warning" role="alert">{documentaryWarning}</small>}{errorMessage}</label>
 }
